@@ -271,7 +271,7 @@ export default function VectorCalculator() {
               }}
             >
               <span style={{ color: "#00ffb4", fontSize: 11, letterSpacing: 2, fontFamily: "'Space Mono', monospace" }}>
-                HERRAMIENTA 1 / 5
+                HERRAMIENTA 2 / 5
               </span>
             </div>
             <h1

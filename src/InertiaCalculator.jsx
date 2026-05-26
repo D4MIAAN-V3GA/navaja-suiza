@@ -265,7 +265,7 @@ export default function InertiaCalculator() {
               transition: "all 0.3s",
             }}>
               <span style={{ color: accent, fontSize: 11, letterSpacing: 2, fontFamily: "'Space Mono', monospace" }}>
-                HERRAMIENTA 2 / 5
+                HERRAMIENTA 3 / 5
               </span>
             </div>
             <h1 style={{ fontSize: "clamp(22px, 5vw, 34px)", fontWeight: 800, color: "#f0f4f8", margin: "0 0 6px", letterSpacing: -0.5 }}>

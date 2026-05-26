@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-const ACCENT = "#9D9DFF";
-
 function det2(a, b, c, d) {
   return a * d - b * c;
 }
@@ -33,6 +31,7 @@ export default function EquationSolver() {
   const [animKey, setAnimKey] = useState(0);
 
   const is3x3 = mode === "3x3";
+  const accent = is3x3 ? "#9D9DFF" : "#00ffb4";
   const varNames = is3x3 ? ["x", "y", "z"] : ["x", "y"];
   const rhsIdx = is3x3 ? 3 : 2;
 
@@ -86,9 +85,12 @@ export default function EquationSolver() {
     setAnimKey((k) => k + 1);
   };
 
-  const cols = is3x3
+  const gridCols = is3x3
     ? "28px 1fr 1fr 1fr 18px 1fr"
     : "28px 1fr 1fr 18px 1fr";
+
+  // Derived rgba values for tints
+  const accentRgb = is3x3 ? "157,157,255" : "0,255,180";
 
   return (
     <>
@@ -102,8 +104,7 @@ export default function EquationSolver() {
         .es-result:nth-child(1) { animation-delay: 0.05s; }
         .es-result:nth-child(2) { animation-delay: 0.11s; }
         .es-result:nth-child(3) { animation-delay: 0.17s; }
-        .es-tab { transition: background 0.18s, color 0.18s; }
-        .es-input:focus { border-color: ${ACCENT}99 !important; outline: none; }
+        .es-tab { transition: background 0.22s, color 0.22s; }
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
       `}</style>
@@ -119,15 +120,15 @@ export default function EquationSolver() {
           fontFamily: "'Syne', sans-serif",
         }}
       >
-        {/* Background dot grid */}
+        {/* Background dot grid — tinted with accent color */}
         <div
           style={{
             position: "fixed",
             inset: 0,
-            backgroundImage:
-              "radial-gradient(circle, rgba(157,157,255,0.04) 1px, transparent 1px)",
+            backgroundImage: `radial-gradient(circle, rgba(${accentRgb},0.04) 1px, transparent 1px)`,
             backgroundSize: "26px 26px",
             pointerEvents: "none",
+            transition: "background-image 0.3s",
           }}
         />
 
@@ -139,22 +140,24 @@ export default function EquationSolver() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 8,
-                background: "rgba(157,157,255,0.06)",
-                border: "1px solid rgba(157,157,255,0.15)",
+                background: `rgba(${accentRgb},0.06)`,
+                border: `1px solid rgba(${accentRgb},0.15)`,
                 borderRadius: 999,
                 padding: "4px 14px",
                 marginBottom: 16,
+                transition: "background 0.3s, border-color 0.3s",
               }}
             >
               <span
                 style={{
-                  color: ACCENT,
+                  color: accent,
                   fontSize: 11,
                   letterSpacing: 2,
                   fontFamily: "'Space Mono', monospace",
+                  transition: "color 0.3s",
                 }}
               >
-                HERRAMIENTA 5 / 5
+                HERRAMIENTA 1 / 5
               </span>
             </div>
             <h1
@@ -167,7 +170,9 @@ export default function EquationSolver() {
               }}
             >
               Solucionador de{" "}
-              <span style={{ color: ACCENT }}>Sistemas Lineales</span>
+              <span style={{ color: accent, transition: "color 0.3s" }}>
+                Sistemas Lineales
+              </span>
             </h1>
             <p
               style={{
@@ -193,28 +198,32 @@ export default function EquationSolver() {
               gap: 4,
             }}
           >
-            {["2x2", "3x3"].map((m) => (
-              <button
-                key={m}
-                className="es-tab"
-                onClick={() => switchMode(m)}
-                style={{
-                  flex: 1,
-                  padding: "10px 0",
-                  borderRadius: 9,
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  letterSpacing: 2,
-                  background: mode === m ? ACCENT : "transparent",
-                  color: mode === m ? "#0a0a0f" : "#555",
-                }}
-              >
-                {m === "2x2" ? "2 × 2" : "3 × 3"}
-              </button>
-            ))}
+            {["2x2", "3x3"].map((m) => {
+              const tabAccent = m === "3x3" ? "#9D9DFF" : "#00ffb4";
+              const isActive = mode === m;
+              return (
+                <button
+                  key={m}
+                  className="es-tab"
+                  onClick={() => switchMode(m)}
+                  style={{
+                    flex: 1,
+                    padding: "10px 0",
+                    borderRadius: 9,
+                    border: "none",
+                    cursor: "pointer",
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    letterSpacing: 2,
+                    background: isActive ? tabAccent : "transparent",
+                    color: isActive ? "#0a0a0f" : "#555",
+                  }}
+                >
+                  {m === "2x2" ? "2 × 2" : "3 × 3"}
+                </button>
+              );
+            })}
           </div>
 
           {/* Augmented matrix input */}
@@ -231,7 +240,7 @@ export default function EquationSolver() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: cols,
+                gridTemplateColumns: gridCols,
                 gap: "8px 10px",
                 marginBottom: 10,
               }}
@@ -243,9 +252,10 @@ export default function EquationSolver() {
                   style={{
                     fontFamily: "'Space Mono', monospace",
                     fontSize: 11,
-                    color: ACCENT,
+                    color: accent,
                     textAlign: "center",
                     letterSpacing: 1,
+                    transition: "color 0.3s",
                   }}
                 >
                   {v}
@@ -271,7 +281,7 @@ export default function EquationSolver() {
                 key={ri}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: cols,
+                  gridTemplateColumns: gridCols,
                   gap: "8px 10px",
                   marginBottom: ri < coeffs.length - 1 ? 10 : 0,
                   alignItems: "center",
@@ -289,11 +299,11 @@ export default function EquationSolver() {
                   E{ri + 1}
                 </span>
 
+                {/* Coefficient inputs */}
                 {varNames.map((_, ci) => (
                   <input
                     key={ci}
                     type="number"
-                    className="es-input"
                     value={row[ci]}
                     onChange={(e) => handleInput(ri, ci, e.target.value)}
                     placeholder="0"
@@ -308,8 +318,15 @@ export default function EquationSolver() {
                       textAlign: "center",
                       width: "100%",
                       boxSizing: "border-box",
+                      outline: "none",
                       transition: "border-color 0.2s",
                     }}
+                    onFocus={(e) =>
+                      (e.target.style.borderColor = accent + "99")
+                    }
+                    onBlur={(e) =>
+                      (e.target.style.borderColor = "rgba(255,255,255,0.09)")
+                    }
                   />
                 ))}
 
@@ -318,32 +335,39 @@ export default function EquationSolver() {
                   style={{
                     width: 1,
                     height: 34,
-                    background: "rgba(157,157,255,0.25)",
+                    background: `rgba(${accentRgb},0.3)`,
                     margin: "0 auto",
                     borderRadius: 999,
+                    transition: "background 0.3s",
                   }}
                 />
 
                 {/* RHS input */}
                 <input
                   type="number"
-                  className="es-input"
                   value={row[rhsIdx]}
                   onChange={(e) => handleInput(ri, rhsIdx, e.target.value)}
                   placeholder="0"
                   style={{
-                    background: "rgba(157,157,255,0.06)",
-                    border: "1px solid rgba(157,157,255,0.18)",
+                    background: `rgba(${accentRgb},0.06)`,
+                    border: `1px solid rgba(${accentRgb},0.2)`,
                     borderRadius: 10,
                     padding: "10px 8px",
-                    color: ACCENT,
+                    color: accent,
                     fontFamily: "'Space Mono', monospace",
                     fontSize: 14,
                     textAlign: "center",
                     width: "100%",
                     boxSizing: "border-box",
-                    transition: "border-color 0.2s",
+                    outline: "none",
+                    transition: "background 0.3s, border-color 0.3s, color 0.3s",
                   }}
+                  onFocus={(e) =>
+                    (e.target.style.borderColor = accent + "99")
+                  }
+                  onBlur={(e) =>
+                    (e.target.style.borderColor = `rgba(${accentRgb},0.2)`)
+                  }
                 />
               </div>
             ))}
@@ -355,7 +379,7 @@ export default function EquationSolver() {
             style={{
               width: "100%",
               padding: "14px 0",
-              background: ACCENT,
+              background: accent,
               border: "none",
               borderRadius: 12,
               color: "#0a0a0f",
@@ -365,17 +389,15 @@ export default function EquationSolver() {
               letterSpacing: 2,
               cursor: "pointer",
               marginBottom: 28,
-              boxShadow: "0 0 24px rgba(157,157,255,0.25)",
-              transition: "box-shadow 0.2s",
+              boxShadow: `0 0 24px rgba(${accentRgb},0.28)`,
+              transition: "background 0.3s, box-shadow 0.2s",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.boxShadow =
-                "0 0 40px rgba(157,157,255,0.5)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.boxShadow =
-                "0 0 24px rgba(157,157,255,0.25)")
-            }
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = `0 0 40px rgba(${accentRgb},0.55)`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = `0 0 24px rgba(${accentRgb},0.28)`;
+            }}
           >
             RESOLVER SISTEMA
           </button>
@@ -393,14 +415,7 @@ export default function EquationSolver() {
                 gap: 14,
               }}
             >
-              <span
-                style={{
-                  color: "#ff6b6b",
-                  fontSize: 18,
-                  lineHeight: 1,
-                  marginTop: 1,
-                }}
-              >
+              <span style={{ color: "#ff6b6b", fontSize: 18, lineHeight: 1, marginTop: 1 }}>
                 ⚠
               </span>
               <div>
@@ -455,7 +470,7 @@ export default function EquationSolver() {
                     <div
                       style={{
                         background: "rgba(255,255,255,0.03)",
-                        border: `1px solid ${ACCENT}44`,
+                        border: `1px solid ${accent}44`,
                         borderRadius: 14,
                         padding: "18px 22px",
                         position: "relative",
@@ -469,7 +484,7 @@ export default function EquationSolver() {
                           left: 0,
                           right: 0,
                           height: 2,
-                          background: `linear-gradient(90deg, transparent, ${ACCENT}, transparent)`,
+                          background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
                           opacity: 0.7,
                         }}
                       />
@@ -489,9 +504,9 @@ export default function EquationSolver() {
                         style={{
                           fontFamily: "'Space Mono', monospace",
                           fontSize: 22,
-                          color: ACCENT,
+                          color: accent,
                           fontWeight: 700,
-                          textShadow: `0 0 18px ${ACCENT}55`,
+                          textShadow: `0 0 18px ${accent}55`,
                         }}
                       >
                         {fmt(result[v])}

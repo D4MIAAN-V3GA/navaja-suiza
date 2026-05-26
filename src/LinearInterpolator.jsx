@@ -204,7 +204,7 @@ export default function LinearInterpolator() {
               borderRadius: 999, padding: "4px 14px", marginBottom: 14,
             }}>
               <span style={{ color: "#00ffb4", fontSize: 11, letterSpacing: 2, fontFamily: "'Space Mono', monospace" }}>
-                HERRAMIENTA 3 / 5
+                HERRAMIENTA 4 / 5
               </span>
             </div>
             <h1 style={{ fontSize: "clamp(22px, 5vw, 34px)", fontWeight: 800, color: "#f0f4f8", margin: "0 0 6px", letterSpacing: -0.5 }}>
