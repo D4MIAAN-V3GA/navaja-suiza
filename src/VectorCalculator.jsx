@@ -235,7 +235,7 @@ export default function VectorCalculator() {
       <div
         style={{
           minHeight: "100vh",
-          background: "#0a0a0f",
+          background: "#0d1117",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -248,9 +248,8 @@ export default function VectorCalculator() {
           style={{
             position: "fixed",
             inset: 0,
-            backgroundImage:
-              "linear-gradient(rgba(0,255,200,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,200,0.025) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+            backgroundImage: "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
             pointerEvents: "none",
           }}
         />

@@ -10,7 +10,7 @@ const EngineerHeader = () => {
 
       {/* Etiqueta de herramienta */}
       <div className="inline-block bg-gray-950 border border-gray-700 text-gray-300 font-mono text-xs px-5 py-2 rounded-full mb-8 tracking-widest shadow-sm">
-        @damian.project
+        @damianvlab
       </div>
 
       {/* El Título Principal */}

@@ -112,7 +112,7 @@ export default function EquationSolver() {
       <div
         style={{
           minHeight: "100vh",
-          background: "#0a0a0f",
+          background: "#0d1117",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -125,8 +125,8 @@ export default function EquationSolver() {
           style={{
             position: "fixed",
             inset: 0,
-            backgroundImage: `radial-gradient(circle, rgba(${accentRgb},0.04) 1px, transparent 1px)`,
-            backgroundSize: "26px 26px",
+            backgroundImage: "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
             pointerEvents: "none",
             transition: "background-image 0.3s",
           }}
