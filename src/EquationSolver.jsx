@@ -191,12 +191,8 @@ export default function EquationSolver() {
           <div
             style={{
               display: "flex",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: 12,
-              padding: 4,
+              gap: 10,
               marginBottom: 28,
-              gap: 4,
             }}
           >
             {["2x2", "3x3"].map((m) => {
@@ -209,16 +205,18 @@ export default function EquationSolver() {
                   onClick={() => switchMode(m)}
                   style={{
                     flex: 1,
-                    padding: "10px 0",
-                    borderRadius: 9,
-                    border: "none",
+                    padding: "12px 0",
+                    borderRadius: 12,
+                    border: `1px solid ${isActive ? tabAccent + "66" : "rgba(255,255,255,0.07)"}`,
                     cursor: "pointer",
                     fontFamily: "'Space Mono', monospace",
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: 700,
                     letterSpacing: 2,
-                    background: isActive ? tabAccent : "transparent",
-                    color: isActive ? "#0a0a0f" : "#555",
+                    background: isActive ? tabAccent + "18" : "rgba(255,255,255,0.03)",
+                    color: isActive ? tabAccent : "#4b5563",
+                    opacity: isActive ? 1 : 0.7,
+                    boxShadow: isActive ? `0 0 20px ${tabAccent}18` : "none",
                   }}
                 >
                   {m === "2x2" ? "2 × 2" : "3 × 3"}
