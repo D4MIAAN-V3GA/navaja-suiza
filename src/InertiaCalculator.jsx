@@ -240,7 +240,8 @@ export default function InertiaCalculator() {
 
       <div style={{
         minHeight: "100vh",
-        background: "#0d1117",
+        backgroundColor: "#0d1117",
+        backgroundImage: `radial-gradient(ellipse 70% 40% at 50% 0%, ${accent}10, transparent)`,
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "center",

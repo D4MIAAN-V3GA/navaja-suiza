@@ -7,11 +7,11 @@ import UnitConverter from './UnitConverter';
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-gray-100 p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-[#0d1117] text-gray-100 font-sans">
 
       <EngineerHeader />
 
-      <main className="max-w-4xl mx-auto flex flex-col gap-12">
+      <main className="max-w-4xl mx-auto flex flex-col">
         <EquationSolver />
         <VectorCalculator />
         <InertiaCalculator />
