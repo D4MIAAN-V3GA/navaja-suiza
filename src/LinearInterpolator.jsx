@@ -64,7 +64,7 @@ function KnownRow({ xLabel, xSub, yLabel, ySub, xVal, yVal, onX, onY, accent, ro
   );
 }
 
-export default function LinearInterpolator() {
+export default function LinearInterpolator({ onAccentChange }) {
   const [x1, setX1] = useState("");
   const [y1, setY1] = useState("");
   const [x2, setX2] = useState("");
@@ -74,6 +74,8 @@ export default function LinearInterpolator() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [animKey, setAnimKey] = useState(0);
+
+  useEffect(() => { onAccentChange?.("#00ffb4"); }, []);
 
   useEffect(() => {
     const nx1 = parseFloat(x1), ny1 = parseFloat(y1),
@@ -165,8 +167,7 @@ export default function LinearInterpolator() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap');
-        @keyframes fadeUp {
+@keyframes fadeUp {
           from { opacity:0; transform:translateY(12px) scale(0.98); }
           to   { opacity:1; transform:translateY(0) scale(1); }
         }
@@ -180,19 +181,12 @@ export default function LinearInterpolator() {
 
       <div style={{
         minHeight: "100vh",
-        background: "#0d1117",
-        backgroundImage: "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,255,180,0.06), transparent)",
+        background: "transparent",
         display: "flex", alignItems: "flex-start", justifyContent: "center",
         padding: "32px 16px 56px",
         fontFamily: "'Syne', sans-serif",
       }}>
 
-        {/* dot grid */}
-        <div style={{
-          position: "fixed", inset: 0, pointerEvents: "none",
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }} />
 
         <div style={{ width: "100%", maxWidth: 560, position: "relative" }}>
 

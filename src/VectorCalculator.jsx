@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const defaultVec = () => ({ i: "", j: "", k: "" });
 
@@ -163,7 +163,7 @@ function ResultCard({ title, value, sub, accent }) {
       <div
         style={{
           fontFamily: "'Space Mono', monospace",
-          fontSize: typeof value === "string" && value.length > 12 ? 13 : 20,
+          fontSize: typeof value === "string" && value.length > 16 ? 13 : value.length > 8 ? 16 : 20,
           color: accent,
           fontWeight: 700,
           wordBreak: "break-all",
@@ -189,7 +189,9 @@ function ResultCard({ title, value, sub, accent }) {
   );
 }
 
-export default function VectorCalculator() {
+export default function VectorCalculator({ onAccentChange }) {
+  const accent = "#00ffb4";
+  useEffect(() => { onAccentChange?.(accent); }, []);
   const [vecA, setVecA] = useState(defaultVec());
   const [vecB, setVecB] = useState(defaultVec());
   const [results, setResults] = useState(null);
@@ -218,8 +220,7 @@ export default function VectorCalculator() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
-        @keyframes fadeUp {
+@keyframes fadeUp {
           from { opacity:0; transform:translateY(16px); }
           to   { opacity:1; transform:translateY(0); }
         }
@@ -228,6 +229,8 @@ export default function VectorCalculator() {
         .vc-result:nth-child(2) { animation-delay: 0.12s; }
         .vc-result:nth-child(3) { animation-delay: 0.19s; }
         .vc-result:nth-child(4) { animation-delay: 0.26s; }
+        .vc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        @media (max-width: 480px) { .vc-grid { grid-template-columns: 1fr; } }
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
       `}</style>
@@ -235,8 +238,7 @@ export default function VectorCalculator() {
       <div
         style={{
           minHeight: "100vh",
-          backgroundColor: "#0d1117",
-          backgroundImage: "radial-gradient(ellipse 70% 40% at 50% 0%, rgba(0,255,180,0.06), transparent)",
+          backgroundColor: "transparent",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -244,16 +246,6 @@ export default function VectorCalculator() {
           fontFamily: "'Syne', sans-serif",
         }}
       >
-        {/* background grid */}
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundImage: "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-            pointerEvents: "none",
-          }}
-        />
 
         <div style={{ width: "100%", maxWidth: 720, position: "relative" }}>
           {/* Header */}
@@ -270,7 +262,7 @@ export default function VectorCalculator() {
                 marginBottom: 16,
               }}
             >
-              <span style={{ color: "#00ffb4", fontSize: 11, letterSpacing: 2, fontFamily: "'Space Mono', monospace" }}>
+              <span style={{ color: accent, fontSize: 11, letterSpacing: 2, fontFamily: "'Space Mono', monospace" }}>
                 HERRAMIENTA 2 / 5
               </span>
             </div>
@@ -284,7 +276,7 @@ export default function VectorCalculator() {
               }}
             >
               Calculadora de{" "}
-              <span style={{ color: "#00ffb4" }}>Vectores 3D</span>
+              <span style={{ color: accent }}>Vectores 3D</span>
             </h1>
             <p style={{ color: "#4a5568", fontSize: 14, margin: 0, fontFamily: "'Space Mono', monospace" }}>
               Magnitud · Producto Punto · Producto Cruz
@@ -295,7 +287,7 @@ export default function VectorCalculator() {
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 20 }}>
             <VecInput
               label="Vector A"
-              color="#00ffb4"
+              color={accent}
               vec={vecA}
               onChange={handleChange(setVecA)}
             />
@@ -338,16 +330,16 @@ export default function VectorCalculator() {
 
           {/* Results */}
           {results && (
-            <div key={animKey} style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <div className="vc-result" style={{ flex: 1, minWidth: 140 }}>
+            <div key={animKey} className="vc-grid">
+              <div className="vc-result">
                 <ResultCard
                   title="|A| Magnitud"
                   value={fmt(results.magA)}
                   sub="unidades"
-                  accent="#00ffb4"
+                  accent={accent}
                 />
               </div>
-              <div className="vc-result" style={{ flex: 1, minWidth: 140 }}>
+              <div className="vc-result">
                 <ResultCard
                   title="|B| Magnitud"
                   value={fmt(results.magB)}
@@ -355,7 +347,7 @@ export default function VectorCalculator() {
                   accent="#7c6ff7"
                 />
               </div>
-              <div className="vc-result" style={{ flex: 1, minWidth: 140 }}>
+              <div className="vc-result">
                 <ResultCard
                   title="A · B  Punto"
                   value={fmt(results.dot)}
@@ -363,7 +355,7 @@ export default function VectorCalculator() {
                   accent="#f7c06f"
                 />
               </div>
-              <div className="vc-result" style={{ flex: 1, minWidth: 200 }}>
+              <div className="vc-result">
                 <ResultCard
                   title="A × B  Cruz"
                   value={crossStr}

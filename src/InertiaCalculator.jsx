@@ -84,12 +84,12 @@ function ShapePreview({ shape, vals }) {
     const cr = r > 0 ? inner / 2 : inner / 3;
     return (
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle cx={size / 2} cy={size / 2} r={cr} fill="rgba(124,111,247,0.14)" stroke="#7c6ff7" strokeWidth="1.5" />
+        <circle cx={size / 2} cy={size / 2} r={cr} fill="rgba(157,157,255,0.14)" stroke="#9D9DFF" strokeWidth="1.5" />
         <circle cx={size / 2} cy={size / 2} r="3" fill="#f7c06f" />
         <line x1={size / 2} y1={size / 2 - cr - 4} x2={size / 2} y2={size / 2 + cr + 4} stroke="#f7c06f" strokeWidth="0.8" strokeDasharray="3,2" />
         <line x1={size / 2 - cr - 4} y1={size / 2} x2={size / 2 + cr + 4} y2={size / 2} stroke="#f7c06f" strokeWidth="0.8" strokeDasharray="3,2" />
-        {r > 0 && <line x1={size / 2} y1={size / 2} x2={size / 2 + cr} y2={size / 2} stroke="#7c6ff7" strokeWidth="1" />}
-        {r > 0 && <text x={size / 2 + cr / 2 - 3} y={size / 2 - 5} fill="#7c6ff7" fontSize="9" fontFamily="monospace">r</text>}
+        {r > 0 && <line x1={size / 2} y1={size / 2} x2={size / 2 + cr} y2={size / 2} stroke="#9D9DFF" strokeWidth="1" />}
+        {r > 0 && <text x={size / 2 + cr / 2 - 3} y={size / 2 - 5} fill="#9D9DFF" fontSize="9" fontFamily="monospace">r</text>}
       </svg>
     );
   }
@@ -183,7 +183,7 @@ function ResultRow({ label, value, unit, accent = "#00ffb4", delay = 0 }) {
   );
 }
 
-export default function InertiaCalculator() {
+export default function InertiaCalculator({ onAccentChange }) {
   const [shape, setShape] = useState("rectangle");
   const [vals, setVals] = useState({ b: "", h: "", r: "", R: "", r2: "" });
   const [results, setResults] = useState(null);
@@ -219,17 +219,18 @@ export default function InertiaCalculator() {
 
   const accentMap = {
     rectangle: "#00ffb4",
-    circle: "#7c6ff7",
+    circle: "#9D9DFF",
     triangle: "#f7c06f",
     hollow_circle: "#f76f9a",
   };
   const accent = accentMap[shape];
 
+  useEffect(() => { onAccentChange?.(accent); }, [accent]);
+
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap');
-        @keyframes fadeUp {
+@keyframes fadeUp {
           from { opacity:0; transform:translateY(10px); }
           to   { opacity:1; transform:translateY(0); }
         }
@@ -240,20 +241,13 @@ export default function InertiaCalculator() {
 
       <div style={{
         minHeight: "100vh",
-        backgroundColor: "#0d1117",
-        backgroundImage: `radial-gradient(ellipse 70% 40% at 50% 0%, ${accent}10, transparent)`,
+        backgroundColor: "transparent",
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "center",
         padding: "32px 16px 48px",
         fontFamily: "'Syne', sans-serif",
       }}>
-        {/* subtle dot grid */}
-        <div style={{
-          position: "fixed", inset: 0, pointerEvents: "none",
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
-        }} />
 
         <div style={{ width: "100%", maxWidth: 680, position: "relative" }}>
 

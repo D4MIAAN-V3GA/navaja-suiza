@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function det2(a, b, c, d) {
   return a * d - b * c;
@@ -23,7 +23,7 @@ function initCoeffs(is3x3) {
   return Array.from({ length: rows }, () => Array(cols).fill(""));
 }
 
-export default function EquationSolver() {
+export default function EquationSolver({ onAccentChange }) {
   const [mode, setMode] = useState("2x2");
   const [coeffs, setCoeffs] = useState(initCoeffs(false));
   const [result, setResult] = useState(null);
@@ -32,6 +32,8 @@ export default function EquationSolver() {
 
   const is3x3 = mode === "3x3";
   const accent = is3x3 ? "#9D9DFF" : "#00ffb4";
+
+  useEffect(() => { onAccentChange?.(accent); }, [accent]);
   const varNames = is3x3 ? ["x", "y", "z"] : ["x", "y"];
   const rhsIdx = is3x3 ? 3 : 2;
 
@@ -95,8 +97,7 @@ export default function EquationSolver() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
-        @keyframes fadeUp {
+@keyframes fadeUp {
           from { opacity: 0; transform: translateY(14px); }
           to   { opacity: 1; transform: translateY(0); }
         }
@@ -112,8 +113,7 @@ export default function EquationSolver() {
       <div
         style={{
           minHeight: "100vh",
-          backgroundColor: "#0d1117",
-          backgroundImage: `radial-gradient(ellipse 70% 40% at 50% 0%, rgba(${accentRgb},0.07), transparent)`,
+          backgroundColor: "transparent",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -121,17 +121,6 @@ export default function EquationSolver() {
           fontFamily: "'Syne', sans-serif",
         }}
       >
-        {/* Background dot grid — tinted with accent color */}
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundImage: "radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-            pointerEvents: "none",
-            transition: "background-image 0.3s",
-          }}
-        />
 
         <div style={{ width: "100%", maxWidth: 680, position: "relative" }}>
           {/* Header */}

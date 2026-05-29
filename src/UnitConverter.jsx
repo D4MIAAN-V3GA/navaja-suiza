@@ -84,13 +84,13 @@ function AllTable({ catKey, fromUnit, inputVal }) {
               padding: "10px 18px",
               borderBottom: i < Object.keys(units).length - 2 ? "1px solid rgba(255,255,255,0.04)" : "none",
               borderRight: i % 2 === 0 ? "1px solid rgba(255,255,255,0.04)" : "none",
-              background: isFrom ? `${cat.accent}08` : "transparent",
+              background: isFrom ? `${accent}08` : "transparent",
               display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8,
             }}>
-              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: isFrom ? cat.accent : "#4b5563" }}>
+              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: isFrom ? accent : "#4b5563" }}>
                 {u.label}
               </span>
-              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: isFrom ? cat.accent : "#94a3b8", fontWeight: isFrom ? 700 : 400 }}>
+              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: isFrom ? accent : "#94a3b8", fontWeight: isFrom ? 700 : 400 }}>
                 {fmt(converted)}
               </span>
             </div>
@@ -101,7 +101,7 @@ function AllTable({ catKey, fromUnit, inputVal }) {
   );
 }
 
-export default function UnitConverter() {
+export default function UnitConverter({ onAccentChange }) {
   const [catKey, setCatKey] = useState("pressure");
   const [inputVal, setInputVal] = useState("");
   const [fromUnit, setFromUnit] = useState("psi");
@@ -114,6 +114,8 @@ export default function UnitConverter() {
   const accent = cat.accent;
   const units = cat.units;
   const unitKeys = Object.keys(units);
+
+  useEffect(() => { onAccentChange?.(accent); }, [accent]);
 
   // reset units when category changes
   useEffect(() => {
@@ -162,8 +164,7 @@ export default function UnitConverter() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap');
-        @keyframes fadeUp {
+@keyframes fadeUp {
           from { opacity:0; transform:translateY(10px) scale(0.97); }
           to   { opacity:1; transform:translateY(0) scale(1); }
         }
@@ -179,20 +180,13 @@ export default function UnitConverter() {
 
       <div style={{
         minHeight: "100vh",
-        background: "#0d1117",
-        backgroundImage: `radial-gradient(ellipse 70% 40% at 50% 0%, ${accent}0a, transparent)`,
+        background: "transparent",
         display: "flex", alignItems: "flex-start", justifyContent: "center",
         padding: "32px 16px 56px",
         fontFamily: "'Syne', sans-serif",
         transition: "background-image 0.4s",
       }}>
 
-        {/* dot grid */}
-        <div style={{
-          position: "fixed", inset: 0, pointerEvents: "none",
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "26px 26px",
-        }} />
 
         <div style={{ width: "100%", maxWidth: 600, position: "relative" }}>
 
