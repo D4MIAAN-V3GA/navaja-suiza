@@ -1,4 +1,4 @@
-const DISCORD_URL   = 'https://discord.gg/TU_INVITE';
+const DISCORD_URL   = 'https://discord.gg/C8MjQAcuNH';
 const TIKTOK_URL    = 'https://tiktok.com/@damianvlab';
 const INSTAGRAM_URL = 'https://instagram.com/damianvlab';
 
