@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
+import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS } from "./theme";
+import { ProcedurePanel } from "./ProcedurePanel";
 
 // ── Conversion data ────────────────────────────────────────────────
 const CATEGORIES = {
   pressure: {
     label: "Presión",
-    icon: "⊕",
-    accent: "#00ffb4",
+    accent: ACCENTS.cyan,
     units: {
       psi:  { label: "psi",  name: "Libras/pulg²",    toBase: v => v * 6894.757,    fromBase: v => v / 6894.757 },
       MPa:  { label: "MPa",  name: "Megapascal",       toBase: v => v * 1e6,         fromBase: v => v / 1e6 },
@@ -17,8 +18,7 @@ const CATEGORIES = {
   },
   torque: {
     label: "Torque",
-    icon: "↻",
-    accent: "#7c6ff7",
+    accent: ACCENTS.blue,
     units: {
       "N·m":    { label: "N·m",    name: "Newton·metro",      toBase: v => v,           fromBase: v => v },
       "kN·m":   { label: "kN·m",   name: "Kilonewton·metro",  toBase: v => v * 1e3,     fromBase: v => v / 1e3 },
@@ -30,8 +30,7 @@ const CATEGORIES = {
   },
   force: {
     label: "Fuerza",
-    icon: "→",
-    accent: "#f76f9a",
+    accent: ACCENTS.orange,
     units: {
       N:    { label: "N",    name: "Newton",          toBase: v => v,           fromBase: v => v },
       kN:   { label: "kN",   name: "Kilonewton",      toBase: v => v * 1e3,     fromBase: v => v / 1e3 },
@@ -51,7 +50,6 @@ function fmt(n) {
   return parseFloat(n.toPrecision(8)).toString();
 }
 
-// quick-reference table: convert all units from the entered value
 function AllTable({ catKey, fromUnit, inputVal }) {
   const cat = CATEGORIES[catKey];
   const units = cat.units;
@@ -60,37 +58,24 @@ function AllTable({ catKey, fromUnit, inputVal }) {
   const base = units[fromUnit].toBase(num);
 
   return (
-    <div style={{
-      marginTop: 2,
-      background: "rgba(255,255,255,0.018)",
-      border: "1px solid rgba(255,255,255,0.06)",
-      borderRadius: 14,
-      overflow: "hidden",
-    }}>
-      <div style={{
-        padding: "10px 18px",
-        borderBottom: "1px solid rgba(255,255,255,0.05)",
-        fontFamily: "'Space Mono', monospace",
-        fontSize: 10, color: "#374151", letterSpacing: 2, textTransform: "uppercase",
-      }}>
+    <div style={{ marginTop: 2, background: PANEL, border: BORDER }}>
+      <div style={{ padding: "10px 18px", borderBottom: BORDER_THIN, fontFamily: MONO, fontSize: 10, color: MUTE, letterSpacing: 2, textTransform: "uppercase" }}>
         Tabla de referencia rápida — {num} {fromUnit}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
         {Object.entries(units).map(([key, u], i) => {
           const converted = u.fromBase(base);
           const isFrom = key === fromUnit;
           return (
             <div key={key} style={{
               padding: "10px 18px",
-              borderBottom: i < Object.keys(units).length - 2 ? "1px solid rgba(255,255,255,0.04)" : "none",
-              borderRight: i % 2 === 0 ? "1px solid rgba(255,255,255,0.04)" : "none",
-              background: isFrom ? `${accent}08` : "transparent",
+              borderBottom: i < Object.keys(units).length - 2 ? BORDER_THIN : "none",
+              borderRight: i % 2 === 0 ? BORDER_THIN : "none",
+              background: isFrom ? cat.accent : "transparent",
               display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8,
             }}>
-              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: isFrom ? accent : "#4b5563" }}>
-                {u.label}
-              </span>
-              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, color: isFrom ? accent : "#94a3b8", fontWeight: isFrom ? 700 : 400 }}>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: isFrom ? "#fff" : MUTE }}>{u.label}</span>
+              <span style={{ fontFamily: MONO, fontSize: 12, color: isFrom ? "#fff" : INK, fontWeight: isFrom ? 700 : 400 }}>
                 {fmt(converted)}
               </span>
             </div>
@@ -117,7 +102,6 @@ export default function UnitConverter({ onAccentChange }) {
 
   useEffect(() => { onAccentChange?.(accent); }, [accent]);
 
-  // reset units when category changes
   useEffect(() => {
     const keys = Object.keys(CATEGORIES[catKey].units);
     setFromUnit(keys[0]);
@@ -126,7 +110,6 @@ export default function UnitConverter({ onAccentChange }) {
     setInputVal("");
   }, [catKey]);
 
-  // compute result
   useEffect(() => {
     const num = parseFloat(inputVal);
     if (isNaN(num) || inputVal === "") { setResult(null); return; }
@@ -141,304 +124,162 @@ export default function UnitConverter({ onAccentChange }) {
     setToUnit(fromUnit);
   };
 
-  const SelectStyle = (ac) => ({
-    background: "rgba(255,255,255,0.04)",
-    border: `1px solid ${ac}44`,
-    borderRadius: 10,
-    padding: "11px 36px 11px 14px",
-    color: "#e2e8f0",
-    fontFamily: "'Space Mono', monospace",
-    fontSize: 13,
-    outline: "none",
-    cursor: "pointer",
-    appearance: "none",
-    WebkitAppearance: "none",
-    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%236b7280' d='M5 6L0 0h10z'/%3E%3C/svg%3E")`,
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "right 12px center",
-    width: "100%",
-    boxSizing: "border-box",
-    transition: "border-color 0.2s",
-  });
+  const procSteps = (result !== null && inputVal !== "") ? (() => {
+    const num = parseFloat(inputVal);
+    const baseKey = unitKeys.find((k) => units[k].toBase(1) === 1);
+    const baseLabel = baseKey ? units[baseKey].label : "base";
+    const factorFrom = units[fromUnit].toBase(1);
+    const factorTo = units[toUnit].toBase(1);
+    const base = units[fromUnit].toBase(num);
+    return [
+      { title: "Factores a unidad base (SI)", lines: [
+        `1 ${units[fromUnit].label} = ${fmt(factorFrom)} ${baseLabel}`,
+        `1 ${units[toUnit].label} = ${fmt(factorTo)} ${baseLabel}`,
+      ]},
+      { title: "Convertir a la base", lines: [`${num} ${units[fromUnit].label} × ${fmt(factorFrom)} = ${fmt(base)} ${baseLabel}`] },
+      { title: "De la base a la unidad destino", lines: [`${fmt(base)} ${baseLabel} ÷ ${fmt(factorTo)} = ${fmt(result)} ${units[toUnit].label}`] },
+    ];
+  })() : [];
+
+  const SelectStyle = {
+    background: PAPER, border: BORDER, borderRadius: 0,
+    padding: "11px 36px 11px 14px", color: INK, fontFamily: MONO, fontSize: 13,
+    outline: "none", cursor: "pointer", appearance: "none", WebkitAppearance: "none",
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23161616' d='M5 6L0 0h10z'/%3E%3C/svg%3E")`,
+    backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center",
+    width: "100%", boxSizing: "border-box",
+  };
 
   return (
-    <>
-      <style>{`
-@keyframes fadeUp {
-          from { opacity:0; transform:translateY(10px) scale(0.97); }
-          to   { opacity:1; transform:translateY(0) scale(1); }
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
-        select option { background:#111827; color:#e2e8f0; }
-        .cat-btn { transition: all 0.2s; }
-        .cat-btn:hover { opacity: 1 !important; }
-        .swap-btn:hover { background: rgba(255,255,255,0.08) !important; }
-        .toggle-btn:hover { opacity: 0.8 !important; }
-      `}</style>
+    <section style={{ maxWidth: 600, margin: "0 auto", padding: "32px 0 16px" }}>
+      <div style={{ marginBottom: 24 }}>
+        <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 12 }}>
+          05 / 05 — UNIDADES
+        </span>
+        <h2 style={{ fontFamily: SANS, fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, color: INK, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
+          Convertidor de unidades
+        </h2>
+        <p style={{ fontFamily: MONO, fontSize: 13, color: MUTE, margin: 0 }}>
+          Presión · torque · fuerza — nivel ingeniería
+        </p>
+      </div>
 
-      <div style={{
-        minHeight: "100vh",
-        background: "transparent",
-        display: "flex", alignItems: "flex-start", justifyContent: "center",
-        padding: "32px 16px 56px",
-        fontFamily: "'Syne', sans-serif",
-        transition: "background-image 0.4s",
-      }}>
-
-
-        <div style={{ width: "100%", maxWidth: 600, position: "relative" }}>
-
-          {/* ── Header ── */}
-          <div style={{ textAlign: "center", marginBottom: 32 }}>
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              background: `${accent}0e`, border: `1px solid ${accent}33`,
-              borderRadius: 999, padding: "4px 14px", marginBottom: 14,
-              transition: "all 0.3s",
-            }}>
-              <span style={{ color: accent, fontSize: 11, letterSpacing: 2, fontFamily: "'Space Mono', monospace", transition: "color 0.3s" }}>
-                HERRAMIENTA 5 / 5
-              </span>
-            </div>
-            <h1 style={{ fontSize: "clamp(22px,5vw,34px)", fontWeight: 800, color: "#f0f4f8", margin: "0 0 6px", letterSpacing: -0.5 }}>
-              Convertidor de{" "}
-              <span style={{ color: accent, transition: "color 0.3s" }}>Unidades</span>
-            </h1>
-            <p style={{ color: "#374151", fontSize: 13, margin: 0, fontFamily: "'Space Mono', monospace" }}>
-              Presión · Torque · Fuerza — nivel ingeniería
-            </p>
-          </div>
-
-          {/* ── Category tabs ── */}
-          <div style={{
-            display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap",
-          }}>
-            {Object.entries(CATEGORIES).map(([key, c]) => {
-              const active = key === catKey;
-              return (
-                <button key={key} className="cat-btn"
-                  onClick={() => setCatKey(key)}
-                  style={{
-                    flex: "1 1 120px",
-                    padding: "12px 16px",
-                    background: active ? `${c.accent}18` : "rgba(255,255,255,0.03)",
-                    border: `1px solid ${active ? c.accent + "66" : "rgba(255,255,255,0.07)"}`,
-                    borderRadius: 12,
-                    color: active ? c.accent : "#4b5563",
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    letterSpacing: 1,
-                    opacity: active ? 1 : 0.7,
-                    boxShadow: active ? `0 0 20px ${c.accent}18` : "none",
-                    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                  }}>
-                  <span style={{ fontSize: 15 }}>{c.icon}</span>
-                  {c.label.toUpperCase()}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* ── Main card ── */}
-          <div style={{
-            background: "rgba(255,255,255,0.025)",
-            border: "1px solid rgba(255,255,255,0.07)",
-            borderRadius: 22,
-            overflow: "hidden",
-          }}>
-
-            {/* Input grid */}
-            <div style={{ padding: "24px 24px 20px" }}>
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr 36px 1fr",
-                gridTemplateRows: "auto auto",
-                gap: "8px 10px",
-                alignItems: "end",
+      {/* Category tabs */}
+      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
+        {Object.entries(CATEGORIES).map(([key, c]) => {
+          const active = key === catKey;
+          return (
+            <button key={key}
+              onClick={() => setCatKey(key)}
+              style={{
+                flex: "1 1 120px", padding: "12px 16px",
+                background: active ? c.accent : PANEL,
+                border: BORDER, borderRadius: 0,
+                color: active ? "#fff" : INK,
+                fontFamily: MONO, fontSize: 12, fontWeight: 700,
+                cursor: "pointer", letterSpacing: 1,
+                boxShadow: active ? SHADOW_SM : "none",
+                textTransform: "uppercase",
               }}>
+              {c.label}
+            </button>
+          );
+        })}
+      </div>
 
-                {/* Label row */}
-                {["Valor", "De", "", "A"].map((lbl, i) => (
-                  <div key={i} style={{
-                    fontFamily: "'Space Mono', monospace", fontSize: 10,
-                    color: "#4b5563", letterSpacing: 1.5, textTransform: "uppercase",
-                    textAlign: i === 2 ? "center" : "left",
-                  }}>{lbl}</div>
-                ))}
-
-                {/* Input */}
-                <input
-                  type="number"
-                  value={inputVal}
-                  onChange={e => setInputVal(e.target.value)}
-                  placeholder="0"
-                  style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: `1px solid ${accent}55`,
-                    borderRadius: 10,
-                    padding: "11px 14px",
-                    color: "#f1f5f9",
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: 18,
-                    fontWeight: 700,
-                    outline: "none",
-                    width: "100%",
-                    boxSizing: "border-box",
-                    boxShadow: `0 0 16px ${accent}18`,
-                  }}
-                />
-
-                {/* From unit */}
-                <select value={fromUnit} onChange={e => setFromUnit(e.target.value)}
-                  style={SelectStyle(accent)}>
-                  {unitKeys.map(k => (
-                    <option key={k} value={k}>{units[k].label} — {units[k].name}</option>
-                  ))}
-                </select>
-
-                {/* Swap button */}
-                <button className="swap-btn" onClick={swap} style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: 10,
-                  color: "#6b7280",
-                  fontSize: 16,
-                  cursor: "pointer",
-                  height: 42,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  transition: "all 0.2s",
-                }}>⇄</button>
-
-                {/* To unit */}
-                <select value={toUnit} onChange={e => setToUnit(e.target.value)}
-                  style={SelectStyle(accent)}>
-                  {unitKeys.map(k => (
-                    <option key={k} value={k}>{units[k].label} — {units[k].name}</option>
-                  ))}
-                </select>
-
-              </div>
-            </div>
-
-            {/* Result */}
-            <div key={animKey} style={{
-              margin: "0 24px 24px",
-              background: result !== null ? `${accent}0d` : "rgba(255,255,255,0.02)",
-              border: `1px solid ${result !== null ? accent + "44" : "rgba(255,255,255,0.05)"}`,
-              borderRadius: 16,
-              padding: "20px 24px",
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              flexWrap: "wrap", gap: 12,
-              animation: result !== null ? "fadeUp 0.3s ease both" : "none",
-              transition: "border-color 0.3s, background 0.3s",
-            }}>
-              <div>
-                <div style={{
-                  fontFamily: "'Space Mono', monospace", fontSize: 10,
-                  color: result !== null ? accent : "#374151",
-                  letterSpacing: 2, textTransform: "uppercase", marginBottom: 6,
-                  transition: "color 0.3s",
-                }}>
-                  Resultado
-                </div>
-                <div style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: "clamp(26px, 7vw, 40px)",
-                  fontWeight: 700,
-                  color: result !== null ? accent : "#1f2937",
-                  textShadow: result !== null ? `0 0 28px ${accent}55` : "none",
-                  letterSpacing: -1,
-                  lineHeight: 1,
-                  transition: "color 0.3s, text-shadow 0.3s",
-                }}>
-                  {result !== null ? fmt(result) : "—"}
-                </div>
-              </div>
-              {result !== null && (
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 22, color: accent, fontWeight: 700 }}>
-                    {units[toUnit].label}
-                  </div>
-                  <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: "#374151", marginTop: 4 }}>
-                    {units[toUnit].name}
-                  </div>
-                </div>
-              )}
-              {result === null && (
-                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 13, color: "#1f2937" }}>
-                  Ingresa un valor para convertir
-                </div>
-              )}
-            </div>
-
-            {/* Full equation line */}
-            {result !== null && inputVal !== "" && (
-              <div style={{
-                margin: "-16px 24px 20px",
-                fontFamily: "'Space Mono', monospace",
-                fontSize: 12,
-                color: "#374151",
-                textAlign: "center",
-                padding: "10px",
-                background: "rgba(255,255,255,0.015)",
-                borderRadius: 10,
-                border: "1px solid rgba(255,255,255,0.04)",
-              }}>
-                {inputVal} {units[fromUnit].label} = <span style={{ color: accent }}>{fmt(result)} {units[toUnit].label}</span>
-              </div>
-            )}
-
-            {/* Toggle table */}
-            <div style={{ padding: "0 24px 24px" }}>
-              <button className="toggle-btn" onClick={() => setShowTable(s => !s)} style={{
-                width: "100%",
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderRadius: 10,
-                padding: "10px",
-                color: "#4b5563",
-                fontFamily: "'Space Mono', monospace",
-                fontSize: 11,
-                cursor: "pointer",
-                letterSpacing: 1,
-                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-              }}>
-                <span style={{ transition: "transform 0.3s", display: "inline-block", transform: showTable ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
-                {showTable ? "OCULTAR" : "VER"} TABLA COMPLETA DE CONVERSIÓN
-              </button>
-              {showTable && (
-                <div style={{ marginTop: 12, animation: "fadeUp 0.3s ease both" }}>
-                  <AllTable catKey={catKey} fromUnit={fromUnit} inputVal={inputVal} />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Unit reference chips */}
-          <div style={{
-            marginTop: 16,
-            display: "flex", flexWrap: "wrap", gap: 8,
-          }}>
-            {Object.entries(units).map(([key, u]) => (
-              <div key={key} style={{
-                background: "rgba(255,255,255,0.02)",
-                border: "1px solid rgba(255,255,255,0.05)",
-                borderRadius: 8,
-                padding: "5px 12px",
-                fontFamily: "'Space Mono', monospace",
-                fontSize: 10,
-                color: "#374151",
-              }}>
-                <span style={{ color: accent }}>{u.label}</span> {u.name}
-              </div>
+      {/* Main card */}
+      <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW }}>
+        <div style={{ padding: "24px 24px 20px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 40px 1fr", gridTemplateRows: "auto auto", gap: "8px 10px", alignItems: "end" }}>
+            {["Valor", "De", "", "A"].map((lbl, i) => (
+              <div key={i} style={{ fontFamily: MONO, fontSize: 10, color: MUTE, letterSpacing: 1.5, textTransform: "uppercase", textAlign: i === 2 ? "center" : "left" }}>{lbl}</div>
             ))}
+
+            <input
+              type="number"
+              value={inputVal}
+              onChange={e => setInputVal(e.target.value)}
+              placeholder="0"
+              style={{ background: PAPER, border: BORDER, borderRadius: 0, padding: "11px 14px", color: INK, fontFamily: MONO, fontSize: 18, fontWeight: 700, outline: "none", width: "100%", boxSizing: "border-box" }}
+            />
+
+            <select value={fromUnit} onChange={e => setFromUnit(e.target.value)} style={SelectStyle}>
+              {unitKeys.map(k => (<option key={k} value={k}>{units[k].label} — {units[k].name}</option>))}
+            </select>
+
+            <button onClick={swap} style={{
+              background: INK, border: BORDER, borderRadius: 0, color: PAPER, fontSize: 16,
+              cursor: "pointer", height: 44, display: "flex", alignItems: "center", justifyContent: "center",
+            }}>⇄</button>
+
+            <select value={toUnit} onChange={e => setToUnit(e.target.value)} style={SelectStyle}>
+              {unitKeys.map(k => (<option key={k} value={k}>{units[k].label} — {units[k].name}</option>))}
+            </select>
           </div>
         </div>
+
+        {/* Result */}
+        <div key={animKey} style={{
+          margin: "0 24px 24px",
+          background: result !== null ? accent : PAPER,
+          border: BORDER,
+          boxShadow: result !== null ? SHADOW_SM : "none",
+          padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12,
+        }}>
+          <div>
+            <div style={{ fontFamily: MONO, fontSize: 10, color: result !== null ? "rgba(255,255,255,0.85)" : MUTE, letterSpacing: 2, textTransform: "uppercase", marginBottom: 6 }}>
+              Resultado
+            </div>
+            <div style={{ fontFamily: MONO, fontSize: "clamp(26px, 7vw, 40px)", fontWeight: 700, color: result !== null ? "#fff" : FAINT, letterSpacing: -1, lineHeight: 1 }}>
+              {result !== null ? fmt(result) : "—"}
+            </div>
+          </div>
+          {result !== null && (
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontFamily: MONO, fontSize: 22, color: "#fff", fontWeight: 700 }}>{units[toUnit].label}</div>
+              <div style={{ fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.85)", marginTop: 4 }}>{units[toUnit].name}</div>
+            </div>
+          )}
+          {result === null && (
+            <div style={{ fontFamily: MONO, fontSize: 13, color: MUTE }}>Ingresa un valor para convertir</div>
+          )}
+        </div>
+
+        {/* Equation line */}
+        {result !== null && inputVal !== "" && (
+          <div style={{ margin: "-16px 24px 20px", fontFamily: MONO, fontSize: 12, color: INK, textAlign: "center", padding: "10px", background: PAPER, border: BORDER_THIN }}>
+            {inputVal} {units[fromUnit].label} = <span style={{ color: accent, fontWeight: 700 }}>{fmt(result)} {units[toUnit].label}</span>
+          </div>
+        )}
+
+        {/* Toggle table */}
+        <div style={{ padding: "0 24px 24px" }}>
+          <button onClick={() => setShowTable(s => !s)} style={{
+            width: "100%", background: PAPER, border: BORDER, borderRadius: 0, padding: "10px",
+            color: INK, fontFamily: MONO, fontSize: 11, cursor: "pointer", letterSpacing: 1,
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8, fontWeight: 700,
+          }}>
+            <span style={{ display: "inline-block", transform: showTable ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
+            {showTable ? "OCULTAR" : "VER"} TABLA COMPLETA DE CONVERSIÓN
+          </button>
+          {showTable && (
+            <div style={{ marginTop: 12 }}>
+              <AllTable catKey={catKey} fromUnit={fromUnit} inputVal={inputVal} />
+            </div>
+          )}
+        </div>
       </div>
-    </>
+
+      {result !== null && inputVal !== "" && <ProcedurePanel accent={accent} steps={procSteps} />}
+
+      {/* Unit reference chips */}
+      <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: 8 }}>
+        {Object.entries(units).map(([key, u]) => (
+          <div key={key} style={{ background: PANEL, border: BORDER_THIN, borderRadius: 0, padding: "5px 12px", fontFamily: MONO, fontSize: 10, color: MUTE }}>
+            <span style={{ color: accent, fontWeight: 700 }}>{u.label}</span> {u.name}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

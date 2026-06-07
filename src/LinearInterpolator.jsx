@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
+import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS } from "./theme";
+import { ProcedurePanel } from "./ProcedurePanel";
 
-function NumInput({ label, sub, value, onChange, accent = "#00ffb4" }) {
+function NumInput({ label, sub, value, onChange, accent }) {
   const [focused, setFocused] = useState(false);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
       <label style={{
-        fontFamily: "'Space Mono', monospace",
-        fontSize: 11,
-        color: focused ? accent : "#4b5563",
-        letterSpacing: 1.5,
-        textTransform: "uppercase",
-        transition: "color 0.2s",
+        fontFamily: MONO, fontSize: 11,
+        color: focused ? accent : MUTE,
+        letterSpacing: 1.5, textTransform: "uppercase",
         display: "flex", alignItems: "baseline", gap: 4,
       }}>
         {label}
@@ -24,20 +23,10 @@ function NumInput({ label, sub, value, onChange, accent = "#00ffb4" }) {
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         style={{
-          background: focused ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.03)",
-          border: `1px solid ${focused ? accent + "88" : "rgba(255,255,255,0.07)"}`,
-          borderRadius: 12,
-          padding: "13px 16px",
-          color: "#f1f5f9",
-          fontFamily: "'Space Mono', monospace",
-          fontSize: 18,
-          fontWeight: 700,
-          outline: "none",
-          width: "100%",
-          boxSizing: "border-box",
-          transition: "all 0.2s",
-          textAlign: "center",
-          boxShadow: focused ? `0 0 20px ${accent}18` : "none",
+          background: PAPER, border: BORDER, borderRadius: 0,
+          padding: "13px 16px", color: INK, fontFamily: MONO, fontSize: 18, fontWeight: 700,
+          outline: "none", width: "100%", boxSizing: "border-box", textAlign: "center",
+          boxShadow: focused ? `3px 3px 0 ${accent}` : "none",
         }}
       />
     </div>
@@ -47,14 +36,9 @@ function NumInput({ label, sub, value, onChange, accent = "#00ffb4" }) {
 function KnownRow({ xLabel, xSub, yLabel, ySub, xVal, yVal, onX, onY, accent, rowLabel }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <div style={{
-        fontFamily: "'Space Mono', monospace", fontSize: 10,
-        color: accent + "bb", letterSpacing: 3, textTransform: "uppercase",
-        display: "flex", alignItems: "center", gap: 8,
-      }}>
-        <span style={{ display: "inline-block", width: 20, height: 1, background: accent + "66" }} />
+      <div style={{ fontFamily: MONO, fontSize: 10, color: accent, letterSpacing: 2, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{ display: "inline-block", width: 12, height: 12, background: accent, border: BORDER_THIN }} />
         {rowLabel}
-        <span style={{ display: "inline-block", flex: 1, height: 1, background: accent + "22" }} />
       </div>
       <div style={{ display: "flex", gap: 12 }}>
         <NumInput label={xLabel} sub={xSub} value={xVal} onChange={onX} accent={accent} />
@@ -65,6 +49,11 @@ function KnownRow({ xLabel, xSub, yLabel, ySub, xVal, yVal, onX, onY, accent, ro
 }
 
 export default function LinearInterpolator({ onAccentChange }) {
+  const accent = ACCENTS.pink;
+  const cGreen = ACCENTS.green;
+  const cBlue = ACCENTS.blue;
+  useEffect(() => { onAccentChange?.(accent); }, []);
+
   const [x1, setX1] = useState("");
   const [y1, setY1] = useState("");
   const [x2, setX2] = useState("");
@@ -74,8 +63,6 @@ export default function LinearInterpolator({ onAccentChange }) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [animKey, setAnimKey] = useState(0);
-
-  useEffect(() => { onAccentChange?.("#00ffb4"); }, []);
 
   useEffect(() => {
     const nx1 = parseFloat(x1), ny1 = parseFloat(y1),
@@ -99,7 +86,6 @@ export default function LinearInterpolator({ onAccentChange }) {
   const hasEnoughForLine = !isNaN(parseFloat(x1)) && !isNaN(parseFloat(y1)) &&
     !isNaN(parseFloat(x3)) && !isNaN(parseFloat(y3)) && parseFloat(x1) !== parseFloat(x3);
 
-  // mini SVG graph
   function MiniGraph() {
     const nx1 = parseFloat(x1), ny1 = parseFloat(y1);
     const nx2 = parseFloat(x2), nx3 = parseFloat(x3), ny3 = parseFloat(y3);
@@ -119,40 +105,24 @@ export default function LinearInterpolator({ onAccentChange }) {
     const p3x = px(nx3), p3y = py(ny3);
 
     return (
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible" }}>
-        {/* grid lines */}
+      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible", border: BORDER_THIN, background: PANEL }}>
         {[0.25, 0.5, 0.75].map((t) => (
-          <line key={t}
-            x1={pad} y1={pad + t * (H - pad * 2)}
-            x2={W - pad} y2={pad + t * (H - pad * 2)}
-            stroke="rgba(255,255,255,0.04)" strokeWidth="1"
-          />
+          <line key={t} x1={pad} y1={pad + t * (H - pad * 2)} x2={W - pad} y2={pad + t * (H - pad * 2)} stroke={FAINT} strokeWidth="1" strokeDasharray="2,3" />
         ))}
-        {/* interpolation line */}
-        <line x1={p1x} y1={p1y} x2={p3x} y2={p3y} stroke="#00ffb4" strokeWidth="1.5" strokeDasharray="5,3" opacity="0.5" />
-        {/* extended faint */}
-        <line x1={pad} y1={p1y + (pad - p1x) * (p3y - p1y) / (p3x - p1x)}
-          x2={W - pad} y2={p1y + (W - pad - p1x) * (p3y - p1y) / (p3x - p1x)}
-          stroke="#00ffb4" strokeWidth="0.5" opacity="0.12" />
-        {/* known points */}
-        <circle cx={p1x} cy={p1y} r="5" fill="#0d1117" stroke="#00ffb4" strokeWidth="2" />
-        <circle cx={p3x} cy={p3y} r="5" fill="#0d1117" stroke="#7c6ff7" strokeWidth="2" />
-        {/* x2/y2 point */}
+        <line x1={p1x} y1={p1y} x2={p3x} y2={p3y} stroke={INK} strokeWidth="2" />
         {y2 !== null && !isNaN(nx2) && (
           <>
-            <line x1={px(nx2)} y1={py(y2)} x2={px(nx2)} y2={H - pad}
-              stroke="#f7c06f" strokeWidth="1" strokeDasharray="3,2" opacity="0.5" />
-            <line x1={pad} y1={py(y2)} x2={px(nx2)} y2={py(y2)}
-              stroke="#f7c06f" strokeWidth="1" strokeDasharray="3,2" opacity="0.5" />
-            <circle cx={px(nx2)} cy={py(y2)} r="6" fill="#f7c06f" opacity="0.9"
-              style={{ filter: "drop-shadow(0 0 6px #f7c06f)" }} />
+            <line x1={px(nx2)} y1={py(y2)} x2={px(nx2)} y2={H - pad} stroke={accent} strokeWidth="1" strokeDasharray="3,2" />
+            <line x1={pad} y1={py(y2)} x2={px(nx2)} y2={py(y2)} stroke={accent} strokeWidth="1" strokeDasharray="3,2" />
+            <rect x={px(nx2) - 5} y={py(y2) - 5} width="10" height="10" fill={accent} stroke={INK} strokeWidth="1.5" />
           </>
         )}
-        {/* labels */}
-        <text x={p1x} y={p1y - 9} textAnchor="middle" fill="#00ffb4" fontSize="9" fontFamily="monospace">(x₁,y₁)</text>
-        <text x={p3x} y={p3y - 9} textAnchor="middle" fill="#7c6ff7" fontSize="9" fontFamily="monospace">(x₃,y₃)</text>
+        <rect x={p1x - 5} y={p1y - 5} width="10" height="10" fill={cGreen} stroke={INK} strokeWidth="1.5" />
+        <rect x={p3x - 5} y={p3y - 5} width="10" height="10" fill={cBlue} stroke={INK} strokeWidth="1.5" />
+        <text x={p1x} y={p1y - 9} textAnchor="middle" fill={INK} fontSize="9" fontFamily="monospace">(x1,y1)</text>
+        <text x={p3x} y={p3y - 9} textAnchor="middle" fill={INK} fontSize="9" fontFamily="monospace">(x3,y3)</text>
         {y2 !== null && !isNaN(nx2) && (
-          <text x={px(nx2) + 9} y={py(y2) - 6} fill="#f7c06f" fontSize="9" fontFamily="monospace">y₂</text>
+          <text x={px(nx2) + 9} y={py(y2) - 6} fill={INK} fontSize="9" fontFamily="monospace">y2</text>
         )}
       </svg>
     );
@@ -164,220 +134,120 @@ export default function LinearInterpolator({ onAccentChange }) {
     return parseFloat(n.toFixed(6)).toString();
   };
 
+  const procSteps = (result !== null && !error) ? (() => {
+    const m = (parseFloat(y3) - parseFloat(y1)) / (parseFloat(x3) - parseFloat(x1));
+    const dx2 = parseFloat(x2) - parseFloat(x1);
+    return [
+      { title: "Fórmula", lines: ["y2 = y1 + [(x2 − x1)/(x3 − x1)] · (y3 − y1)"] },
+      { title: "Sustitución", lines: [`y2 = ${y1} + [(${x2} − ${x1})/(${x3} − ${x1})] · (${y3} − ${y1})`] },
+      { title: "Pendiente entre puntos", lines: [`m = (${y3} − ${y1}) / (${x3} − ${x1}) = ${fmt(m)}`] },
+      { title: "Resultado", lines: [`y2 = ${y1} + (${fmt(dx2)})·(${fmt(m)}) = ${fmt(result)}`] },
+    ];
+  })() : [];
+
   return (
-    <>
-      <style>{`
-@keyframes fadeUp {
-          from { opacity:0; transform:translateY(12px) scale(0.98); }
-          to   { opacity:1; transform:translateY(0) scale(1); }
-        }
-        @keyframes pulse-border {
-          0%,100% { box-shadow: 0 0 0 0 rgba(247,192,111,0); }
-          50%      { box-shadow: 0 0 0 6px rgba(247,192,111,0.12); }
-        }
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
-      `}</style>
+    <section style={{ maxWidth: 560, margin: "0 auto", padding: "32px 0 16px" }}>
+      <div style={{ marginBottom: 24 }}>
+        <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 12 }}>
+          04 / 05 — INTERPOLACIÓN
+        </span>
+        <h2 style={{ fontFamily: SANS, fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, color: INK, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
+          Interpolador lineal
+        </h2>
+        <p style={{ fontFamily: MONO, fontSize: 12, color: MUTE, margin: 0 }}>
+          y2 = y1 + [(x2 − x1) / (x3 − x1)] · (y3 − y1)
+        </p>
+      </div>
 
-      <div style={{
-        minHeight: "100vh",
-        background: "transparent",
-        display: "flex", alignItems: "flex-start", justifyContent: "center",
-        padding: "32px 16px 56px",
-        fontFamily: "'Syne', sans-serif",
-      }}>
+      <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW }}>
+        <div style={{ padding: "24px 24px 0" }}>
+          <KnownRow rowLabel="Punto conocido 1" xLabel="x" xSub="1" yLabel="y" ySub="1" xVal={x1} yVal={y1} onX={setX1} onY={setY1} accent={cGreen} />
 
-
-        <div style={{ width: "100%", maxWidth: 560, position: "relative" }}>
-
-          {/* Header */}
-          <div style={{ textAlign: "center", marginBottom: 36 }}>
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              background: "rgba(0,255,180,0.06)", border: "1px solid rgba(0,255,180,0.15)",
-              borderRadius: 999, padding: "4px 14px", marginBottom: 14,
-            }}>
-              <span style={{ color: "#00ffb4", fontSize: 11, letterSpacing: 2, fontFamily: "'Space Mono', monospace" }}>
-                HERRAMIENTA 4 / 5
-              </span>
-            </div>
-            <h1 style={{ fontSize: "clamp(22px, 5vw, 34px)", fontWeight: 800, color: "#f0f4f8", margin: "0 0 6px", letterSpacing: -0.5 }}>
-              Interpolador{" "}
-              <span style={{ color: "#00ffb4" }}>Lineal</span>
-            </h1>
-            <p style={{ color: "#374151", fontSize: 13, margin: 0, fontFamily: "'Space Mono', monospace" }}>
-              y₂ = y₁ + [(x₂ − x₁) / (x₃ − x₁)] · (y₃ − y₁)
-            </p>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "20px 0" }}>
+            <div style={{ flex: 1, height: 2, background: INK }} />
+            <span style={{ fontFamily: MONO, fontSize: 16, color: INK }}>▼</span>
+            <div style={{ flex: 1, height: 2, background: INK }} />
           </div>
 
-          {/* Card */}
-          <div style={{
-            background: "rgba(255,255,255,0.025)",
-            border: "1px solid rgba(255,255,255,0.07)",
-            borderRadius: 22,
-            overflow: "hidden",
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+            <div style={{ fontFamily: MONO, fontSize: 10, color: accent, letterSpacing: 2, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ display: "inline-block", width: 12, height: 12, background: accent, border: BORDER_THIN }} />
+              Valor a interpolar
+            </div>
+            <NumInput label="x" sub="2" value={x2} onChange={setX2} accent={accent} />
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "0 0 20px" }}>
+            <div style={{ flex: 1, height: 2, background: INK }} />
+            <span style={{ fontFamily: MONO, fontSize: 16, color: INK }}>▼</span>
+            <div style={{ flex: 1, height: 2, background: INK }} />
+          </div>
+
+          <KnownRow rowLabel="Punto conocido 2" xLabel="x" xSub="3" yLabel="y" ySub="3" xVal={x3} yVal={y3} onX={setX3} onY={setY3} accent={cBlue} />
+        </div>
+
+        {/* Result */}
+        <div style={{ padding: "20px 24px 24px" }}>
+          <div key={animKey} style={{
+            marginTop: 8,
+            background: error ? ACCENTS.pink : result !== null ? accent : PAPER,
+            border: BORDER,
+            boxShadow: (error || result !== null) ? SHADOW_SM : "none",
+            padding: "20px 24px", textAlign: "center",
           }}>
-
-            <div style={{ padding: "24px 24px 0" }}>
-              {/* Punto 1 */}
-              <KnownRow
-                rowLabel="Punto conocido 1"
-                xLabel="x" xSub="1" yLabel="y" ySub="1"
-                xVal={x1} yVal={y1}
-                onX={setX1} onY={setY1}
-                accent="#00ffb4"
-              />
-
-              {/* Divider con flecha */}
-              <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "20px 0" }}>
-                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.05)" }} />
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                  <div style={{ width: 1, height: 8, background: "rgba(247,192,111,0.3)" }} />
-                  <div style={{ width: 6, height: 6, borderRight: "1px solid rgba(247,192,111,0.5)", borderBottom: "1px solid rgba(247,192,111,0.5)", transform: "rotate(45deg)", marginTop: -4 }} />
-                </div>
-                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.05)" }} />
-              </div>
-
-              {/* x2 — valor a interpolar */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
-                <div style={{
-                  fontFamily: "'Space Mono', monospace", fontSize: 10,
-                  color: "#f7c06fbb", letterSpacing: 3, textTransform: "uppercase",
-                  display: "flex", alignItems: "center", gap: 8,
-                }}>
-                  <span style={{ display: "inline-block", width: 20, height: 1, background: "#f7c06f66" }} />
-                  Valor a interpolar
-                  <span style={{ display: "inline-block", flex: 1, height: 1, background: "#f7c06f22" }} />
-                </div>
-                <NumInput label="x" sub="2" value={x2} onChange={setX2} accent="#f7c06f" />
-              </div>
-
-              {/* Divider */}
-              <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "0 0 20px" }}>
-                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.05)" }} />
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                  <div style={{ width: 1, height: 8, background: "rgba(124,111,247,0.3)" }} />
-                  <div style={{ width: 6, height: 6, borderRight: "1px solid rgba(124,111,247,0.5)", borderBottom: "1px solid rgba(124,111,247,0.5)", transform: "rotate(45deg)", marginTop: -4 }} />
-                </div>
-                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.05)" }} />
-              </div>
-
-              {/* Punto 3 */}
-              <KnownRow
-                rowLabel="Punto conocido 2"
-                xLabel="x" xSub="3" yLabel="y" ySub="3"
-                xVal={x3} yVal={y3}
-                onX={setX3} onY={setY3}
-                accent="#7c6ff7"
-              />
+            <div style={{ fontFamily: MONO, fontSize: 11, color: (error || result !== null) ? "rgba(255,255,255,0.9)" : MUTE, letterSpacing: 2, textTransform: "uppercase", marginBottom: 10 }}>
+              {error ? "Error" : "Resultado — y2"}
             </div>
 
-            {/* Result */}
-            <div style={{ padding: "20px 24px 24px" }}>
-              <div key={animKey} style={{
-                marginTop: 8,
-                background: error
-                  ? "rgba(248,113,113,0.07)"
-                  : result !== null
-                    ? "rgba(247,192,111,0.07)"
-                    : "rgba(255,255,255,0.02)",
-                border: `1px solid ${error ? "rgba(248,113,113,0.3)" : result !== null ? "rgba(247,192,111,0.3)" : "rgba(255,255,255,0.06)"}`,
-                borderRadius: 16,
-                padding: "20px 24px",
-                textAlign: "center",
-                animation: (error || result !== null) ? "fadeUp 0.35s ease both" : "none",
-                animationName: (error || result !== null) ? (result !== null ? "pulse-border" : "fadeUp") : "none",
-              }}>
-                <div style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: 11,
-                  color: error ? "#f87171" : result !== null ? "#f7c06f" : "#374151",
-                  letterSpacing: 2,
-                  textTransform: "uppercase",
-                  marginBottom: 10,
-                }}>
-                  {error ? "⚠ Error" : "Resultado — y₂"}
-                </div>
-
-                {error && (
-                  <div style={{
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: 22,
-                    fontWeight: 700,
-                    color: "#f87171",
-                    letterSpacing: 1,
-                  }}>
-                    Error: División por cero
-                  </div>
-                )}
-
-                {!error && result !== null && (
-                  <div>
-                    <div style={{
-                      fontFamily: "'Space Mono', monospace",
-                      fontSize: "clamp(28px, 8vw, 44px)",
-                      fontWeight: 700,
-                      color: "#f7c06f",
-                      textShadow: "0 0 30px rgba(247,192,111,0.4)",
-                      letterSpacing: -1,
-                      lineHeight: 1,
-                    }}>
-                      {fmt(result)}
-                    </div>
-                    <div style={{
-                      marginTop: 8,
-                      fontFamily: "'Space Mono', monospace",
-                      fontSize: 11,
-                      color: "#374151",
-                    }}>
-                      interpolado en x₂ = {x2}
-                    </div>
-                  </div>
-                )}
-
-                {!error && result === null && (
-                  <div style={{
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: 13,
-                    color: "#1f2937",
-                  }}>
-                    Completa los 5 campos para obtener y₂
-                  </div>
-                )}
+            {error && (
+              <div style={{ fontFamily: MONO, fontSize: 20, fontWeight: 700, color: "#fff", letterSpacing: 1 }}>
+                División por cero
               </div>
-            </div>
+            )}
 
-            {/* Graph */}
-            {hasEnoughForLine && (
-              <div style={{
-                borderTop: "1px solid rgba(255,255,255,0.05)",
-                padding: "16px 24px 20px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 8,
-              }}>
-                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: "#1f2937", letterSpacing: 2, textTransform: "uppercase" }}>
-                  Representación gráfica
+            {!error && result !== null && (
+              <div>
+                <div style={{ fontFamily: MONO, fontSize: "clamp(28px, 8vw, 44px)", fontWeight: 700, color: "#fff", letterSpacing: -1, lineHeight: 1 }}>
+                  {fmt(result)}
                 </div>
-                <MiniGraph />
-                <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
-                  {[
-                    { color: "#00ffb4", label: "(x₁, y₁)" },
-                    { color: "#7c6ff7", label: "(x₃, y₃)" },
-                    { color: "#f7c06f", label: "(x₂, y₂) interpolado" },
-                  ].map(({ color, label }) => (
-                    <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: color }} />
-                      <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, color: "#374151" }}>{label}</span>
-                    </div>
-                  ))}
+                <div style={{ marginTop: 8, fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.85)" }}>
+                  interpolado en x2 = {x2}
                 </div>
               </div>
             )}
+
+            {!error && result === null && (
+              <div style={{ fontFamily: MONO, fontSize: 13, color: MUTE }}>
+                Completa los 5 campos para obtener y2
+              </div>
+            )}
           </div>
+
+          {result !== null && !error && <ProcedurePanel accent={accent} steps={procSteps} />}
         </div>
+
+        {/* Graph */}
+        {hasEnoughForLine && (
+          <div style={{ borderTop: BORDER, padding: "16px 24px 20px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+            <div style={{ fontFamily: MONO, fontSize: 10, color: MUTE, letterSpacing: 2, textTransform: "uppercase" }}>
+              Representación gráfica
+            </div>
+            <MiniGraph />
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+              {[
+                { color: cGreen, label: "(x1, y1)" },
+                { color: cBlue, label: "(x3, y3)" },
+                { color: accent, label: "(x2, y2) interpolado" },
+              ].map(({ color, label }) => (
+                <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                  <div style={{ width: 10, height: 10, background: color, border: BORDER_THIN }} />
+                  <span style={{ fontFamily: MONO, fontSize: 10, color: MUTE }}>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </section>
   );
 }

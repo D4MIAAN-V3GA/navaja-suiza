@@ -2,11 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Sellador maestro para matar márgenes blancos */
+/* Base brutalista: papel crema, tinta negra, esquinas rectas. */
 html, body, #root {
   margin: 0;
   padding: 0;
-  background-color: #0a0a0a; /* El mismo negro profundo de la app */
+  background-color: #fbf7ec; /* mismo crema que la app */
   min-height: 100vh;
   width: 100%;
 }
+
+body {
+  font-family: Helvetica, Arial, "Helvetica Neue", system-ui, sans-serif;
+  color: #161616;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Quitar las flechitas de los number inputs en todos lados */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+/* Las <option> de los <select> heredan el papel */
+select option { background: #fbf7ec; color: #161616; }
