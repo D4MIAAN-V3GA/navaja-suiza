@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#9D9DFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0d1117" stop-opacity="1"/>
+    </radialGradient>
+    <radialGradient id="accentGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9D9DFF" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="strongGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0d1117"/>
+  <rect width="1200" height="630" fill="url(#bgGlow)"/>
+
+  <!-- Grid lines subtle -->
+  <g stroke="#9D9DFF" stroke-opacity="0.04" stroke-width="1">
+    <line x1="0" y1="105" x2="1200" y2="105"/>
+    <line x1="0" y1="210" x2="1200" y2="210"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="420" x2="1200" y2="420"/>
+    <line x1="0" y1="525" x2="1200" y2="525"/>
+    <line x1="200" y1="0" x2="200" y2="630"/>
+    <line x1="400" y1="0" x2="400" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="800" y1="0" x2="800" y2="630"/>
+    <line x1="1000" y1="0" x2="1000" y2="630"/>
+  </g>
+
+  <!-- Top border accent line -->
+  <rect x="0" y="0" width="1200" height="2" fill="#9D9DFF" opacity="0.6"/>
+
+  <!-- @damianvlab badge top-left -->
+  <rect x="52" y="44" width="140" height="28" rx="14" fill="#9D9DFF" fill-opacity="0.1" stroke="#9D9DFF" stroke-opacity="0.35" stroke-width="1"/>
+  <text x="122" y="63" font-family="'Space Mono', monospace" font-size="12" fill="#9D9DFF" text-anchor="middle" filter="url(#glow)">@damianvlab</text>
+
+  <!-- GRATIS badge top-right -->
+  <rect x="1008" y="44" width="140" height="28" rx="14" fill="#00ffb4" fill-opacity="0.08" stroke="#00ffb4" stroke-opacity="0.35" stroke-width="1"/>
+  <text x="1078" y="63" font-family="'Space Mono', monospace" font-size="12" fill="#00ffb4" text-anchor="middle" filter="url(#glow)">100% GRATIS</text>
+
+  <!-- Main title -->
+  <text x="600" y="195" font-family="'Syne', 'Arial Black', sans-serif" font-weight="800" font-size="38" fill="#e8e8ff" text-anchor="middle" letter-spacing="6" opacity="0.5">la</text>
+  <text x="600" y="270" font-family="'Syne', 'Arial Black', sans-serif" font-weight="800" font-size="96" fill="#ffffff" text-anchor="middle" letter-spacing="-1" filter="url(#strongGlow)">NAVAJA SUIZA</text>
+  <text x="600" y="340" font-family="'Syne', 'Arial Black', sans-serif" font-weight="800" font-size="38" fill="#e8e8ff" text-anchor="middle" letter-spacing="6" opacity="0.5">del</text>
+  <text x="600" y="415" font-family="'Syne', 'Arial Black', sans-serif" font-weight="800" font-size="72" fill="#9D9DFF" text-anchor="middle" letter-spacing="8" filter="url(#strongGlow)">INGENIERO</text>
+
+  <!-- Divider line -->
+  <line x1="400" y1="450" x2="800" y2="450" stroke="#9D9DFF" stroke-opacity="0.2" stroke-width="1"/>
+
+  <!-- 5 tools row -->
+  <!-- Tool 1 -->
+  <rect x="52" y="475" width="200" height="38" rx="8" fill="#9D9DFF" fill-opacity="0.07" stroke="#9D9DFF" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="152" y="499" font-family="'Space Mono', monospace" font-size="11" fill="#9D9DFF" text-anchor="middle">Ec. Lineales</text>
+
+  <!-- Tool 2 -->
+  <rect x="270" y="475" width="200" height="38" rx="8" fill="#00ffb4" fill-opacity="0.07" stroke="#00ffb4" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="370" y="499" font-family="'Space Mono', monospace" font-size="11" fill="#00ffb4" text-anchor="middle">Vectores 3D</text>
+
+  <!-- Tool 3 -->
+  <rect x="488" y="475" width="224" height="38" rx="8" fill="#9D9DFF" fill-opacity="0.07" stroke="#9D9DFF" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="600" y="499" font-family="'Space Mono', monospace" font-size="11" fill="#9D9DFF" text-anchor="middle">Momentos de Inercia</text>
+
+  <!-- Tool 4 -->
+  <rect x="730" y="475" width="200" height="38" rx="8" fill="#9D9DFF" fill-opacity="0.07" stroke="#9D9DFF" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="830" y="499" font-family="'Space Mono', monospace" font-size="11" fill="#9D9DFF" text-anchor="middle">Interpolación</text>
+
+  <!-- Tool 5 -->
+  <rect x="948" y="475" width="200" height="38" rx="8" fill="#00ffb4" fill-opacity="0.07" stroke="#00ffb4" stroke-opacity="0.25" stroke-width="1"/>
+  <text x="1048" y="499" font-family="'Space Mono', monospace" font-size="11" fill="#00ffb4" text-anchor="middle">Conv. Unidades</text>
+
+  <!-- URL bottom center -->
+  <text x="600" y="585" font-family="'Space Mono', monospace" font-size="14" fill="#ffffff" text-anchor="middle" opacity="0.3" letter-spacing="2">navaja-suiza.vercel.app</text>
+
+  <!-- Corner accents -->
+  <polyline points="52,90 52,52 90,52" fill="none" stroke="#9D9DFF" stroke-opacity="0.4" stroke-width="1.5"/>
+  <polyline points="1148,90 1148,52 1110,52" fill="none" stroke="#9D9DFF" stroke-opacity="0.4" stroke-width="1.5"/>
+  <polyline points="52,540 52,578 90,578" fill="none" stroke="#9D9DFF" stroke-opacity="0.4" stroke-width="1.5"/>
+  <polyline points="1148,540 1148,578 1110,578" fill="none" stroke="#9D9DFF" stroke-opacity="0.4" stroke-width="1.5"/>
+</svg>

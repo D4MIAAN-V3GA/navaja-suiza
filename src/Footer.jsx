@@ -83,7 +83,7 @@ export default function Footer() {
         flexWrap: 'wrap', gap: 8,
       }}>
         <span style={{ color: '#9a9a8c', fontSize: 10, letterSpacing: '0.06em' }}>
-          © 2025 LA NAVAJA SUIZA DEL INGENIERO
+          © 2026 LA NAVAJA SUIZA DEL INGENIERO
         </span>
         <span style={{ color: '#9a9a8c', fontSize: 10, letterSpacing: '0.06em' }}>
           HERRAMIENTAS ANTI-FILTROS · GRATIS
