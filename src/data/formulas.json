@@ -1,0 +1,389 @@
+[
+  {
+    "id": 1,
+    "name": "Teorema de Bernoulli",
+    "category": "Fluidos",
+    "tags": ["presión", "velocidad", "flujo", "energía"],
+    "formula": "P + ½ρv² + ρgh = cte",
+    "description": "Conservación de energía en flujo estacionario incompresible. Relaciona presión, velocidad cinética y altura potencial.",
+    "ref": "ASME B31.3"
+  },
+  {
+    "id": 2,
+    "name": "Número de Reynolds",
+    "category": "Fluidos",
+    "tags": ["turbulencia", "régimen", "viscosidad", "flujo"],
+    "formula": "Re = ρvD / μ",
+    "description": "Determina si el flujo es laminar (Re < 2300) o turbulento (Re > 4000). ρ=densidad, v=velocidad, D=diámetro, μ=viscosidad.",
+    "ref": "—"
+  },
+  {
+    "id": 3,
+    "name": "Ecuación de Continuidad",
+    "category": "Fluidos",
+    "tags": ["caudal", "flujo", "área", "conservación", "masa"],
+    "formula": "A₁v₁ = A₂v₂",
+    "description": "Para flujo incompresible, el caudal volumétrico se conserva: el producto del área transversal por la velocidad es constante.",
+    "ref": "—"
+  },
+  {
+    "id": 4,
+    "name": "Ecuación de Darcy-Weisbach",
+    "category": "Fluidos",
+    "tags": ["pérdida", "carga", "fricción", "tubería", "presión"],
+    "formula": "hf = f · (L/D) · (v²/2g)",
+    "description": "Pérdida de carga por fricción en tuberías. f = factor de fricción, L = longitud, D = diámetro, v = velocidad media.",
+    "ref": "—"
+  },
+  {
+    "id": 5,
+    "name": "Pérdida por Hazen-Williams",
+    "category": "Fluidos",
+    "tags": ["agua", "tubería", "caudal", "pérdida", "carga"],
+    "formula": "hf = 10.67 · L · Q^1.852 / (C^1.852 · D^4.87)",
+    "description": "Estima la pérdida de carga en tuberías de agua a presión. C = coeficiente de rugosidad de Hazen-Williams.",
+    "ref": "—"
+  },
+  {
+    "id": 6,
+    "name": "Presión Hidrostática",
+    "category": "Fluidos",
+    "tags": ["presión", "profundidad", "líquido", "columna"],
+    "formula": "P = ρgh",
+    "description": "Presión ejercida por una columna de fluido en reposo a profundidad h. ρ = densidad, g = gravedad.",
+    "ref": "—"
+  },
+  {
+    "id": 7,
+    "name": "Ley de Gas Ideal",
+    "category": "Termo",
+    "tags": ["presión", "volumen", "temperatura", "gas"],
+    "formula": "PV = nRT",
+    "description": "Relación entre presión (P), volumen (V), moles (n) y temperatura (T) para gases ideales. R = 8.314 J/mol·K.",
+    "ref": "ISO 6976"
+  },
+  {
+    "id": 8,
+    "name": "Primera Ley de la Termodinámica",
+    "category": "Termo",
+    "tags": ["calor", "trabajo", "energía interna", "sistema"],
+    "formula": "ΔU = Q − W",
+    "description": "La variación de energía interna (ΔU) de un sistema es igual al calor absorbido (Q) menos el trabajo realizado (W).",
+    "ref": "—"
+  },
+  {
+    "id": 9,
+    "name": "Conductividad Térmica (Fourier)",
+    "category": "Termo",
+    "tags": ["calor", "conducción", "temperatura", "material"],
+    "formula": "q = −k · A · (dT/dx)",
+    "description": "Flujo de calor por conducción. k = conductividad [W/m·K], A = área transversal, dT/dx = gradiente de temperatura.",
+    "ref": "ASHRAE 90.1"
+  },
+  {
+    "id": 10,
+    "name": "Eficiencia de Carnot",
+    "category": "Termo",
+    "tags": ["eficiencia", "ciclo", "máquina", "calor", "temperatura"],
+    "formula": "η = 1 − Tc / Th",
+    "description": "Eficiencia máxima teórica de una máquina térmica entre foco frío (Tc) y caliente (Th), en kelvin.",
+    "ref": "—"
+  },
+  {
+    "id": 11,
+    "name": "Calor Sensible",
+    "category": "Termo",
+    "tags": ["calor", "temperatura", "masa", "específico"],
+    "formula": "Q = m · c · ΔT",
+    "description": "Calor para variar la temperatura de una masa m sin cambio de fase. c = calor específico, ΔT = variación de temperatura.",
+    "ref": "—"
+  },
+  {
+    "id": 12,
+    "name": "Ley de Enfriamiento de Newton",
+    "category": "Termo",
+    "tags": ["convección", "calor", "temperatura", "superficie"],
+    "formula": "q = h · A · (Ts − T∞)",
+    "description": "Transferencia de calor por convección. h = coeficiente de convección, Ts = temp. superficie, T∞ = temp. fluido.",
+    "ref": "—"
+  },
+  {
+    "id": 13,
+    "name": "Ley de Hooke",
+    "category": "Resistencia",
+    "tags": ["deformación", "estrés", "esfuerzo", "elasticidad", "módulo"],
+    "formula": "σ = E · ε",
+    "description": "Esfuerzo normal (σ) es proporcional a la deformación unitaria (ε). E = módulo de Young [Pa].",
+    "ref": "ASTM E111"
+  },
+  {
+    "id": 14,
+    "name": "Fórmula de Euler (Pandeo)",
+    "category": "Resistencia",
+    "tags": ["columna", "pandeo", "carga crítica", "compresión"],
+    "formula": "Pcr = π²EI / (KL)²",
+    "description": "Carga crítica de pandeo de una columna. K = factor de longitud efectiva, L = longitud, EI = rigidez a flexión.",
+    "ref": "AISC 360"
+  },
+  {
+    "id": 15,
+    "name": "Fórmula de Flexión",
+    "category": "Resistencia",
+    "tags": ["viga", "momento", "flexión", "sección"],
+    "formula": "σ = M · c / I",
+    "description": "Esfuerzo máximo en una viga en flexión. M = momento flector, c = distancia al centroide, I = momento de inercia.",
+    "ref": "—"
+  },
+  {
+    "id": 16,
+    "name": "Esfuerzo Cortante Torsional",
+    "category": "Resistencia",
+    "tags": ["torsión", "cortante", "eje", "par"],
+    "formula": "τ = T · r / J",
+    "description": "Esfuerzo cortante en un eje sometido a torsión. T = par torsor, r = radio, J = momento polar de inercia.",
+    "ref": "—"
+  },
+  {
+    "id": 17,
+    "name": "Esfuerzo Cortante Promedio",
+    "category": "Resistencia",
+    "tags": ["cortante", "fuerza", "área", "tornillo"],
+    "formula": "τ = V / A",
+    "description": "Esfuerzo cortante promedio en una sección sometida a una fuerza cortante V repartida sobre el área A.",
+    "ref": "—"
+  },
+  {
+    "id": 18,
+    "name": "Factor de Seguridad",
+    "category": "Resistencia",
+    "tags": ["seguridad", "diseño", "fluencia", "esfuerzo"],
+    "formula": "FS = σadm / σtrabajo",
+    "description": "Relación entre el esfuerzo admisible (o de fluencia) y el esfuerzo real de trabajo. Criterio básico de diseño mecánico.",
+    "ref": "—"
+  },
+  {
+    "id": 19,
+    "name": "Deformación Térmica",
+    "category": "Resistencia",
+    "tags": ["dilatación", "temperatura", "longitud", "expansión"],
+    "formula": "δ = α · L · ΔT",
+    "description": "Cambio de longitud por variación de temperatura. α = coeficiente de dilatación lineal, L = longitud, ΔT = variación.",
+    "ref": "—"
+  },
+  {
+    "id": 20,
+    "name": "Tolerancia de Posición (GD&T)",
+    "category": "GD&T",
+    "tags": ["posición", "localización", "datum", "tolerancia", "diámetro"],
+    "formula": "⊕ ⌀t | A | B | C",
+    "description": "Define la zona cilíndrica de tolerancia (diámetro t) dentro de la cual debe estar el eje real de un elemento, relativo a los datums A, B, C.",
+    "ref": "ASME Y14.5-2018"
+  },
+  {
+    "id": 21,
+    "name": "Tolerancia de Planitud",
+    "category": "GD&T",
+    "tags": ["planitud", "superficie", "flatness", "forma"],
+    "formula": "⏥ t",
+    "description": "Zona entre dos planos paralelos (separados t) dentro de la cual debe estar la superficie. No referencia datums.",
+    "ref": "ISO 1101:2017"
+  },
+  {
+    "id": 22,
+    "name": "Tolerancia de Perfil de Superficie",
+    "category": "GD&T",
+    "tags": ["perfil", "superficie", "contorno", "forma"],
+    "formula": "⌓ t | A",
+    "description": "Zona uniforme de ancho t alrededor del perfil teórico verdadero. Puede usarse con o sin datum.",
+    "ref": "ASME Y14.5-2018"
+  },
+  {
+    "id": 23,
+    "name": "Circularidad / Redondez",
+    "category": "GD&T",
+    "tags": ["circularidad", "redondez", "diámetro", "cilindro"],
+    "formula": "○ t",
+    "description": "Cada sección transversal circular debe caer entre dos círculos concéntricos separados por t. No requiere datum.",
+    "ref": "ISO 1101:2017"
+  },
+  {
+    "id": 24,
+    "name": "Condición de Máximo Material (MMC)",
+    "category": "GD&T",
+    "tags": ["mmc", "bonus", "tolerancia", "datum", "material"],
+    "formula": "⊕ ⌀t Ⓜ | A",
+    "description": "Cuando un elemento se controla en MMC se otorga tolerancia bonus a medida que el elemento se aleja de su condición de máximo material.",
+    "ref": "ASME Y14.5-2018"
+  },
+  {
+    "id": 25,
+    "name": "Cilindricidad",
+    "category": "GD&T",
+    "tags": ["cilindricidad", "cilindro", "forma", "superficie"],
+    "formula": "⌭ t",
+    "description": "Zona entre dos cilindros coaxiales separados radialmente por t. Controla redondez, rectitud y conicidad a la vez.",
+    "ref": "ISO 1101:2017"
+  },
+  {
+    "id": 26,
+    "name": "Incertidumbre de Medición (GUM)",
+    "category": "Metrología",
+    "tags": ["incertidumbre", "calibración", "medición", "error", "iso"],
+    "formula": "U = k · uc",
+    "description": "Incertidumbre expandida U con factor de cobertura k (típico k=2 para 95%). uc = incertidumbre combinada estándar.",
+    "ref": "ISO/IEC Guide 98-3 (GUM)"
+  },
+  {
+    "id": 27,
+    "name": "Incertidumbre Combinada",
+    "category": "Metrología",
+    "tags": ["incertidumbre", "propagación", "combinada", "error"],
+    "formula": "uc = √(Σ uᵢ²)",
+    "description": "Combinación cuadrática (raíz de la suma de cuadrados) de las contribuciones de incertidumbre estándar independientes.",
+    "ref": "ISO/IEC Guide 98-3 (GUM)"
+  },
+  {
+    "id": 29,
+    "name": "Capacidad de Proceso (Cp)",
+    "category": "Metrología",
+    "tags": ["capacidad", "proceso", "tolerancia", "calidad", "spc"],
+    "formula": "Cp = (USL − LSL) / 6σ",
+    "description": "Mide el potencial de un proceso para cumplir tolerancias. USL/LSL = límites de especificación, σ = desviación estándar.",
+    "ref": "—"
+  },
+  {
+    "id": 30,
+    "name": "Resolución de Calibre",
+    "category": "Metrología",
+    "tags": ["resolución", "calibre", "incertidumbre", "rectangular"],
+    "formula": "u = res / (2√3)",
+    "description": "Incertidumbre estándar por resolución de un instrumento digital, asumiendo distribución rectangular.",
+    "ref": "ISO/IEC Guide 98-3 (GUM)"
+  },
+  {
+    "id": 31,
+    "name": "Regla de la Cadena",
+    "category": "Cálculo",
+    "tags": ["derivada", "composición", "función", "diferencial"],
+    "formula": "d/dx[f(g(x))] = f'(g(x))·g'(x)",
+    "description": "Derivada de una función compuesta. Fundamental en análisis de sensibilidad y propagación de errores.",
+    "ref": "—"
+  },
+  {
+    "id": 32,
+    "name": "Transformada de Laplace",
+    "category": "Cálculo",
+    "tags": ["señales", "control", "ecuaciones diferenciales", "frecuencia"],
+    "formula": "F(s) = ∫₀^∞ f(t)e^(−st) dt",
+    "description": "Convierte ecuaciones diferenciales en algebraicas. Clave en sistemas de control e ingeniería eléctrica.",
+    "ref": "—"
+  },
+  {
+    "id": 33,
+    "name": "Regla del Producto",
+    "category": "Cálculo",
+    "tags": ["derivada", "producto", "función", "diferencial"],
+    "formula": "(fg)' = f'g + fg'",
+    "description": "Derivada del producto de dos funciones. Indispensable en mecánica, dinámica y propagación de incertidumbre.",
+    "ref": "—"
+  },
+  {
+    "id": 34,
+    "name": "Integración por Partes",
+    "category": "Cálculo",
+    "tags": ["integral", "partes", "función", "diferencial"],
+    "formula": "∫u dv = uv − ∫v du",
+    "description": "Técnica para integrar productos de funciones. Derivada de la regla del producto aplicada a la integración.",
+    "ref": "—"
+  },
+  {
+    "id": 35,
+    "name": "Serie de Taylor",
+    "category": "Cálculo",
+    "tags": ["serie", "aproximación", "polinomio", "expansión"],
+    "formula": "f(x) = Σ f⁽ⁿ⁾(a)/n! · (x−a)ⁿ",
+    "description": "Aproximación de una función mediante un polinomio infinito alrededor de un punto a. Base del cálculo numérico.",
+    "ref": "—"
+  },
+  {
+    "id": 36,
+    "name": "Ley de Ohm",
+    "category": "Eléctrica",
+    "tags": ["voltaje", "corriente", "resistencia", "circuito"],
+    "formula": "V = I · R",
+    "description": "El voltaje (V) es igual a la corriente (I) por la resistencia (R). Relación fundamental de los circuitos eléctricos.",
+    "ref": "—"
+  },
+  {
+    "id": 37,
+    "name": "Potencia Eléctrica",
+    "category": "Eléctrica",
+    "tags": ["potencia", "voltaje", "corriente", "watt"],
+    "formula": "P = V · I = I²R",
+    "description": "Potencia disipada en un elemento resistivo. Puede expresarse en términos de voltaje, corriente o resistencia.",
+    "ref": "—"
+  },
+  {
+    "id": 38,
+    "name": "Impedancia (AC)",
+    "category": "Eléctrica",
+    "tags": ["impedancia", "reactancia", "alterna", "circuito"],
+    "formula": "Z = √(R² + (XL − XC)²)",
+    "description": "Magnitud de la impedancia en circuitos de corriente alterna. R = resistencia, XL = reactancia inductiva, XC = capacitiva.",
+    "ref": "—"
+  },
+  {
+    "id": 39,
+    "name": "Resistencias en Paralelo",
+    "category": "Eléctrica",
+    "tags": ["resistencia", "paralelo", "circuito", "equivalente"],
+    "formula": "1/Req = Σ 1/Rᵢ",
+    "description": "La inversa de la resistencia equivalente en paralelo es la suma de las inversas de cada resistencia.",
+    "ref": "—"
+  },
+  {
+    "id": 40,
+    "name": "Segunda Ley de Newton",
+    "category": "Estática",
+    "tags": ["fuerza", "masa", "aceleración", "dinámica"],
+    "formula": "ΣF = m · a",
+    "description": "La suma de fuerzas sobre un cuerpo es igual a su masa por su aceleración. Pilar de la dinámica y la estática.",
+    "ref": "—"
+  },
+  {
+    "id": 41,
+    "name": "Equilibrio Estático",
+    "category": "Estática",
+    "tags": ["equilibrio", "fuerza", "momento", "reacción"],
+    "formula": "ΣF = 0 ,  ΣM = 0",
+    "description": "Un cuerpo está en equilibrio cuando la suma de fuerzas y la suma de momentos son nulas. Base del análisis de estructuras.",
+    "ref": "—"
+  },
+  {
+    "id": 42,
+    "name": "Momento de una Fuerza",
+    "category": "Estática",
+    "tags": ["momento", "torque", "fuerza", "brazo", "palanca"],
+    "formula": "M = F · d",
+    "description": "Momento (torque) de una fuerza respecto a un punto: producto de la fuerza por la distancia perpendicular (brazo).",
+    "ref": "—"
+  },
+  {
+    "id": 43,
+    "name": "Fuerza de Fricción",
+    "category": "Estática",
+    "tags": ["fricción", "rozamiento", "normal", "coeficiente"],
+    "formula": "f = μ · N",
+    "description": "Fuerza de fricción entre superficies. μ = coeficiente de fricción (estático o cinético), N = fuerza normal.",
+    "ref": "—"
+  },
+  {
+    "id": 44,
+    "name": "Centroide de un Área",
+    "category": "Estática",
+    "tags": ["centroide", "área", "momento", "geometría"],
+    "formula": "x̄ = Σ(Aᵢ·xᵢ) / ΣAᵢ",
+    "description": "Posición del centroide de un área compuesta como media ponderada de los centroides parciales por sus áreas.",
+    "ref": "—"
+  }
+]

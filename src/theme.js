@@ -18,7 +18,7 @@ export const SHADOW_SM = `3px 3px 0 ${INK}`;
 export const SANS = `Helvetica, Arial, "Helvetica Neue", system-ui, sans-serif`;
 export const MONO = `"Courier New", "Courier", ui-monospace, Menlo, monospace`;
 
-// Paleta plana retro (sin neón, sin morado). Una por herramienta.
+// Paleta plana retro (sin neón, sin morado). Una por herramienta / categoría.
 export const ACCENTS = {
   green: "#2f7d4f",
   blue: "#2b4acc",
@@ -26,6 +26,18 @@ export const ACCENTS = {
   pink: "#cf3b6b",
   cyan: "#1c7e96",
   orange: "#d9480f",
+  red: "#b02525",
+  brown: "#7a5230",
+};
+
+// Devuelve tinta o blanco según el contraste sobre un color de fondo (#rrggbb).
+export const textOn = (bg) => {
+  const h = bg.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  const L = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return L > 0.6 ? INK : "#ffffff";
 };
 
 // ── helpers de estilo ────────────────────────────────────────────────
