@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './Landing';
 import ToolsApp from './ToolsApp';
+import UncertaintyBudget from './UncertaintyBudget';
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/herramientas" element={<ToolsApp />} />
+        <Route path="/incertidumbre" element={<UncertaintyBudget />} />
       </Routes>
     </BrowserRouter>
   );

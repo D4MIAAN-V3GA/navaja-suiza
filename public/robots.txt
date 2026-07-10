@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://industriasmuneco.com/sitemap.xml

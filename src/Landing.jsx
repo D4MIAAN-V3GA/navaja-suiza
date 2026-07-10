@@ -219,6 +219,37 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ── Para industria: herramientas B2B, aparte del catálogo de estudiantes ── */}
+        <section style={{ padding: '40px 0 0' }}>
+          <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
+            PARA INDUSTRIA
+          </span>
+          <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, padding: '20px 22px' }}>
+            <h2 style={{ fontFamily: SANS, fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
+              Presupuesto de incertidumbre (GUM)
+            </h2>
+            <p style={{ fontFamily: MONO, fontSize: 13.5, color: MUTE, lineHeight: 1.65, margin: '0 0 16px' }}>
+              Calculadora y guía para laboratorios y áreas de calidad: evaluación Tipo A y Tipo B,
+              suma en cuadratura e incertidumbre expandida U (k=2), con el procedimiento paso a paso.
+            </p>
+            <Link
+              to="/incertidumbre"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+                padding: '12px 22px', border: BORDER, background: ACCENTS.red, boxShadow: SHADOW_SM, color: '#fff',
+                fontFamily: MONO, fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
+                textDecoration: 'none', textTransform: 'uppercase',
+                transition: 'transform 0.05s, box-shadow 0.05s',
+              }}
+              onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(3px,3px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
+              onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
+            >
+              Abrir calculadora →
+            </Link>
+          </div>
+        </section>
+
         {/* ── Enlaces (linktree): ordenados, mismo nivel, no invasivos ── */}
         <section style={{ padding: '36px 0 52px' }}>
           <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
@@ -234,7 +265,7 @@ export default function Landing() {
             ))}
           </div>
           <p style={{ fontFamily: MONO, fontSize: 11, color: FAINT, marginTop: 22, letterSpacing: '0.06em' }}>
-            INDUSTRIAS MUÑECO · QUERÉTARO, MX · navaja.industriasmuneco.com
+            INDUSTRIAS MUÑECO · QUERÉTARO, MX · industriasmuneco.com
           </p>
         </section>
       </div>
