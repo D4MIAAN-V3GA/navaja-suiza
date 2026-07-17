@@ -2,118 +2,70 @@ import { useState } from "react";
 import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS } from "./theme";
 import { ProcedurePanel } from "./ProcedurePanel";
 import SizePicker from "./SizePicker";
-import { detN, fmt, parseFraction, toNumber, fracDiv } from "./matrixSolve";
+import { solveMatrix, parseFraction, toNumber, fmt } from "./matrixSolve";
 
+// n libre entre 2 y 8. El mínimo algebraico es 2; el tope es de UI:
+// más de 8 columnas de inputs ya no caben legibles ni en desktop.
+// ponytail: subir MAX_N si alguien pide sistemas más grandes.
 const MIN_N = 2;
 const MAX_N = 8;
 
-function varNamesFor(n) {
-  // x, y, z para lo clásico; x1..xn cuando ya no alcanza el abecedario cómodo.
-  return n <= 3
-    ? ["x", "y", "z"].slice(0, n)
-    : Array.from({ length: n }, (_, i) => `x${i + 1}`);
-}
-
-function buildEqSteps(r, varNames) {
-  const n = varNames.length;
-  const c = r.c;
-  // coeficientes fraccionarios entre paréntesis: (2/3)x en vez de 2/3x
-  const coef = (v) => (v.d === 1n ? fmt(v) : `(${fmt(v)})`);
-  const eqLines = c.map(
-    (row) => row.slice(0, n).map((v, j) => `${coef(v)}${varNames[j]}`).join(" + ") + ` = ${fmt(row[n])}`
-  );
-
-  if (n === 2) {
-    return [
-      { title: "Planteamiento", lines: eqLines },
-      { title: "Determinante del sistema Δ", lines: [
-        `Δ = (${fmt(c[0][0])})(${fmt(c[1][1])}) − (${fmt(c[0][1])})(${fmt(c[1][0])}) = ${fmt(r.det)}`,
-      ]},
-      { title: "Δx  (columna x ← términos indep.)", lines: [
-        `Δx = (${fmt(c[0][2])})(${fmt(c[1][1])}) − (${fmt(c[0][1])})(${fmt(c[1][2])}) = ${fmt(r.deltas[0])}`,
-      ]},
-      { title: "Δy  (columna y ← términos indep.)", lines: [
-        `Δy = (${fmt(c[0][0])})(${fmt(c[1][2])}) − (${fmt(c[0][2])})(${fmt(c[1][0])}) = ${fmt(r.deltas[1])}`,
-      ]},
-      { title: "Solución (regla de Cramer)", lines: varNames.map(
-        (v, i) => `${v} = Δ${v} / Δ = ${fmt(r.deltas[i])} / ${fmt(r.det)} = ${fmt(r.solution[i])}`
-      )},
-    ];
-  }
-
-  return [
-    { title: "Planteamiento", lines: eqLines },
-    { title: "Determinante del sistema Δ", lines: [
-      `Δ = det(A) = ${fmt(r.det)}`,
-      `(determinante ${n}×${n} por eliminación)`,
-    ]},
-    { title: "Determinantes de Cramer", lines: varNames.map(
-      (v, i) => `Δ${v} = ${fmt(r.deltas[i])}   (columna ${v} ← términos indep.)`
-    )},
-    { title: "Solución (regla de Cramer)", lines: varNames.map(
-      (v, i) => `${v} = Δ${v} / Δ = ${fmt(r.deltas[i])} / ${fmt(r.det)} = ${fmt(r.solution[i])}`
-    )},
-  ];
-}
-
-function initCoeffs(n) {
+function initMatrix(n) {
   return Array.from({ length: n }, () => Array(n + 1).fill(""));
 }
 
-export default function EquationSolver() {
-  const [n, setN] = useState(2);
-  const [coeffs, setCoeffs] = useState(initCoeffs(2));
+export default function MatrixSolver() {
+  const [n, setN] = useState(3);
+  const [method, setMethod] = useState("gauss");
+  const [cells, setCells] = useState(initMatrix(3));
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null); // null | "parse" | "singular"
   const [animKey, setAnimKey] = useState(0);
 
-  const accent = ACCENTS.blue;
-  const varNames = varNamesFor(n);
+  const accent = method === "gauss-jordan" ? ACCENTS.brown : ACCENTS.blue;
 
   const changeSize = (size) => {
     const next = Math.min(MAX_N, Math.max(MIN_N, size));
     if (next === n) return;
     setN(next);
-    setCoeffs(initCoeffs(next));
+    setCells(initMatrix(next));
     setResult(null);
     setError(null);
   };
 
-  const handleInput = (row, col, val) => {
-    setCoeffs((prev) => {
-      const next = prev.map((r) => [...r]);
-      next[row][col] = val;
+  const changeMethod = (m) => {
+    setMethod(m);
+    setResult(null);
+    setError(null);
+  };
+
+  const handleInput = (r, c, val) => {
+    setCells((prev) => {
+      const next = prev.map((row) => [...row]);
+      next[r][c] = val;
       return next;
     });
   };
 
   const solve = () => {
-    const c = coeffs.map((row) => row.map(parseFraction));
-    if (c.flat().includes(null)) {
+    const parsed = cells.map((row) => row.map(parseFraction));
+    if (parsed.flat().includes(null)) {
       setError("parse");
       setResult(null);
       return;
     }
-    const A = c.map((row) => row.slice(0, n));
-    const b = c.map((row) => row[n]);
-
-    const det = detN(A);
-    if (det.n === 0n) {
+    const r = solveMatrix(parsed, method);
+    if (!r.ok) {
       setError("singular");
       setResult(null);
       return;
     }
-    // Cramer: Δi = det(A con la columna i sustituida por b). Todo exacto.
-    const deltas = varNames.map((_, i) =>
-      detN(A.map((row, r) => row.map((v, j) => (j === i ? b[r] : v))))
-    );
-    const solution = deltas.map((d) => fracDiv(d, det));
-
-    setResult({ det, deltas, solution, c });
     setError(null);
+    setResult(r);
     setAnimKey((k) => k + 1);
   };
 
+  // grilla: etiqueta | n coeficientes | separador | término indep.
   // minmax evita que los inputs se aplasten con n grande (la tarjeta scrollea).
   const gridCols = `28px repeat(${n}, minmax(52px, 1fr)) 16px minmax(52px, 1fr)`;
 
@@ -136,14 +88,47 @@ export default function EquationSolver() {
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 12 }}>
-          ECUACIONES
+          MATRICES
         </span>
         <h2 style={{ fontFamily: SANS, fontSize: "clamp(24px, 4vw, 34px)", fontWeight: 800, color: INK, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
-          Solucionador de sistemas lineales
+          Solucionador de matrices
         </h2>
         <p style={{ fontFamily: MONO, fontSize: 13, color: MUTE, margin: 0 }}>
-          Regla de Cramer · 2×2 a 8×8 · acepta fracciones («2/3») · resultados exactos
+          Gauss · Gauss-Jordan · acepta fracciones («2/3») · resultados exactos
         </p>
+      </div>
+
+      {/* Método */}
+      <div style={{ display: "flex", gap: 12, marginBottom: 14 }}>
+        {[
+          { id: "gauss", label: "GAUSS" },
+          { id: "gauss-jordan", label: "GAUSS-JORDAN" },
+        ].map((m) => {
+          const isActive = method === m.id;
+          const mAccent = m.id === "gauss-jordan" ? ACCENTS.brown : ACCENTS.blue;
+          return (
+            <button
+              key={m.id}
+              onClick={() => changeMethod(m.id)}
+              style={{
+                flex: 1,
+                padding: "12px 0",
+                border: BORDER,
+                borderRadius: 0,
+                cursor: "pointer",
+                fontFamily: MONO,
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: 1,
+                background: isActive ? mAccent : PANEL,
+                color: isActive ? "#fff" : INK,
+                boxShadow: isActive ? SHADOW_SM : "none",
+              }}
+            >
+              {m.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Tamaño */}
@@ -154,22 +139,22 @@ export default function EquationSolver() {
         {/* Encabezados de columna */}
         <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: "8px 10px", marginBottom: 10 }}>
           <span />
-          {varNames.map((v) => (
-            <span key={v} style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: accent, textAlign: "center", letterSpacing: 1 }}>
-              {v}
+          {Array.from({ length: n }, (_, i) => (
+            <span key={i} style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: accent, textAlign: "center", letterSpacing: 1 }}>
+              x{i + 1}
             </span>
           ))}
           <span />
           <span style={{ fontFamily: MONO, fontSize: 12, color: MUTE, textAlign: "center" }}>=</span>
         </div>
 
-        {coeffs.map((row, ri) => (
+        {cells.map((row, ri) => (
           <div key={ri} style={{ display: "grid", gridTemplateColumns: gridCols, gap: "8px 10px", marginBottom: ri < n - 1 ? 10 : 0, alignItems: "center" }}>
             <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: MUTE, textAlign: "right" }}>
-              E{ri + 1}
+              F{ri + 1}
             </span>
 
-            {varNames.map((_, ci) => (
+            {Array.from({ length: n }, (_, ci) => (
               <input
                 key={ci}
                 type="text"
@@ -182,7 +167,6 @@ export default function EquationSolver() {
               />
             ))}
 
-            {/* separador | */}
             <div style={{ width: 2, height: 34, background: INK, margin: "0 auto" }} />
 
             <input
@@ -198,7 +182,7 @@ export default function EquationSolver() {
         ))}
       </div>
 
-      {/* Solve button */}
+      {/* Resolver */}
       <button
         onClick={solve}
         style={{
@@ -224,48 +208,48 @@ export default function EquationSolver() {
         RESOLVER SISTEMA
       </button>
 
-      {/* Error banner */}
+      {/* Error */}
       {error && (
         <div style={{ background: ACCENTS.pink, border: BORDER, boxShadow: SHADOW_SM, padding: "16px 20px", display: "flex", alignItems: "flex-start", gap: 14 }}>
           <span style={{ color: "#fff", fontSize: 18, lineHeight: 1, marginTop: 1 }}>!</span>
           <div>
             <div style={{ color: "#fff", fontFamily: MONO, fontWeight: 700, fontSize: 13, letterSpacing: 1, marginBottom: 4 }}>
-              {error === "parse" ? "Entrada no válida" : "Sistema sin solución única — Δ = 0"}
+              {error === "parse" ? "Entrada no válida" : "Sistema sin solución única"}
             </div>
             <div style={{ color: "rgba(255,255,255,0.85)", fontFamily: MONO, fontSize: 11 }}>
               {error === "parse"
                 ? "Revisa las celdas: usa números o fracciones, p. ej. 2, -1.5, 2/3"
-                : "El sistema es incompatible o tiene infinitas soluciones"}
+                : "La matriz es singular: el sistema es incompatible o tiene infinitas soluciones"}
             </div>
           </div>
         </div>
       )}
 
-      {/* Results */}
+      {/* Resultado */}
       {result && !error && (
         <div key={animKey}>
           <div style={{ fontFamily: MONO, fontSize: 12, color: MUTE, letterSpacing: 1, marginBottom: 14, textAlign: "center" }}>
-            Δ = {fmt(result.det)}
+            {method === "gauss-jordan" ? "Forma escalonada reducida (RREF)" : "Triangular superior + sustitución hacia atrás"}
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            {varNames.map((v, i) => (
-              <div key={v} style={{ flex: 1, minWidth: 120, background: accent, border: BORDER, boxShadow: SHADOW_SM, padding: "16px 20px" }}>
+            {result.solution.map((v, i) => (
+              <div key={i} style={{ flex: 1, minWidth: 120, background: accent, border: BORDER, boxShadow: SHADOW_SM, padding: "16px 20px" }}>
                 <div style={{ fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.85)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>
-                  {v}
+                  x{i + 1}
                 </div>
                 <div style={{ fontFamily: MONO, fontSize: 24, color: "#fff", fontWeight: 700, wordBreak: "break-all" }}>
-                  {fmt(result.solution[i])}
+                  {fmt(v)}
                 </div>
-                {result.solution[i].d !== 1n && (
+                {v.d !== 1n && (
                   <div style={{ fontFamily: MONO, fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 4 }}>
-                    ≈ {fmt(toNumber(result.solution[i]))}
+                    ≈ {fmt(toNumber(v))}
                   </div>
                 )}
               </div>
             ))}
           </div>
 
-          <ProcedurePanel accent={accent} steps={buildEqSteps(result, varNames)} />
+          <ProcedurePanel accent={accent} steps={result.steps} />
         </div>
       )}
 

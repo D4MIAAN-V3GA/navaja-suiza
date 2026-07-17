@@ -1,15 +1,20 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './Landing';
-import ToolsApp from './ToolsApp';
-import UncertaintyBudget from './UncertaintyBudget';
+import ToolsHub from './ToolsHub';
+import ToolsGrid from './ToolsGrid';
+import ToolPage from './ToolPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/herramientas" element={<ToolsApp />} />
-        <Route path="/incertidumbre" element={<UncertaintyBudget />} />
+        <Route path="/herramientas" element={<ToolsHub />}>
+          <Route index element={<ToolsGrid />} />
+          <Route path=":id" element={<ToolPage />} />
+        </Route>
+        {/* Compatibilidad con links B2B ya compartidos */}
+        <Route path="/incertidumbre" element={<Navigate to="/herramientas/incertidumbre" replace />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 import Footer from './Footer';
+import { TOOLS } from './tools';
 import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS, textOn } from './theme';
+
+// Catálogo para la portada: todo menos GUM, que tiene su propia sección B2B.
+const GRID_TOOLS = TOOLS.filter((t) => t.id !== 'incertidumbre');
 
 // ─────────────────────────────────────────────────────────────
 const YOUTUBE_URL   = 'https://www.youtube.com/@damian.project';
@@ -9,15 +13,6 @@ const CONTACT_EMAIL = 'contacto@industriasmuneco.com';          // ← recomenda
 const DISCORD_URL   = 'https://discord.gg/C8MjQAcuNH';
 const TIKTOK_URL    = 'https://tiktok.com/@damianvlab';
 const INSTAGRAM_URL = 'https://instagram.com/damianvlab';
-
-const TOOLS = [
-  { n: '01', label: 'Ecuaciones',    desc: 'Sistemas lineales 2×2 y 3×3 por Cramer', accent: ACCENTS.blue },
-  { n: '02', label: 'Vectores',      desc: 'Operaciones vectoriales en 3D',          accent: ACCENTS.green },
-  { n: '03', label: 'Inercia',       desc: 'Momentos de inercia de secciones',       accent: ACCENTS.orange },
-  { n: '04', label: 'Interpolación', desc: 'Interpolación lineal entre puntos',       accent: ACCENTS.pink },
-  { n: '05', label: 'Unidades',      desc: 'Presión · torque · fuerza',              accent: ACCENTS.cyan },
-  { n: '06', label: 'Fórmulas',      desc: 'Biblioteca buscable de ingeniería',      accent: ACCENTS.yellow },
-];
 
 // ── Iconos (reciben el color del trazo según el bloque donde van) ──
 const ICONS = {
@@ -159,22 +154,22 @@ export default function Landing() {
         {/* ── Herramientas ── */}
         <section style={{ paddingBottom: 12 }}>
           <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
-            6 HERRAMIENTAS · GRATIS
+            {GRID_TOOLS.length} HERRAMIENTAS · GRATIS
           </span>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 230px), 1fr))',
             gap: 14,
           }}>
-            {TOOLS.map((t) => (
-              <Link key={t.n} to="/herramientas" style={{ textDecoration: 'none' }}>
+            {GRID_TOOLS.map((t, i) => (
+              <Link key={t.id} to={`/herramientas/${t.id}`} style={{ textDecoration: 'none' }}>
                 <div style={{
                   background: PANEL, border: BORDER, boxShadow: SHADOW_SM,
                   padding: '14px 16px', height: '100%', boxSizing: 'border-box',
                   display: 'flex', flexDirection: 'column', gap: 5,
                 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                    <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: t.accent }}>{t.n}</span>
+                    <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: t.accent }}>{String(i + 1).padStart(2, '0')}</span>
                     <span style={{ fontFamily: SANS, fontSize: 16, fontWeight: 800, color: INK }}>{t.label}</span>
                   </div>
                   <span style={{ fontFamily: MONO, fontSize: 12, color: MUTE, lineHeight: 1.5 }}>{t.desc}</span>
@@ -233,7 +228,7 @@ export default function Landing() {
               suma en cuadratura e incertidumbre expandida U (k=2), con el procedimiento paso a paso.
             </p>
             <Link
-              to="/incertidumbre"
+              to="/herramientas/incertidumbre"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 10,
                 padding: '12px 22px', border: BORDER, background: ACCENTS.red, boxShadow: SHADOW_SM, color: '#fff',

@@ -24,3 +24,14 @@ input[type=number] { -moz-appearance: textfield; }
 
 /* Las <option> de los <select> heredan el papel */
 select option { background: #fbf7ec; color: #161616; }
+
+/* Hub de herramientas: sidebar de categorías + contenido. Colapsa en móvil. */
+.hub-layout { display: grid; grid-template-columns: 190px 1fr; gap: 28px; align-items: start; }
+.hub-sidebar { position: sticky; top: 12px; }
+.hub-cats { display: flex; flex-direction: column; gap: 8px; }
+@media (max-width: 720px) {
+  .hub-layout { grid-template-columns: 1fr; gap: 16px; }
+  .hub-sidebar { position: static; }
+  .hub-cats { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
+  .hub-cats button { white-space: nowrap; }
+}
