@@ -3,8 +3,8 @@ import Footer from './Footer';
 import { TOOLS } from './tools';
 import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS, textOn } from './theme';
 
-// Catálogo para la portada: todo menos GUM, que tiene su propia sección B2B.
-const GRID_TOOLS = TOOLS.filter((t) => t.id !== 'incertidumbre');
+// Catálogo para la portada: todo menos las herramientas B2B, que tienen su propia sección aparte.
+const GRID_TOOLS = TOOLS.filter((t) => t.id !== 'incertidumbre' && t.id !== 'tur');
 
 // ─────────────────────────────────────────────────────────────
 const YOUTUBE_URL   = 'https://www.youtube.com/@damian.project';
@@ -13,6 +13,7 @@ const CONTACT_EMAIL = 'contacto@industriasmuneco.com';          // ← recomenda
 const DISCORD_URL   = 'https://discord.gg/C8MjQAcuNH';
 const TIKTOK_URL    = 'https://tiktok.com/@damianvlab';
 const INSTAGRAM_URL = 'https://instagram.com/damianvlab';
+const LINKEDIN_URL  = 'https://www.linkedin.com/in/damianvlab';
 
 // ── Iconos (reciben el color del trazo según el bloque donde van) ──
 const ICONS = {
@@ -38,6 +39,11 @@ const ICONS = {
       <path d="M23 7.5a3 3 0 0 0-2.1-2.1C19 4.9 12 4.9 12 4.9s-7 0-8.9.5A3 3 0 0 0 1 7.5 31 31 0 0 0 .5 12 31 31 0 0 0 1 16.5a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 23.5 12 31 31 0 0 0 23 7.5ZM9.75 15.02V8.98L15.5 12l-5.75 3.02Z"/>
     </svg>
   ),
+  linkedin: (c) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill={c}>
+      <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45Z"/>
+    </svg>
+  ),
   email: (c) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -52,6 +58,7 @@ const LINKS = [
   { key: 'instagram', label: 'Instagram', sub: '@damianvlab',     href: INSTAGRAM_URL, external: true,  color: ACCENTS.pink },
   { key: 'tiktok',    label: 'TikTok',    sub: '@damianvlab',     href: TIKTOK_URL,    external: true,  color: ACCENTS.cyan },
   { key: 'youtube',   label: 'YouTube',   sub: '@damian.project', href: YOUTUBE_URL,   external: true,  color: ACCENTS.red },
+  { key: 'linkedin',  label: 'LinkedIn',  sub: 'damianvlab',      href: LINKEDIN_URL,  external: true,  color: ACCENTS.orange },
   { key: 'email',     label: 'Contacto',  sub: 'Marcas y colabs', href: `mailto:${CONTACT_EMAIL}`, external: false, color: ACCENTS.green },
 ];
 
@@ -219,29 +226,56 @@ export default function Landing() {
           <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
             PARA INDUSTRIA
           </span>
-          <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, padding: '20px 22px' }}>
-            <h2 style={{ fontFamily: SANS, fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
-              Presupuesto de incertidumbre (GUM)
-            </h2>
-            <p style={{ fontFamily: MONO, fontSize: 13.5, color: MUTE, lineHeight: 1.65, margin: '0 0 16px' }}>
-              Calculadora y guía para laboratorios y áreas de calidad: evaluación Tipo A y Tipo B,
-              suma en cuadratura e incertidumbre expandida U (k=2), con el procedimiento paso a paso.
-            </p>
-            <Link
-              to="/herramientas/incertidumbre"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 10,
-                padding: '12px 22px', border: BORDER, background: ACCENTS.red, boxShadow: SHADOW_SM, color: '#fff',
-                fontFamily: MONO, fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
-                textDecoration: 'none', textTransform: 'uppercase',
-                transition: 'transform 0.05s, box-shadow 0.05s',
-              }}
-              onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(3px,3px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
-              onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
-            >
-              Abrir calculadora →
-            </Link>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 14 }}>
+            <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, padding: '20px 22px' }}>
+              <h2 style={{ fontFamily: SANS, fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
+                Presupuesto de incertidumbre (GUM)
+              </h2>
+              <p style={{ fontFamily: MONO, fontSize: 13.5, color: MUTE, lineHeight: 1.65, margin: '0 0 16px' }}>
+                Calculadora y guía para laboratorios y áreas de calidad: evaluación Tipo A y Tipo B,
+                suma en cuadratura e incertidumbre expandida U (k=2), con el procedimiento paso a paso.
+              </p>
+              <Link
+                to="/herramientas/incertidumbre"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 10,
+                  padding: '12px 22px', border: BORDER, background: ACCENTS.red, boxShadow: SHADOW_SM, color: '#fff',
+                  fontFamily: MONO, fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
+                  textDecoration: 'none', textTransform: 'uppercase',
+                  transition: 'transform 0.05s, box-shadow 0.05s',
+                }}
+                onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(3px,3px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
+                onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
+              >
+                Abrir calculadora →
+              </Link>
+            </div>
+
+            <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, padding: '20px 22px' }}>
+              <h2 style={{ fontFamily: SANS, fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
+                TUR / TAR: ¿tu patrón es apto para calibrar?
+              </h2>
+              <p style={{ fontFamily: MONO, fontSize: 13.5, color: MUTE, lineHeight: 1.65, margin: '0 0 16px' }}>
+                No hagas la cuenta a mano — dame los datos de tu instrumento y tu patrón, y te digo si pasa
+                la regla 4:1, con veredicto y procedimiento incluido.
+              </p>
+              <Link
+                to="/herramientas/tur"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 10,
+                  padding: '12px 22px', border: BORDER, background: ACCENTS.brown, boxShadow: SHADOW_SM, color: '#fff',
+                  fontFamily: MONO, fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
+                  textDecoration: 'none', textTransform: 'uppercase',
+                  transition: 'transform 0.05s, box-shadow 0.05s',
+                }}
+                onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(3px,3px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
+                onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
+              >
+                Abrir calculadora →
+              </Link>
+            </div>
           </div>
         </section>
 

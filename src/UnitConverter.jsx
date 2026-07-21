@@ -3,10 +3,13 @@ import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW
 import { ProcedurePanel } from "./ProcedurePanel";
 
 // ── Conversion data ────────────────────────────────────────────────
+// `contexts`: rangos de referencia curados y aproximados (educativos, no de
+// fabricante) usados por el medidor de "sentido físico" — ver SenseGauge más abajo.
 const CATEGORIES = {
   pressure: {
     label: "Presión",
     accent: ACCENTS.cyan,
+    scale: "log",
     units: {
       psi:  { label: "psi",  name: "Libras/pulg²",    toBase: v => v * 6894.757,    fromBase: v => v / 6894.757 },
       MPa:  { label: "MPa",  name: "Megapascal",       toBase: v => v * 1e6,         fromBase: v => v / 1e6 },
@@ -15,10 +18,20 @@ const CATEGORIES = {
       kPa:  { label: "kPa",  name: "Kilopascal",       toBase: v => v * 1e3,         fromBase: v => v / 1e3 },
       Pa:   { label: "Pa",   name: "Pascal",           toBase: v => v,               fromBase: v => v },
     },
+    contexts: [
+      { label: "Llanta de bici",                unit: "psi", min: 65,   max: 95 },
+      { label: "Llanta de auto",                unit: "psi", min: 28,   max: 35 },
+      { label: "Llanta de camión",              unit: "psi", min: 100,  max: 120 },
+      { label: "Línea doméstica de agua",       unit: "psi", min: 40,   max: 80 },
+      { label: "Sistema hidráulico industrial", unit: "psi", min: 1500, max: 3000 },
+      { label: "Prensa hidráulica pesada",      unit: "psi", min: 5000, max: 10000 },
+      { label: "Atmósfera (nivel del mar)",     unit: "psi", min: 14.7, max: 14.7 },
+    ],
   },
   torque: {
     label: "Torque",
     accent: ACCENTS.blue,
+    scale: "log",
     units: {
       "N·m":    { label: "N·m",    name: "Newton·metro",      toBase: v => v,           fromBase: v => v },
       "kN·m":   { label: "kN·m",   name: "Kilonewton·metro",  toBase: v => v * 1e3,     fromBase: v => v / 1e3 },
@@ -27,10 +40,19 @@ const CATEGORIES = {
       "kgf·m":  { label: "kgf·m",  name: "Kilogramo-fuerza·m",toBase: v => v * 9.80665, fromBase: v => v / 9.80665 },
       "dN·m":   { label: "dN·m",   name: "Decanewton·metro",  toBase: v => v * 10,      fromBase: v => v / 10 },
     },
+    contexts: [
+      { label: "Tornillo de electrónica",    unit: "N·m", min: 0.1, max: 0.3 },
+      { label: "Bujía de motor",             unit: "N·m", min: 20,  max: 30 },
+      { label: "Culata/tapa de motor",       unit: "N·m", min: 80,  max: 100 },
+      { label: "Tuerca de rueda de auto",    unit: "N·m", min: 100, max: 140 },
+      { label: "Tuerca de rueda de camión",  unit: "N·m", min: 450, max: 700 },
+      { label: "Perno estructural grande",   unit: "N·m", min: 500, max: 1000 },
+    ],
   },
   force: {
     label: "Fuerza",
     accent: ACCENTS.orange,
+    scale: "log",
     units: {
       N:    { label: "N",    name: "Newton",          toBase: v => v,           fromBase: v => v },
       kN:   { label: "kN",   name: "Kilonewton",      toBase: v => v * 1e3,     fromBase: v => v / 1e3 },
@@ -39,6 +61,69 @@ const CATEGORIES = {
       kgf:  { label: "kgf",  name: "Kilogramo-fuerza",toBase: v => v * 9.80665, fromBase: v => v / 9.80665 },
       tf:   { label: "tf",   name: "Tonelada-fuerza", toBase: v => v * 9806.65, fromBase: v => v / 9806.65 },
     },
+    contexts: [
+      { label: "Levantar 1 kg",                     unit: "N", min: 9.8,   max: 9.8 },
+      { label: "Mordida humana promedio",           unit: "N", min: 500,   max: 700 },
+      { label: "Peso de una persona de 70 kg",      unit: "N", min: 686,   max: 686 },
+      { label: "Auto compacto acelerando",          unit: "N", min: 3000,  max: 5000 },
+      { label: "Empuje de motor de avión pequeño",  unit: "N", min: 20000, max: 50000 },
+    ],
+  },
+  length: {
+    label: "Longitud",
+    accent: ACCENTS.green,
+    scale: "log",
+    units: {
+      mm: { label: "mm", name: "Milímetro", toBase: v => v / 1000, fromBase: v => v * 1000 },
+      cm: { label: "cm", name: "Centímetro", toBase: v => v / 100,  fromBase: v => v * 100 },
+      m:  { label: "m",  name: "Metro",      toBase: v => v,        fromBase: v => v },
+      km: { label: "km", name: "Kilómetro",  toBase: v => v * 1000, fromBase: v => v / 1000 },
+      in: { label: "in", name: "Pulgada",    toBase: v => v * 0.0254, fromBase: v => v / 0.0254 },
+      ft: { label: "ft", name: "Pie",        toBase: v => v * 0.3048, fromBase: v => v / 0.3048 },
+    },
+    contexts: [
+      { label: "Grosor de hoja de papel",  unit: "mm", min: 0.08, max: 0.12 },
+      { label: "Diámetro de un cabello",   unit: "mm", min: 0.07, max: 0.1 },
+      { label: "Tornillo M6",              unit: "mm", min: 6,    max: 6 },
+      { label: "Altura de una persona",    unit: "m",  min: 1.5,  max: 1.9 },
+      { label: "Cancha de fútbol (largo)", unit: "m",  min: 90,   max: 120 },
+    ],
+  },
+  mass: {
+    label: "Masa",
+    accent: ACCENTS.yellow,
+    scale: "log",
+    units: {
+      g:  { label: "g",  name: "Gramo",     toBase: v => v / 1000, fromBase: v => v * 1000 },
+      kg: { label: "kg", name: "Kilogramo", toBase: v => v,        fromBase: v => v },
+      t:  { label: "t",  name: "Tonelada",  toBase: v => v * 1000, fromBase: v => v / 1000 },
+      lb: { label: "lb", name: "Libra",     toBase: v => v * 0.453592, fromBase: v => v / 0.453592 },
+    },
+    contexts: [
+      { label: "Una moneda",             unit: "g",  min: 5,     max: 10 },
+      { label: "Un celular",             unit: "g",  min: 150,   max: 220 },
+      { label: "Una persona adulta",     unit: "kg", min: 55,    max: 90 },
+      { label: "Un auto compacto",       unit: "kg", min: 1000,  max: 1300 },
+      { label: "Un contenedor de carga", unit: "kg", min: 20000, max: 24000 },
+    ],
+  },
+  temperature: {
+    label: "Temperatura",
+    accent: ACCENTS.pink,
+    scale: "linear",
+    units: {
+      "°C": { label: "°C", name: "Celsius",    toBase: v => v,               fromBase: v => v },
+      "K":  { label: "K",  name: "Kelvin",     toBase: v => v - 273.15,     fromBase: v => v + 273.15 },
+      "°F": { label: "°F", name: "Fahrenheit", toBase: v => (v - 32) * 5/9, fromBase: v => v * 9/5 + 32 },
+    },
+    contexts: [
+      { label: "Congelador",                     unit: "°C", min: -20, max: -15 },
+      { label: "Refrigerador",                   unit: "°C", min: 2,   max: 6 },
+      { label: "Ambiente confortable",           unit: "°C", min: 18,  max: 24 },
+      { label: "Fiebre humana",                  unit: "°C", min: 38,  max: 40 },
+      { label: "Agua hirviendo (nivel del mar)", unit: "°C", min: 100, max: 100 },
+      { label: "Horno doméstico",                unit: "°C", min: 180, max: 220 },
+    ],
   },
 };
 
@@ -86,6 +171,94 @@ function AllTable({ catKey, fromUnit, inputVal }) {
   );
 }
 
+// ── "¿Tiene sentido tu número?" — medidor de sentido físico ─────────
+// Clasifica un valor contra un rango de referencia curado (min/max en la
+// misma unidad). "typical" = dentro del rango; "atypical" = zona extendida
+// (posible pero raro); "impossible" = muy fuera, probablemente un error.
+function classifyAgainstContext(value, min, max, scale) {
+  const margin = scale === "linear" ? Math.max(max - min, 4) : null;
+  const yLow = scale === "linear" ? min - margin : min / 3;
+  const yHigh = scale === "linear" ? max + margin : max * 3;
+  if (value >= min && value <= max) return "typical";
+  if (value >= yLow && value <= yHigh) return "atypical";
+  return "impossible";
+}
+
+const SENSE_VERDICTS = {
+  typical:    { label: "Dentro de lo típico",     hint: "Tu número cuadra con este contexto",                    color: ACCENTS.green },
+  atypical:   { label: "Atípico",                 hint: "Fuera de lo común — revisa tu conversión o el contexto", color: ACCENTS.yellow },
+  impossible: { label: "Prácticamente imposible", hint: "Muy fuera de rango — casi seguro hay un error",          color: ACCENTS.red },
+};
+
+function SenseGauge({ min, max, value, unitLabel, scale }) {
+  const W = 520, H = 92, pad = 14, trackY = 34, trackH = 18;
+
+  let domainMin, domainMax, yLow, yHigh;
+  if (scale === "linear") {
+    const margin = Math.max(max - min, 4);
+    yLow = min - margin; yHigh = max + margin;
+    domainMin = min - margin * 3; domainMax = max + margin * 3;
+  } else {
+    yLow = min / 3; yHigh = max * 3;
+    domainMin = min / 10; domainMax = max * 10;
+  }
+
+  const toT = (v) => scale === "linear"
+    ? (v - domainMin) / (domainMax - domainMin)
+    : (Math.log10(v) - Math.log10(domainMin)) / (Math.log10(domainMax) - Math.log10(domainMin));
+  const px = (v) => pad + Math.min(Math.max(toT(v), 0), 1) * (W - pad * 2);
+
+  const clampedValue = Math.min(Math.max(value, domainMin), domainMax);
+  const offScaleLow = value < domainMin;
+  const offScaleHigh = value > domainMax;
+
+  const verdictKey = classifyAgainstContext(value, min, max, scale);
+  const verdict = SENSE_VERDICTS[verdictKey];
+
+  const xMin = px(min), xMax = px(max);
+  const xYLow = px(Math.max(yLow, domainMin)), xYHigh = px(Math.min(yHigh, domainMax));
+  const xVal = px(clampedValue);
+  const xRight = W - pad;
+
+  return (
+    <div>
+      <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible", border: BORDER_THIN, background: PANEL }}>
+        <rect x={xMin - 0} y={trackY} width={Math.max(xMax - xMin, 3)} height={trackH} fill={ACCENTS.green} opacity="0.35" />
+        <rect x={xYLow} y={trackY} width={Math.max(xMin - xYLow, 0)} height={trackH} fill={ACCENTS.yellow} opacity="0.28" />
+        <rect x={xMax} y={trackY} width={Math.max(xYHigh - xMax, 0)} height={trackH} fill={ACCENTS.yellow} opacity="0.28" />
+        <rect x={pad} y={trackY} width={Math.max(xYLow - pad, 0)} height={trackH} fill={ACCENTS.red} opacity="0.18" />
+        <rect x={xYHigh} y={trackY} width={Math.max(xRight - xYHigh, 0)} height={trackH} fill={ACCENTS.red} opacity="0.18" />
+        <rect x={pad} y={trackY} width={W - pad * 2} height={trackH} fill="none" stroke={INK} strokeWidth="1.5" />
+
+        <text x={xMin} y={trackY - 6} textAnchor="middle" fill={MUTE} fontSize="9" fontFamily="monospace">{fmt(min)}</text>
+        {max !== min && (
+          <text x={xMax} y={trackY - 6} textAnchor="middle" fill={MUTE} fontSize="9" fontFamily="monospace">{fmt(max)}</text>
+        )}
+
+        <line x1={xVal} y1={trackY - 6} x2={xVal} y2={trackY + trackH + 6} stroke={INK} strokeWidth="2" />
+        <rect x={xVal - 5} y={trackY + trackH + 1} width="10" height="10" fill={verdict.color} stroke={INK} strokeWidth="1.5" />
+
+        {offScaleLow && <text x={pad + 2} y={H - 6} fill={INK} fontSize="9" fontFamily="monospace">◂ fuera de escala</text>}
+        {offScaleHigh && <text x={xRight - 2} y={H - 6} textAnchor="end" fill={INK} fontSize="9" fontFamily="monospace">fuera de escala ▸</text>}
+      </svg>
+
+      <div style={{ marginTop: 10, background: verdict.color, border: BORDER, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+        <div>
+          <div style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: "#fff" }}>{verdict.label}</div>
+          <div style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.85)", marginTop: 2 }}>{verdict.hint}</div>
+        </div>
+        <div style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: "#fff" }}>
+          {fmt(value)} {unitLabel}
+        </div>
+      </div>
+
+      <p style={{ fontFamily: MONO, fontSize: 10, color: FAINT, lineHeight: 1.5, margin: "8px 0 0" }}>
+        Valores de referencia aproximados y educativos — no sustituyen la especificación de tu fabricante.
+      </p>
+    </div>
+  );
+}
+
 export default function UnitConverter({ onAccentChange }) {
   const [catKey, setCatKey] = useState("pressure");
   const [inputVal, setInputVal] = useState("");
@@ -94,6 +267,7 @@ export default function UnitConverter({ onAccentChange }) {
   const [result, setResult] = useState(null);
   const [animKey, setAnimKey] = useState(0);
   const [showTable, setShowTable] = useState(false);
+  const [contextIdx, setContextIdx] = useState(null);
 
   const cat = CATEGORIES[catKey];
   const accent = cat.accent;
@@ -102,13 +276,18 @@ export default function UnitConverter({ onAccentChange }) {
 
   useEffect(() => { onAccentChange?.(accent); }, [accent]);
 
-  useEffect(() => {
-    const keys = Object.keys(CATEGORIES[catKey].units);
+  // Cambia categoría y unidades en el mismo batch — si se hiciera en un efecto
+  // separado, habría un render intermedio con `units` de la categoría nueva
+  // pero `fromUnit`/`toUnit`/`result` todavía de la vieja, y crashearía.
+  const selectCategory = (key) => {
+    const keys = Object.keys(CATEGORIES[key].units);
+    setCatKey(key);
     setFromUnit(keys[0]);
     setToUnit(keys[1]);
     setResult(null);
     setInputVal("");
-  }, [catKey]);
+    setContextIdx(null);
+  };
 
   useEffect(() => {
     const num = parseFloat(inputVal);
@@ -157,10 +336,10 @@ export default function UnitConverter({ onAccentChange }) {
           05 / 05 — UNIDADES
         </span>
         <h2 style={{ fontFamily: SANS, fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, color: INK, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
-          Convertidor de unidades
+          ¿Tiene sentido tu número?
         </h2>
         <p style={{ fontFamily: MONO, fontSize: 13, color: MUTE, margin: 0 }}>
-          Presión · torque · fuerza — nivel ingeniería
+          Convierte y compara contra un contexto real — presión · torque · fuerza · longitud · masa · temperatura
         </p>
       </div>
 
@@ -170,7 +349,7 @@ export default function UnitConverter({ onAccentChange }) {
           const active = key === catKey;
           return (
             <button key={key}
-              onClick={() => setCatKey(key)}
+              onClick={() => selectCategory(key)}
               style={{
                 flex: "1 1 120px", padding: "12px 16px",
                 background: active ? c.accent : PANEL,
@@ -186,6 +365,35 @@ export default function UnitConverter({ onAccentChange }) {
           );
         })}
       </div>
+
+      {/* Selector de contexto real — dispara el medidor de sentido físico */}
+      {cat.contexts && (
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontFamily: MONO, fontSize: 10, color: MUTE, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 8 }}>
+            ¿Con qué comparamos tu número? (opcional)
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {cat.contexts.map((c, i) => {
+              const active = contextIdx === i;
+              return (
+                <button key={c.label}
+                  onClick={() => {
+                    if (active) { setContextIdx(null); return; }
+                    setContextIdx(i);
+                    setFromUnit(c.unit);
+                  }}
+                  style={{
+                    padding: "8px 14px", background: active ? accent : PANEL, border: BORDER, borderRadius: 0,
+                    color: active ? "#fff" : INK, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 0.5,
+                    cursor: "pointer",
+                  }}>
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Main card */}
       <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW }}>
@@ -251,6 +459,26 @@ export default function UnitConverter({ onAccentChange }) {
             {inputVal} {units[fromUnit].label} = <span style={{ color: accent, fontWeight: 700 }}>{fmt(result)} {units[toUnit].label}</span>
           </div>
         )}
+
+        {/* Medidor de sentido físico — solo si hay contexto elegido y valor válido */}
+        {contextIdx !== null && result !== null && inputVal !== "" && (() => {
+          const context = cat.contexts[contextIdx];
+          const valueInContextUnit = units[context.unit].fromBase(units[fromUnit].toBase(parseFloat(inputVal)));
+          return (
+            <div style={{ margin: "0 24px 20px" }}>
+              <div style={{ fontFamily: MONO, fontSize: 10, color: MUTE, letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>
+                Comparado con: {context.label}
+              </div>
+              <SenseGauge
+                min={context.min}
+                max={context.max}
+                value={valueInContextUnit}
+                unitLabel={units[context.unit].label}
+                scale={cat.scale}
+              />
+            </div>
+          );
+        })()}
 
         {/* Toggle table */}
         <div style={{ padding: "0 24px 24px" }}>

@@ -985,7 +985,7 @@ export default function UncertaintyBudget() {
                 Descargar mi reporte →
               </button>
               <p style={{ fontFamily: MONO, fontSize: 10, color: FAINT, lineHeight: 1.5, margin: "10px 0 0" }}>
-                Cero spam — tus datos solo se usan para contactarte sobre servicios de metrología.
+                Te puedo ayudar a revisar tu presupuesto de incertidumbre o a prepararte para tu auditoría ISO 17025 — hablemos 15 minutos, sin costo y sin compromiso.
               </p>
             </form>
           </div>
