@@ -23,7 +23,7 @@
 ## ▶️ Cómo retomar
 1. Aprobar/ajustar la Story 3 y regenerar si hace falta.
 2. Confirmar las 3 historias y el resto de cambios sin commitear.
-3. Cuando Damián dé luz verde: **commit + push** (rama `main`) y **deploy** en Vercel. ⚠️ Eso gasta datos. ✅ Hecho (`70f091f`).
+3. Cuando Damián dé luz verde: **commit + push** (rama `main`) y **deploy** en Vercel. ✅ Hecho (`70f091f`).
 4. Configurar el dominio `industriasmuneco.com` en Vercel (ver 🟡) y verificar el sitio en `industriasmuneco.com` (`/` y `/herramientas`).
 5. Publicar las historias en IG con los links UTM (`?utm_source=instagram&utm_campaign=update_formulas`).
 
