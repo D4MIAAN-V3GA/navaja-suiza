@@ -9,8 +9,9 @@ function FavStar({ active, onToggle }) {
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(); }}
       aria-label={active ? "Quitar de favoritos" : "Marcar favorito"}
       style={{
-        background: "none", border: "none", cursor: "pointer", padding: 0,
-        fontSize: 16, lineHeight: 1, color: active ? INK : "#c9c4b4",
+        background: "none", border: "none", cursor: "pointer",
+        padding: "6px 2px", margin: "-6px -2px", // área táctil sin mover la estrella
+        fontSize: 18, lineHeight: 1, color: active ? INK : "#c9c4b4",
       }}
     >
       {active ? "★" : "☆"}
