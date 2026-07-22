@@ -15,6 +15,7 @@ function App() {
         </Route>
         {/* Compatibilidad con links B2B ya compartidos */}
         <Route path="/incertidumbre" element={<Navigate to="/herramientas/incertidumbre" replace />} />
+        <Route path="/tur" element={<Navigate to="/herramientas/tur" replace />} />
       </Routes>
     </BrowserRouter>
   );

@@ -9,6 +9,7 @@ import LinearInterpolator from "./LinearInterpolator";
 import UnitConverter from "./UnitConverter";
 import FormulaLibrary from "./FormulaLibrary";
 import UncertaintyBudget from "./UncertaintyBudget";
+import TurTar from "./TurTar";
 import { ACCENTS } from "./theme";
 
 export const CATEGORIES = [
@@ -26,9 +27,10 @@ export const TOOLS = [
   { id: "vectores",      label: "Vectores",      desc: "Operaciones vectoriales en 3D",           category: "algebra",    accent: ACCENTS.green,  component: VectorCalculator },
   { id: "inercia",       label: "Inercia",       desc: "Momentos de inercia de secciones",        category: "secciones",  accent: ACCENTS.orange, component: InertiaCalculator },
   { id: "interpolacion", label: "Interpolación", desc: "Interpolación lineal entre puntos",       category: "numerico",   accent: ACCENTS.pink,   component: LinearInterpolator },
-  { id: "unidades",      label: "Unidades",      desc: "Presión · torque · fuerza",               category: "unidades",   accent: ACCENTS.cyan,   component: UnitConverter },
+  { id: "unidades",      label: "Unidades",      desc: "6 magnitudes + ¿tiene sentido tu número?", category: "unidades",   accent: ACCENTS.cyan,   component: UnitConverter },
   { id: "formulas",      label: "Fórmulas",      desc: "Biblioteca buscable de ingeniería",       category: "referencia", accent: ACCENTS.yellow, component: FormulaLibrary },
   { id: "incertidumbre", label: "Incertidumbre", desc: "Presupuesto GUM (Tipo A/B, U k=2)",       category: "metrologia", accent: ACCENTS.red,    component: UncertaintyBudget },
+  { id: "tur",           label: "TUR / TAR",     desc: "Razón de incertidumbre/exactitud de ensayo (regla 4:1)", category: "metrologia", accent: ACCENTS.brown, component: TurTar },
 ];
 
 export const getTool = (id) => TOOLS.find((t) => t.id === id);
