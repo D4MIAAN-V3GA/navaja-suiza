@@ -84,6 +84,25 @@ try {
   boom.close();
   assert.strictEqual(st, 500, `fallo de BD no devolvio 500 (${st}) — revisa que no tumbe el proceso`);
 
+  // Techo global: el límite por IP no sirve contra quien rota direcciones IPv6, así que
+  // 300 envíos desde 300 IPs distintas tienen que toparse igual (si no, llenan el disco).
+  const flood = createServer({ dbPath: join(dir, "flood.db"), allowedOrigins: [], adminToken: TOKEN });
+  await new Promise((r) => flood.listen(0, "127.0.0.1", r));
+  const fbase = `http://127.0.0.1:${flood.address().port}`;
+  const codes = await Promise.all(
+    Array.from({ length: 300 }, (_, i) =>
+      fetch(`${fbase}/lead`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "CF-Connecting-IP": `2001:db8::${i}` },
+        body: JSON.stringify(valid),
+      }).then((r) => r.status)
+    )
+  );
+  const aceptados = codes.filter((c) => c === 204).length;
+  flood.close();
+  assert.ok(aceptados <= 100, `300 IPs distintas colaron ${aceptados} envios; el techo global no frena`);
+  assert.ok(aceptados > 0, "el techo global bloquea incluso el trafico legitimo");
+
   // Rate limit: 5 pasan, el 6º no
   for (let i = 0; i < 4; i++) {
     assert.strictEqual((await post(valid, { "CF-Connecting-IP": "9.9.9.9" })).status, 204);

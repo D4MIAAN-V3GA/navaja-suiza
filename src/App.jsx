@@ -3,12 +3,14 @@ import Landing from './Landing';
 import ToolsHub from './ToolsHub';
 import ToolsGrid from './ToolsGrid';
 import ToolPage from './ToolPage';
+import Privacy from './Privacy';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/privacidad" element={<Privacy />} />
         <Route path="/herramientas" element={<ToolsHub />}>
           <Route index element={<ToolsGrid />} />
           <Route path=":id" element={<ToolPage />} />

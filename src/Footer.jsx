@@ -44,7 +44,10 @@ export default function Footer() {
             </a>
           </div>
           <span style={{ color: '#9a9a8c', fontSize: 11, letterSpacing: '0.06em' }}>
-            INDUSTRIAS MUÑECO · QUERÉTARO, MX
+            INDUSTRIAS MUÑECO · QUERÉTARO, MX ·{' '}
+            <a href="/privacidad" style={{ color: '#9a9a8c', textDecoration: 'underline' }}>
+              AVISO DE PRIVACIDAD
+            </a>
           </span>
         </div>
 

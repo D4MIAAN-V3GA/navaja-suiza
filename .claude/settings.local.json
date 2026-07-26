@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/damian/**)",
+      "WebSearch",
+      "Bash(git fetch *)",
+      "Bash(git rev-list *)",
+      "Bash(git stash *)",
+      "Bash(git merge *)",
+      "Bash(npx vite *)",
+      "Bash(npm run *)"
+    ]
+  }
+}

@@ -8,6 +8,11 @@ const BODY_LIMIT = 4096;          // bytes; un POST más grande se corta en seco
 const RATE_MAX = 5;               // POST /lead permitidos...
 const ADMIN_RATE_MAX = 30;        // ...y GET /leads, que solo usas tú...
 const RATE_WINDOW_MS = 10 * 60e3; // ...cada 10 minutos, por IP
+// Techo global, sumando a todo el mundo. El límite por IP no sirve de nada contra quien
+// rota direcciones IPv6: sin este techo llenaría la microSD de leads basura. 100 envíos
+// cada 10 min está muy por encima de cualquier tráfico real de este sitio.
+const GLOBAL_RATE_MAX = 100;
+const MAX_TRACKED = 5000;         // tope duro de IPs vigiladas a la vez
 
 // Cloudflare SOBRESCRIBE CF-Connecting-IP con la IP real: un cliente no la puede falsear.
 // Es de fiar únicamente porque escuchamos en 127.0.0.1 y solo el túnel llega ahí.
@@ -89,8 +94,12 @@ export function createServer({ dbPath, allowedOrigins, adminToken }) {
   const hits = new Map();
   function rateLimited(key, max = RATE_MAX) {
     const now = Date.now();
-    if (hits.size > 5000) {
+    if (hits.size > MAX_TRACKED) {
       for (const [k, v] of hits) if (v.resetAt <= now) hits.delete(k);
+      // Con IPv6 un solo atacante dispone de billones de direcciones distintas, así que
+      // "borrar las vencidas" puede no borrar ni una. El tope duro es lo que impide que
+      // el Map crezca sin freno y se coma la memoria de la Pi.
+      if (hits.size > MAX_TRACKED) hits.clear();
     }
     const e = hits.get(key);
     if (!e || e.resetAt <= now) {
@@ -146,6 +155,9 @@ export function createServer({ dbPath, allowedOrigins, adminToken }) {
     }
 
     if (req.method === "POST" && url.pathname === "/lead") {
+      // El techo global va PRIMERO a propósito: así una avalancha de IPs distintas se
+      // corta antes de crear su entrada en el Map, y de paso acota cuánto puede crecer.
+      if (rateLimited("global", GLOBAL_RATE_MAX)) return send(429, { error: "rate_limited" });
       if (rateLimited(clientIp(req))) return send(429, { error: "rate_limited" });
 
       let data;
@@ -198,6 +210,8 @@ export function createServer({ dbPath, allowedOrigins, adminToken }) {
   // Cortan slowloris: conexiones que abren y mandan bytes a cuentagotas.
   server.headersTimeout = 10_000;
   server.requestTimeout = 20_000;
+  // Sin tope, una inundación de conexiones agota los descriptores de archivo de la Pi.
+  server.maxConnections = 512;
 
   server.on("close", () => db.close());
   return server;

@@ -1012,6 +1012,15 @@ export default function UncertaintyBudget() {
               <p style={{ fontFamily: MONO, fontSize: 10, color: FAINT, lineHeight: 1.5, margin: "10px 0 0" }}>
                 Te puedo ayudar a revisar tu presupuesto de incertidumbre o a prepararte para tu auditoría ISO 17025 — hablemos 15 minutos, sin costo y sin compromiso.
               </p>
+              {/* Aviso de privacidad simplificado: la LFPDPPP lo exige en el punto donde
+                  se recaban los datos, con enlace al aviso integral. */}
+              <p style={{ fontFamily: MONO, fontSize: 10, color: FAINT, lineHeight: 1.5, margin: "8px 0 0" }}>
+                Tus datos los trata Industrias Muñeco para enviarte el reporte y, si lo aceptas,
+                contactarte sobre metrología. No los compartimos con nadie. Consulta el{" "}
+                <a href="/privacidad" target="_blank" rel="noopener noreferrer" style={{ color: MUTE, fontWeight: 700 }}>
+                  aviso de privacidad
+                </a>.
+              </p>
             </form>
           </div>
         </div>
