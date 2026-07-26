@@ -1,0 +1,35 @@
+[Unit]
+Description=API de La Navaja Suiza (captura de leads)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=navaja
+Group=navaja
+WorkingDirectory=/opt/navaja-api
+ExecStart=/usr/bin/node /opt/navaja-api/server.js
+EnvironmentFile=/etc/navaja-api.env
+Restart=on-failure
+RestartSec=5
+
+# Blindaje: si alguien logra ejecutar código dentro del proceso, no puede escribir
+# en ningún lado del disco salvo la carpeta de la base de datos.
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ReadWritePaths=/var/lib/navaja-api
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=no
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+[Install]
+WantedBy=multi-user.target

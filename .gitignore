@@ -23,6 +23,16 @@ dist-ssr
 *.sln
 *.sw?
 
+# Secretos y datos. .env.example SÍ se versiona; el resto no.
+.env
+.env.*
+!.env.example
+
+# Bases de datos con datos personales de leads — nunca a git.
+*.db
+*.db-journal
+*.db-wal
+
 #Contexto y cosas asi
 claude.md
 promptES.txt

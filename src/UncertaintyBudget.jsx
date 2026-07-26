@@ -129,7 +129,7 @@ export default function UncertaintyBudget() {
   // Lead Wall B2B: el resultado se desbloquea al dejar los datos (una vez por sesión).
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [leadCaptured, setLeadCaptured] = useState(false);
-  const [lead, setLead] = useState({ name: "", email: "", role: "", company: "" });
+  const [lead, setLead] = useState({ name: "", email: "", role: "", company: "", website: "" });
 
   // SEO: título y descripción propios de esta ruta; se restauran al salir.
   useEffect(() => {
@@ -217,6 +217,12 @@ export default function UncertaintyBudget() {
     runEstimation();
   };
 
+  // El reporte se arma con document.write en una ventana about:blank, que NO hereda la CSP
+  // de Vercel: los nombres que escribe el usuario tienen que escaparse aquí o se ejecutan.
+  const esc = (s) =>
+    String(s ?? "").replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
   // Reporte formal (sin marca de agua) en ventana nueva — el usuario decide cuándo imprimir/guardar.
   const downloadReport = (res) => {
     if (!res) return;
@@ -225,7 +231,7 @@ export default function UncertaintyBudget() {
     const kConf = K_OPTIONS.find((o) => o.k === res.k)?.conf || "";
     const rowsHtml = res.rows.map((r, i) => {
       const d = DISTRIBUTIONS[r.dist];
-      return `<tr><td>${i + 1}</td><td>${r.name}</td><td>${r.desc || "—"}</td><td>${d.tipo}</td><td>${d.label}</td><td class="num">${fmtSI(r.v)}</td><td class="num">÷ ${r.divLabel}</td><td class="num">${fmtSI(r.u)}</td><td class="num">${fmtSI(r.ci)}</td><td class="num">${fmtSI(r.contrib)}</td><td class="num">${isFinite(r.dof) ? r.dof : "&infin;"}</td><td class="num">${r.pct.toFixed(1)}%</td></tr>`;
+      return `<tr><td>${i + 1}</td><td>${esc(r.name)}</td><td>${esc(r.desc) || "—"}</td><td>${d.tipo}</td><td>${d.label}</td><td class="num">${fmtSI(r.v)}</td><td class="num">÷ ${r.divLabel}</td><td class="num">${fmtSI(r.u)}</td><td class="num">${fmtSI(r.ci)}</td><td class="num">${fmtSI(r.contrib)}</td><td class="num">${isFinite(r.dof) ? r.dof : "&infin;"}</td><td class="num">${r.pct.toFixed(1)}%</td></tr>`;
     }).join("");
     // Fecha en formato metrológico ISO 8601 (AAAA-MM-DD), con la fecha local.
     const dNow = new Date();
@@ -337,10 +343,22 @@ export default function UncertaintyBudget() {
     setIsModalOpen(true);
   };
 
-  const handleLeadSubmit = (e) => {
+  const handleLeadSubmit = async (e) => {
     e.preventDefault();
-    // Simulación del envío a base de datos — aquí irá el POST real al backend.
-    console.log("Lead B2B capturado:", lead);
+    // Fail-open a propósito: si el backend está caído, el usuario igual recibe su reporte.
+    // Perder un lead es molesto; romperle el reporte a un ingeniero legítimo es peor.
+    const api = import.meta.env.VITE_API_URL;
+    if (api) {
+      try {
+        await fetch(`${api}/lead`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...lead, source: "uncertainty" }),
+        });
+      } catch {
+        // sin reintento y sin ruido en consola: el usuario no tiene nada que hacer con este error
+      }
+    }
     setIsModalOpen(false);
     setLeadCaptured(true);
     downloadReport(results);
@@ -956,6 +974,13 @@ export default function UncertaintyBudget() {
             </p>
 
             <form onSubmit={handleLeadSubmit}>
+              {/* Honeypot: invisible y fuera del orden de tabulación. Solo un bot lo llena. */}
+              <input
+                type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
+                value={lead.website}
+                onChange={(e) => setLead((prev) => ({ ...prev, website: e.target.value }))}
+                style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+              />
               {[
                 { key: "name",    label: "Nombre completo",    type: "text",  placeholder: "Ej. Ana Torres" },
                 { key: "email",   label: "Correo corporativo", type: "email", placeholder: "ana@empresa.com" },

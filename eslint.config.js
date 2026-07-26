@@ -26,4 +26,9 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  // El backend de la Raspberry corre en Node, no en el navegador.
+  {
+    files: ['server/**/*.js'],
+    languageOptions: { globals: globals.node },
+  },
 ])
