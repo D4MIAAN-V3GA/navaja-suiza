@@ -6,7 +6,24 @@ import { timingSafeEqual } from "node:crypto";
 
 const BODY_LIMIT = 4096;          // bytes; un POST más grande se corta en seco
 const RATE_MAX = 5;               // POST /lead permitidos...
+const ADMIN_RATE_MAX = 30;        // ...y GET /leads, que solo usas tú...
 const RATE_WINDOW_MS = 10 * 60e3; // ...cada 10 minutos, por IP
+
+// Cloudflare SOBRESCRIBE CF-Connecting-IP con la IP real: un cliente no la puede falsear.
+// Es de fiar únicamente porque escuchamos en 127.0.0.1 y solo el túnel llega ahí.
+let warnedNoIp = false;
+function clientIp(req) {
+  const ip = req.headers["cf-connecting-ip"];
+  if (ip) return ip;
+  // Sin el header, TODO el tráfico del túnel comparte una sola cubeta y el sexto
+  // visitante del día se queda sin enviar. Es fallo cerrado (seguro), pero silencioso:
+  // hay que gritarlo o nunca te enteras de que el túnel quedó mal configurado.
+  if (!warnedNoIp) {
+    warnedNoIp = true;
+    console.warn("AVISO: llega tráfico sin CF-Connecting-IP — revisa el túnel; el rate limit es global mientras tanto.");
+  }
+  return req.socket.remoteAddress || "?";
+}
 
 const LIMITS = { name: 100, email: 160, role: 120, company: 120 };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -20,8 +37,10 @@ function readBody(req) {
     req.on("data", (c) => {
       size += c.length;
       if (size > BODY_LIMIT) {
+        // Pausar en vez de destruir: así el handler alcanza a responder 413 antes de
+        // cerrar. Destruir el socket deja al cliente con un error de red sin explicación.
+        req.pause();
         reject(new Error("too_large"));
-        req.destroy();
         return;
       }
       chunks.push(c);
@@ -68,21 +87,21 @@ export function createServer({ dbPath, allowedOrigins, adminToken }) {
   // ponytail: rate limit en memoria, se reinicia con el servicio. Suficiente para un
   // formulario; mover a una tabla de SQLite solo si el reinicio se vuelve un agujero real.
   const hits = new Map();
-  function rateLimited(ip) {
+  function rateLimited(key, max = RATE_MAX) {
     const now = Date.now();
     if (hits.size > 5000) {
       for (const [k, v] of hits) if (v.resetAt <= now) hits.delete(k);
     }
-    const e = hits.get(ip);
+    const e = hits.get(key);
     if (!e || e.resetAt <= now) {
-      hits.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+      hits.set(key, { count: 1, resetAt: now + RATE_WINDOW_MS });
       return false;
     }
     e.count += 1;
-    return e.count > RATE_MAX;
+    return e.count > max;
   }
 
-  const server = http.createServer(async (req, res) => {
+  async function handle(req, res) {
     const origin = req.headers.origin;
     const cors = allowedOrigins.includes(origin)
       ? { "Access-Control-Allow-Origin": origin, Vary: "Origin" }
@@ -95,6 +114,8 @@ export function createServer({ dbPath, allowedOrigins, adminToken }) {
         ...cors,
         "Content-Type": "application/json; charset=utf-8",
         "X-Content-Type-Options": "nosniff",
+        // /leads devuelve datos personales: que no los guarde ningún caché intermedio.
+        "Cache-Control": "no-store",
       });
       res.end(payload);
     };
@@ -116,16 +137,16 @@ export function createServer({ dbPath, allowedOrigins, adminToken }) {
     }
 
     if (req.method === "GET" && url.pathname === "/leads") {
+      // El rate limit va ANTES del token: sin esto se puede intentar adivinarlo sin
+      // freno, y cada intento hace trabajo en la Pi.
+      if (rateLimited(`admin:${clientIp(req)}`, ADMIN_RATE_MAX)) return send(429, { error: "rate_limited" });
       const given = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
       if (!tokenMatches(given, adminToken)) return send(401, { error: "unauthorized" });
       return send(200, selectAll.all());
     }
 
     if (req.method === "POST" && url.pathname === "/lead") {
-      // Solo el túnel alcanza el 127.0.0.1 donde escuchamos, así que CF-Connecting-IP
-      // no lo puede falsear un tercero desde fuera.
-      const ip = req.headers["cf-connecting-ip"] || req.socket.remoteAddress || "?";
-      if (rateLimited(ip)) return send(429, { error: "rate_limited" });
+      if (rateLimited(clientIp(req))) return send(429, { error: "rate_limited" });
 
       let data;
       try {
@@ -136,7 +157,9 @@ export function createServer({ dbPath, allowedOrigins, adminToken }) {
       if (!data || typeof data !== "object") return send(400, { error: "bad_request" });
 
       // Honeypot: el campo va oculto en el formulario, un humano nunca lo llena.
-      if (field(data.website, 200, { required: false })) return send(204);
+      // Cualquier contenido lo delata — nada de pasarlo por field(), que devuelve null
+      // cuando se pasa de largo y dejaría entrar al bot que llene 300 caracteres.
+      if (typeof data.website === "string" && data.website.trim()) return send(204);
 
       const lead = {
         name: field(data.name, LIMITS.name),
@@ -159,7 +182,22 @@ export function createServer({ dbPath, allowedOrigins, adminToken }) {
     }
 
     send(404, { error: "not_found" });
+  }
+
+  // En Node, una promesa rechazada dentro del handler TERMINA el proceso. Con la BD en
+  // una microSD —que típicamente falla volviéndose de solo lectura— eso sería un bucle
+  // de caídas que systemd acaba abandonando. Un 500 es infinitamente mejor.
+  const server = http.createServer((req, res) => {
+    handle(req, res).catch((err) => {
+      console.error("error no manejado:", err?.code || err?.message || "desconocido");
+      if (res.headersSent || res.destroyed) return res.destroy();
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end('{"error":"server_error"}');
+    });
   });
+  // Cortan slowloris: conexiones que abren y mandan bytes a cuentagotas.
+  server.headersTimeout = 10_000;
+  server.requestTimeout = 20_000;
 
   server.on("close", () => db.close());
   return server;

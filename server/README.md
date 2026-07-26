@@ -188,10 +188,48 @@ sudo -u navaja sqlite3 /var/lib/navaja-api/leads.db 'SELECT * FROM leads;'
 sudo -u navaja sqlite3 /var/lib/navaja-api/leads.db ".backup '/var/lib/navaja-api/backup.db'"
 ```
 
+## Endurecer la Pi (hazlo antes de exponer nada)
+
+El API es la parte fácil; la Pi misma es la superficie grande.
+
+```sh
+# 1. SSH solo con llave — el password de la Pi es lo primero que prueban los bots
+ssh-copy-id TU_USUARIO@IP_DE_LA_PI          # desde tu portátil, primero
+sudo sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+sudo sed -i 's/^#*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+sudo systemctl restart ssh
+
+# 2. Que no quede el usuario 'pi' con password por defecto
+passwd                                       # cambia el tuyo si nunca lo hiciste
+
+# 3. Credenciales del túnel a solo-tu-usuario
+chmod 600 ~/.cloudflared/*.json
+
+# 4. Parches automáticos de seguridad
+sudo apt install -y unattended-upgrades && sudo dpkg-reconfigure -plow unattended-upgrades
+```
+
+**Aviso de privacidad (LFPDPPP).** El formulario recoge datos personales de terceros y eres una
+empresa mexicana: la ley te obliga a mostrar un aviso de privacidad en el punto de captura. Falta.
+Agrega al modal una línea con enlace a `/privacidad` antes de anunciar la herramienta.
+
 ## Límites conocidos
 
 - **El rate limit vive en memoria** y se reinicia con el servicio. Suficiente para un formulario.
 - **CORS no frena un `curl`** — solo lo aplica el navegador. Contra abuso directo trabajan el rate
   limit, el tope de body de 4 KB y la validación.
+- **Si falta el header `CF-Connecting-IP`**, todo el tráfico comparte una sola cubeta de rate limit
+  y el sexto visitante del día se queda sin enviar. Es fallo cerrado (seguro), y el servicio lo
+  grita en el log: `journalctl -u navaja-api | grep AVISO`. Si aparece, el túnel está mal.
+- **La BD no está cifrada en reposo.** Los permisos (700) protegen contra otros usuarios de la Pi,
+  no contra quien se lleve la microSD físicamente. Cifrar el disco es la respuesta si algún día los
+  datos lo ameritan.
+- **Cloudflare ve el tráfico en claro** (el TLS termina en su borde). Es inherente a usar un túnel.
+- **Sin política de retención**: los leads se acumulan para siempre. Borra los viejos cuando dejen
+  de servirte — menos datos guardados es menos daño si algo sale mal.
 - **El muro de leads sigue siendo cosmético**: quien abra las DevTools puede llamar `downloadReport`
   sin registrarse. Se cierra de verdad solo cuando el PDF se genere en el servidor.
+- **`react-router-dom` tiene 2 avisos de `npm audit` sin parche disponible** (CSRF en modo RSC). El
+  único "arreglo" que ofrece npm es bajar a 7.11.0, una versión mayor atrás. **No lo hagas**: el
+  fallo es del modo RSC y este sitio usa `BrowserRouter` plano sin acciones de servidor, así que no
+  aplica. Revisa de nuevo cuando salga un 7.18.x parcheado.
