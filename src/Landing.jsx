@@ -9,7 +9,7 @@ const GRID_TOOLS = TOOLS.filter((t) => t.id !== 'incertidumbre' && t.id !== 'tur
 
 // ─────────────────────────────────────────────────────────────
 const YOUTUBE_URL   = 'https://www.youtube.com/@damian.project';
-const CONTACT_EMAIL = 'contacto@industriasmuneco.com';          // ← recomendación; confírmame o cámbialo
+const CONTACT_EMAIL = 'contacto@industriasmuneco.com';          // confirmado 2026-08
 // ─────────────────────────────────────────────────────────────
 const DISCORD_URL   = 'https://discord.gg/C8MjQAcuNH';
 const TIKTOK_URL    = 'https://tiktok.com/@damianvlab';
