@@ -9,6 +9,8 @@
 - [ ] **Historias de Instagram del dominio**: nunca se hicieron (en Discord sí). La nueva landing es el pretexto para mostrarlo por fin.
 
 ## 🟡 Técnico antes del lanzamiento
+- [ ] **Push pendiente** (2026-07-21): `b9beafe` está commiteado en local pero NO subido.
+      Incluye TurTar + arreglos de móvil. `git push origin main` lo pone en vivo.
 - [x] Commit + push de todo lo nuevo (landing, herramienta 06, vercel.json, assets). Hecho: `70f091f`.
 - [x] **Dominio en Vercel**: `industriasmuneco.com` apuntando a este proyecto vía Namecheap (A `@` → 216.198.79.1, CNAME `www`). Landing en `/`, navaja en `/herramientas`.
 - [x] Verificado en vivo: `/`, `/herramientas`, `www` y `navaja` responden 200; sirven la app correcta y el asset desplegado coincide con el último build (`index-snXeBkgA.js`).
@@ -28,6 +30,12 @@
 5. Publicar las historias en IG con los links UTM (`?utm_source=instagram&utm_campaign=update_formulas`).
 
 ## ✅ Hecho
+- **Herramienta 09 — TUR / TAR** (`/herramientas/tur`, categoría Metrología, regla 4:1). Sin anunciar todavía.
+- **Conversor de unidades ampliado**: 6 magnitudes (presión, torque, fuerza, longitud, masa, temperatura) + medidor «¿tiene sentido tu número?».
+- **Vista móvil arreglada** (2026-07-21). La causa de fondo: Vite 8 minificaba los `@media` a sintaxis de rango
+  `(width<=720px)`, que Safari <16.4 y los navegadores embebidos de Instagram/TikTok ignoran — se caían TODOS
+  los breakpoints. Corregido con `build.cssTarget` en `vite.config.js`. **No quitar esa opción.**
+  De paso: zoom de iOS al enfocar campos, conversor apilado en móvil, `100dvh`, áreas táctiles.
 - Git sincronizado con la nube.
 - Dominio `navaja.industriasmuneco.com` vivo y anunciado en Discord.
 - Herramienta 06 (Biblioteca de Fórmulas, 43 fórmulas, color por categoría).

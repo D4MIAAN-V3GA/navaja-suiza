@@ -171,6 +171,18 @@ function AllTable({ catKey, fromUnit, inputVal }) {
   );
 }
 
+// Etiqueta + campo. minWidth 0 evita que el <select> desborde la rejilla.
+function Cell({ label, children }) {
+  return (
+    <div style={{ minWidth: 0 }}>
+      <div style={{ fontFamily: MONO, fontSize: 10, color: MUTE, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 8, minHeight: 12 }}>
+        {label}
+      </div>
+      {children}
+    </div>
+  );
+}
+
 // ── "¿Tiene sentido tu número?" — medidor de sentido físico ─────────
 // Clasifica un valor contra un rango de referencia curado (min/max en la
 // misma unidad). "typical" = dentro del rango; "atypical" = zona extendida
@@ -398,31 +410,36 @@ export default function UnitConverter({ onAccentChange }) {
       {/* Main card */}
       <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW }}>
         <div style={{ padding: "24px 24px 20px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 40px 1fr", gridTemplateRows: "auto auto", gap: "8px 10px", alignItems: "end" }}>
-            {["Valor", "De", "", "A"].map((lbl, i) => (
-              <div key={i} style={{ fontFamily: MONO, fontSize: 10, color: MUTE, letterSpacing: 1.5, textTransform: "uppercase", textAlign: i === 2 ? "center" : "left" }}>{lbl}</div>
-            ))}
+          {/* Cada celda lleva su etiqueta dentro para poder apilarse en móvil (.uc-grid). */}
+          <div className="uc-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 40px 1fr", gap: "8px 10px", alignItems: "end" }}>
+            <Cell label="Valor">
+              <input
+                type="number"
+                value={inputVal}
+                onChange={e => setInputVal(e.target.value)}
+                placeholder="0"
+                style={{ background: PAPER, border: BORDER, borderRadius: 0, padding: "11px 14px", color: INK, fontFamily: MONO, fontSize: 18, fontWeight: 700, outline: "none", width: "100%", boxSizing: "border-box" }}
+              />
+            </Cell>
 
-            <input
-              type="number"
-              value={inputVal}
-              onChange={e => setInputVal(e.target.value)}
-              placeholder="0"
-              style={{ background: PAPER, border: BORDER, borderRadius: 0, padding: "11px 14px", color: INK, fontFamily: MONO, fontSize: 18, fontWeight: 700, outline: "none", width: "100%", boxSizing: "border-box" }}
-            />
+            <Cell label="De">
+              <select value={fromUnit} onChange={e => setFromUnit(e.target.value)} style={SelectStyle}>
+                {unitKeys.map(k => (<option key={k} value={k}>{units[k].label} — {units[k].name}</option>))}
+              </select>
+            </Cell>
 
-            <select value={fromUnit} onChange={e => setFromUnit(e.target.value)} style={SelectStyle}>
-              {unitKeys.map(k => (<option key={k} value={k}>{units[k].label} — {units[k].name}</option>))}
-            </select>
+            <Cell label="">
+              <button onClick={swap} aria-label="Intercambiar unidades" style={{
+                background: INK, border: BORDER, borderRadius: 0, color: PAPER, fontSize: 16,
+                cursor: "pointer", height: 44, width: "100%", display: "flex", alignItems: "center", justifyContent: "center",
+              }}>⇄</button>
+            </Cell>
 
-            <button onClick={swap} style={{
-              background: INK, border: BORDER, borderRadius: 0, color: PAPER, fontSize: 16,
-              cursor: "pointer", height: 44, display: "flex", alignItems: "center", justifyContent: "center",
-            }}>⇄</button>
-
-            <select value={toUnit} onChange={e => setToUnit(e.target.value)} style={SelectStyle}>
-              {unitKeys.map(k => (<option key={k} value={k}>{units[k].label} — {units[k].name}</option>))}
-            </select>
+            <Cell label="A">
+              <select value={toUnit} onChange={e => setToUnit(e.target.value)} style={SelectStyle}>
+                {unitKeys.map(k => (<option key={k} value={k}>{units[k].label} — {units[k].name}</option>))}
+              </select>
+            </Cell>
           </div>
         </div>
 

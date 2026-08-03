@@ -93,7 +93,7 @@ export default function CommandPalette() {
             >
               <span style={{ width: 10, height: 10, flexShrink: 0, background: t.accent, border: `1px solid ${i === sel ? PAPER : INK}` }} />
               <span style={{ fontFamily: SANS, fontSize: 15, fontWeight: 800 }}>{t.label}</span>
-              <span style={{ fontFamily: MONO, fontSize: 11, color: i === sel ? "rgba(255,255,255,0.7)" : MUTE, marginLeft: "auto" }}>
+              <span className="cmdk-desc" style={{ fontFamily: MONO, fontSize: 11, color: i === sel ? "rgba(255,255,255,0.7)" : MUTE, marginLeft: "auto" }}>
                 {t.desc}
               </span>
             </button>

@@ -98,7 +98,7 @@ function LinkButton({ icon, label, sub, href, external, color }) {
 
 export default function Landing() {
   return (
-    <div style={{ minHeight: '100vh', background: PAPER, color: INK, fontFamily: SANS }}>
+    <div style={{ minHeight: '100dvh', background: PAPER, color: INK, fontFamily: SANS }}>
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 16px' }}>
 
         {/* ── Hero de marca: corto, invita a acercarse ── */}

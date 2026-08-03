@@ -228,7 +228,7 @@ export default function TurTar() {
   ] : [];
 
   return (
-    <div style={{ minHeight: "100vh", background: PAPER, color: INK, fontFamily: SANS }}>
+    <div style={{ minHeight: "100dvh", background: PAPER, color: INK, fontFamily: SANS }}>
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "0 16px" }}>
 
         {/* Navegación de regreso */}

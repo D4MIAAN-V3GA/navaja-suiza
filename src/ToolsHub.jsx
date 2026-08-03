@@ -42,7 +42,7 @@ export default function ToolsHub() {
   });
 
   return (
-    <div style={{ minHeight: "100vh", background: PAPER, color: INK, fontFamily: SANS }}>
+    <div style={{ minHeight: "100dvh", background: PAPER, color: INK, fontFamily: SANS }}>
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "0 16px" }}>
         <EngineerHeader />
 
@@ -65,6 +65,7 @@ export default function ToolsHub() {
             style={field({ flex: 1 })}
           />
           <button
+            className="hub-kbd"
             onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true }))}
             title="Paleta de comandos (Ctrl/⌘ + K)"
             style={{
