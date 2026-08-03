@@ -22,15 +22,15 @@ export const CATEGORIES = [
 ];
 
 export const TOOLS = [
-  { id: "ecuaciones",    label: "Ecuaciones",    desc: "Sistemas lineales n×n por Cramer",        category: "algebra",    accent: ACCENTS.blue,   component: EquationSolver },
-  { id: "matrices",      label: "Matrices",      desc: "Gauss y Gauss-Jordan paso a paso",        category: "algebra",    accent: ACCENTS.brown,  component: MatrixSolver },
-  { id: "vectores",      label: "Vectores",      desc: "Operaciones vectoriales en 3D",           category: "algebra",    accent: ACCENTS.green,  component: VectorCalculator },
-  { id: "inercia",       label: "Inercia",       desc: "Momentos de inercia de secciones",        category: "secciones",  accent: ACCENTS.orange, component: InertiaCalculator },
-  { id: "interpolacion", label: "Interpolación", desc: "Interpolación lineal entre puntos",       category: "numerico",   accent: ACCENTS.pink,   component: LinearInterpolator },
-  { id: "unidades",      label: "Unidades",      desc: "6 magnitudes + ¿tiene sentido tu número?", category: "unidades",   accent: ACCENTS.cyan,   component: UnitConverter },
-  { id: "formulas",      label: "Fórmulas",      desc: "Biblioteca buscable de ingeniería",       category: "referencia", accent: ACCENTS.yellow, component: FormulaLibrary },
-  { id: "incertidumbre", label: "Incertidumbre", desc: "Presupuesto GUM (Tipo A/B, U k=2)",       category: "metrologia", accent: ACCENTS.red,    component: UncertaintyBudget },
-  { id: "tur",           label: "TUR / TAR",     desc: "Razón de incertidumbre/exactitud de ensayo (regla 4:1)", category: "metrologia", accent: ACCENTS.brown, component: TurTar },
+  { id: "ecuaciones",    label: "Ecuaciones",    desc: "Dale los coeficientes, te regresa x, y, z con el desarrollo", category: "algebra",    accent: ACCENTS.blue,   component: EquationSolver },
+  { id: "matrices",      label: "Matrices",      desc: "Reduce tu matriz por Gauss sin equivocarte en un signo",      category: "algebra",    accent: ACCENTS.brown,  component: MatrixSolver },
+  { id: "vectores",      label: "Vectores",      desc: "Producto punto, cruz y magnitud sin errores de signo",        category: "algebra",    accent: ACCENTS.green,  component: VectorCalculator },
+  { id: "inercia",       label: "Inercia",       desc: "Centroide e inercia de tu perfil, listos para copiar",        category: "secciones",  accent: ACCENTS.orange, component: InertiaCalculator },
+  { id: "interpolacion", label: "Interpolación", desc: "El valor entre dos puntos de tu tabla, en segundos",          category: "numerico",   accent: ACCENTS.pink,   component: LinearInterpolator },
+  { id: "unidades",      label: "Unidades",      desc: "Convierte y te avisa si tu número no tiene sentido",          category: "unidades",   accent: ACCENTS.cyan,   component: UnitConverter },
+  { id: "formulas",      label: "Fórmulas",      desc: "Busca la fórmula que se te olvidó, sin abrir el libro",       category: "referencia", accent: ACCENTS.yellow, component: FormulaLibrary },
+  { id: "incertidumbre", label: "Incertidumbre", desc: "Presupuesto GUM completo con reporte descargable",            category: "metrologia", accent: ACCENTS.red,    component: UncertaintyBudget },
+  { id: "tur",           label: "TUR / TAR",     desc: "¿Tu patrón pasa la regla 4:1? Te doy el veredicto",           category: "metrologia", accent: ACCENTS.brown,  component: TurTar },
 ];
 
 export const getTool = (id) => TOOLS.find((t) => t.id === id);

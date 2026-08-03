@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Footer from './Footer';
+import PremiumCard from './PremiumCard';
 import { TOOLS } from './tools';
 import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS, textOn } from './theme';
 
@@ -54,7 +55,8 @@ const ICONS = {
 
 // Enlaces del "linktree" — orden intencional, cada uno con su color.
 const LINKS = [
-  { key: 'discord',   label: 'Discord',   sub: 'Comunidad',       href: DISCORD_URL,   external: true,  color: ACCENTS.blue },
+  // El Discord es el escalón de entrada del premium, no una oferta que le compita.
+  { key: 'discord',   label: 'Discord',   sub: 'Gratis · empieza aquí', href: DISCORD_URL, external: true, color: ACCENTS.blue },
   { key: 'instagram', label: 'Instagram', sub: '@damianvlab',     href: INSTAGRAM_URL, external: true,  color: ACCENTS.pink },
   { key: 'tiktok',    label: 'TikTok',    sub: '@damianvlab',     href: TIKTOK_URL,    external: true,  color: ACCENTS.cyan },
   { key: 'youtube',   label: 'YouTube',   sub: '@damian.project', href: YOUTUBE_URL,   external: true,  color: ACCENTS.red },
@@ -119,12 +121,18 @@ export default function Landing() {
           </h1>
 
           <p style={{ fontFamily: MONO, fontSize: 14, color: MUTE, margin: '16px 0 0', lineHeight: 1.6, maxWidth: 560 }}>
-            Ingeniería sin filtros. Herramientas gratis, comunidad y contenido.
-            ¿Eres seguidor o una marca que quiere colaborar? Estás en el lugar correcto.
+            Calculadoras que resuelven tu problema de ingeniería en segundos — y te enseñan
+            el procedimiento, para que lo puedas defender en el examen. Gratis y sin registro.
           </p>
 
-          {/* CTAs: producto + colaboración */}
-          <div style={{ marginTop: 28, display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+          {/* Prueba social: la escasez del premium solo es creíble si antes hay demanda */}
+          <p style={{ fontFamily: MONO, fontSize: 12, color: MUTE, margin: '14px 0 0', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            +300 ingenieros en el Discord · {TOOLS.length} herramientas · 0 registros
+          </p>
+
+          {/* Un solo CTA primario; "Colaboremos" baja a enlace de texto (las marcas lo
+              buscan en SOBRE MÍ, donde sigue teniendo su botón completo). */}
+          <div style={{ marginTop: 28, display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'center' }}>
             <Link
               to="/herramientas"
               style={{
@@ -143,20 +151,22 @@ export default function Landing() {
             <a
               href={`mailto:${CONTACT_EMAIL}?subject=Colaboración con Industrias Muñeco`}
               style={{
-                display: 'inline-flex', alignItems: 'center', gap: 10,
-                padding: '15px 26px', border: BORDER, background: PAPER, boxShadow: SHADOW, color: INK,
-                fontFamily: MONO, fontSize: 14, fontWeight: 700, letterSpacing: '0.06em',
-                textDecoration: 'none', textTransform: 'uppercase',
-                transition: 'transform 0.05s, box-shadow 0.05s',
+                fontFamily: MONO, fontSize: 13, color: MUTE,
+                textDecoration: 'underline', textUnderlineOffset: 3,
               }}
-              onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(5px,5px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
-              onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW; }}
             >
-              Colaboremos
+              ¿Eres una marca? Colaboremos
             </a>
           </div>
         </header>
+
+        {/* ── Zona Premium: segunda sección, arriba del catálogo gratis ── */}
+        <section style={{ padding: '4px 0 12px' }}>
+          <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
+            ZONA PREMIUM
+          </span>
+          <PremiumCard />
+        </section>
 
         {/* ── Herramientas ── */}
         <section style={{ paddingBottom: 12 }}>
