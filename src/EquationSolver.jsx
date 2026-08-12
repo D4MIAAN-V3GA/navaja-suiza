@@ -115,16 +115,16 @@ export default function EquationSolver() {
   };
 
   // minmax evita que los inputs se aplasten con n grande (la tarjeta scrollea).
-  const gridCols = `28px repeat(${n}, minmax(52px, 1fr)) 16px minmax(52px, 1fr)`;
+  const gridCols = `34px repeat(${n}, minmax(60px, 1fr)) 18px minmax(60px, 1fr)`;
 
   const coefInput = {
     background: PAPER,
     border: BORDER_THIN,
     borderRadius: 0,
-    padding: "10px 8px",
+    padding: "14px 10px",
     color: INK,
     fontFamily: MONO,
-    fontSize: 14,
+    fontSize: 18,
     textAlign: "center",
     width: "100%",
     boxSizing: "border-box",
@@ -132,40 +132,37 @@ export default function EquationSolver() {
   };
 
   return (
-    <section style={{ maxWidth: 680, margin: "0 auto", padding: "32px 0 16px" }}>
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 12 }}>
-          ECUACIONES
-        </span>
-        <h2 style={{ fontFamily: SANS, fontSize: "clamp(24px, 4vw, 34px)", fontWeight: 800, color: INK, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
-          Solucionador de sistemas lineales
-        </h2>
-        <p style={{ fontFamily: MONO, fontSize: 13, color: MUTE, margin: 0 }}>
-          Regla de Cramer · 2×2 a 8×8 · acepta fracciones («2/3») · resultados exactos
-        </p>
-      </div>
-
+    <div>
       {/* Tamaño */}
       <SizePicker value={n} onChange={changeSize} min={MIN_N} max={MAX_N} />
 
       {/* Matriz aumentada */}
-      <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, padding: "24px 20px", marginBottom: 20, overflowX: "auto" }}>
+      <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, flexWrap: "wrap", padding: "16px 22px", borderBottom: BORDER }}>
+          <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1.4, color: INK, textTransform: "uppercase" }}>
+            Matriz aumentada · {n}×{n}
+          </span>
+          <span style={{ fontFamily: MONO, fontSize: 11.5, color: MUTE }}>
+            la columna de color es el término independiente
+          </span>
+        </div>
+
+        <div style={{ padding: "22px 22px 24px", overflowX: "auto" }}>
         {/* Encabezados de columna */}
-        <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: "8px 10px", marginBottom: 10 }}>
+        <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: "10px 12px", marginBottom: 10 }}>
           <span />
           {varNames.map((v) => (
-            <span key={v} style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: accent, textAlign: "center", letterSpacing: 1 }}>
+            <span key={v} style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: accent, textAlign: "center", letterSpacing: 1 }}>
               {v}
             </span>
           ))}
           <span />
-          <span style={{ fontFamily: MONO, fontSize: 12, color: MUTE, textAlign: "center" }}>=</span>
+          <span style={{ fontFamily: MONO, fontSize: 14, color: MUTE, textAlign: "center" }}>=</span>
         </div>
 
         {coeffs.map((row, ri) => (
-          <div key={ri} style={{ display: "grid", gridTemplateColumns: gridCols, gap: "8px 10px", marginBottom: ri < n - 1 ? 10 : 0, alignItems: "center" }}>
-            <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, color: MUTE, textAlign: "right" }}>
+          <div key={ri} style={{ display: "grid", gridTemplateColumns: gridCols, gap: "10px 12px", marginBottom: ri < n - 1 ? 12 : 0, alignItems: "center" }}>
+            <span style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, color: MUTE, textAlign: "right" }}>
               E{ri + 1}
             </span>
 
@@ -183,7 +180,7 @@ export default function EquationSolver() {
             ))}
 
             {/* separador | */}
-            <div style={{ width: 2, height: 34, background: INK, margin: "0 auto" }} />
+            <div style={{ width: 2, height: 42, background: INK, margin: "0 auto" }} />
 
             <input
               type="text"
@@ -196,6 +193,7 @@ export default function EquationSolver() {
             />
           </div>
         ))}
+        </div>
       </div>
 
       {/* Solve button */}
@@ -203,7 +201,7 @@ export default function EquationSolver() {
         onClick={solve}
         style={{
           width: "100%",
-          padding: "14px 0",
+          padding: "17px 0",
           background: accent,
           border: BORDER,
           boxShadow: SHADOW,
@@ -244,20 +242,27 @@ export default function EquationSolver() {
       {/* Results */}
       {result && !error && (
         <div key={animKey}>
-          <div style={{ fontFamily: MONO, fontSize: 12, color: MUTE, letterSpacing: 1, marginBottom: 14, textAlign: "center" }}>
-            Δ = {fmt(result.det)}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1.4, color: INK, textTransform: "uppercase" }}>
+              Solución
+            </span>
+            <div style={{ flex: 1, height: 2, background: INK }} />
+            <span style={{ fontFamily: MONO, fontSize: 12.5, color: MUTE }}>
+              Δ = {fmt(result.det)}
+            </span>
           </div>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 170px), 1fr))", gap: 14 }}>
             {varNames.map((v, i) => (
-              <div key={v} style={{ flex: 1, minWidth: 120, background: accent, border: BORDER, boxShadow: SHADOW_SM, padding: "16px 20px" }}>
-                <div style={{ fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.85)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>
+              <div key={v} style={{ background: accent, border: BORDER, boxShadow: SHADOW_SM, padding: "18px 22px" }}>
+                <div style={{ fontFamily: MONO, fontSize: 12, color: "rgba(255,255,255,0.85)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 10 }}>
                   {v}
                 </div>
-                <div style={{ fontFamily: MONO, fontSize: 24, color: "#fff", fontWeight: 700, wordBreak: "break-all" }}>
+                <div style={{ fontFamily: MONO, fontSize: 30, color: "#fff", fontWeight: 700, lineHeight: 1.1, wordBreak: "break-all" }}>
                   {fmt(result.solution[i])}
                 </div>
                 {result.solution[i].d !== 1n && (
-                  <div style={{ fontFamily: MONO, fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 4 }}>
+                  <div style={{ fontFamily: MONO, fontSize: 13, color: "rgba(255,255,255,0.8)", marginTop: 6 }}>
                     ≈ {fmt(toNumber(result.solution[i]))}
                   </div>
                 )}
@@ -271,10 +276,10 @@ export default function EquationSolver() {
 
       {/* Placeholder */}
       {result === null && !error && (
-        <div style={{ textAlign: "center", padding: "24px 0", border: `2px dashed ${FAINT}`, color: MUTE, fontFamily: MONO, fontSize: 12, letterSpacing: 0.5 }}>
+        <div style={{ textAlign: "center", padding: "34px 0", border: `2px dashed ${FAINT}`, color: MUTE, fontFamily: MONO, fontSize: 13, letterSpacing: 0.5 }}>
           ingresa los coeficientes y presiona resolver
         </div>
       )}
-    </section>
+    </div>
   );
 }

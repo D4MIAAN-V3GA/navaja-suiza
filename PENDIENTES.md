@@ -29,7 +29,49 @@
 4. Configurar el dominio `industriasmuneco.com` en Vercel (ver 🟡) y verificar el sitio en `industriasmuneco.com` (`/` y `/herramientas`).
 5. Publicar las historias en IG con los links UTM (`?utm_source=instagram&utm_campaign=update_formulas`).
 
+## 🟡 Fórmulas calculables — lo que falta
+
+Ya está hecho el motor (ver ✅ abajo). Falta:
+
+- [ ] **Probar en móvil real (375px)**: los campos de la calculadora dentro de la tarjeta.
+      Los inputs van a 16px para que iOS no haga zoom al enfocarlos. Verificado a 485px en
+      Chrome de escritorio (no baja de ahí); faltan los 375px de verdad.
+- [x] **Completar despejes**: van **37 de 43**. Se agregaron 10 (2026-08-12): Bernoulli entre
+      dos puntos, los cinco de GD&T que sí tienen cuenta detrás (posición, planitud, perfil,
+      circularidad, cilindricidad y MMC), incertidumbre combinada, resistencias en paralelo y
+      centroide. Las sumatorias se resolvieron a **dos términos** con nota de cómo encadenar,
+      en vez de inventar un campo de lista dinámico.
+- [ ] **Las 6 que faltan**: los cinco de **Cálculo** (cadena, producto, partes, Laplace,
+      Taylor) y **equilibrio estático**. Las de Cálculo son reglas simbólicas: harían falta un
+      parser + derivación (un CAS chico) o, para Taylor, un selector de función — es otro
+      proyecto, no un despeje más. El CSP no lo impide; el alcance sí.
+- [ ] **Contenido para redes**: cada fórmula calculable es un video corto ("¿cuánto aguanta
+      esa columna antes de pandear? te lo saco en 10 segundos"). Es la razón de haberla
+      hecho — falta explotarla.
+
 ## ✅ Hecho
+- **Fórmulas que se resuelven solas** (2026-08-10). La biblioteca dejó de ser solo referencia:
+  **27 de las 43 fórmulas** traen calculadora — eliges qué variable despejar, metes los datos y
+  sale el número, con unidades y notas de uso. Filtro «Solo las que se calculan» para hallarlas.
+  - Los despejes viven en `src/data/formulaCalcs.js`, indexados por el `id` de `formulas.json`.
+    Una fórmula sin entrada ahí sigue mostrándose como tarjeta normal → se puede ir de a una.
+  - **Son funciones JS, no expresiones en texto, a propósito**: el CSP de `vercel.json` no
+    permite `'unsafe-eval'`, así que un parser/`eval` habría reventado en producción.
+  - `node scripts/verify-calcs.mjs` verifica ida y vuelta los 98 despejes (arma un juego
+    consistente y comprueba que cada variable despejada reproduzca su valor). Correlo antes de
+    subir despejes nuevos. Cómo agregar una calculadora: sección del `README.md`.
+  - **Reempaquetado** para que el catálogo deje de venderla como biblioteca: la categoría
+    **«Referencia» pasó a «Física aplicada»** (era la única del catálogo que nombraba un
+    formato en vez de un área — literalmente archivaba la herramienta como material de
+    consulta), el `desc` ahora abre con el resultado y no con «busca», y el titular quedó
+    **«La fórmula ya la sabes. El número te lo doy yo.»** — vende la ejecución sin contradecir
+    que enseñar el método es parte de la marca. El `desc` de `tools.js` se propaga solo a
+    Landing, grid y paleta.
+- **Traductor Técnico — descartado** (2026-08-10). Se había construido (`TermTranslator.jsx` +
+  81 términos) y se borró sin commitear. Motivo: un diccionario es commodity y no vende, y las
+  frases "listas para el cliente" las había generado la IA, no un metrólogo real — no se podía
+  sostener el argumento de venta. Su idea buena (que la herramienta trabaje por ti, no que te
+  consulte) se ejecutó en Fórmulas. Sobrevive `src/fuzzy.js`, que salió de ahí.
 - **Herramienta 09 — TUR / TAR** (`/herramientas/tur`, categoría Metrología, regla 4:1). Sin anunciar todavía.
 - **Conversor de unidades ampliado**: 6 magnitudes (presión, torque, fuerza, longitud, masa, temperatura) + medidor «¿tiene sentido tu número?».
 - **Vista móvil arreglada** (2026-07-21). La causa de fondo: Vite 8 minificaba los `@media` a sintaxis de rango

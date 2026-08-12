@@ -29,18 +29,84 @@ select option { background: #fbf7ec; color: #161616; }
    la pantalla en móvil. min-width:0 lo deja encogerse. */
 select { min-width: 0; max-width: 100%; }
 
-/* Hub de herramientas: sidebar de categorías + contenido. Colapsa en móvil. */
-.hub-layout { display: grid; grid-template-columns: 190px 1fr; gap: 28px; align-items: start; }
+/* Los bloques plegables del riel traen su propia flecha: la del navegador
+   estorba y no se puede estilar igual en todos. */
+summary::-webkit-details-marker { display: none; }
+summary::marker { content: ""; }
+details[open] > summary > span:first-child { transform: rotate(90deg); display: inline-block; }
+
+/* ── Hub de herramientas ─────────────────────────────────────────────
+   Tres columnas: navegación · herramienta · riel de contexto.
+   Antes el contenedor medía 980px y la calculadora se encogía a 560–680
+   en el centro; en un monitor normal quedaba una columnita perdida.
+   El riel no se esconde en pantallas chicas: se baja debajo del contenido
+   y sus tarjetas se reparten a lo ancho. */
+.hub-shell { max-width: 1520px; margin: 0 auto; padding: 0 20px; }
+
+.hub-layout { display: grid; grid-template-columns: 1fr; gap: 22px; align-items: start; }
 /* min-width:0 — sin esto una celda de rejilla se niega a encogerse por debajo de
    su contenido y empuja la página a lo ancho en pantallas angostas. */
 .hub-layout > * { min-width: 0; }
-.hub-sidebar { position: sticky; top: 12px; }
-.hub-cats { display: flex; flex-direction: column; gap: 8px; }
+
+.hub-nav-inner { display: flex; flex-direction: column; gap: 18px; }
+.hub-nav-title {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase;
+  color: #5c5c54; margin-bottom: 8px;
+}
+.hub-cats { display: flex; flex-direction: column; gap: 6px; }
+.hub-nav-tools { display: flex; flex-direction: column; gap: 6px; }
+.hub-rail-inner {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px; align-items: start;
+}
+
+/* Escritorio angosto / tablet: nav + herramienta, riel debajo del centro. */
+@media (min-width: 900px) {
+  .hub-layout { grid-template-columns: 220px minmax(0, 1fr); gap: 24px; }
+  .hub-nav  { grid-column: 1; grid-row: 1 / span 2; }
+  .hub-main { grid-column: 2; grid-row: 1; }
+  .hub-rail { grid-column: 2; grid-row: 2; }
+  .hub-nav-inner {
+    position: sticky; top: 14px;
+    max-height: calc(100dvh - 28px); overflow-y: auto;
+  }
+}
+
+/* Escritorio completo: las tres columnas de verdad. */
+@media (min-width: 1240px) {
+  .hub-layout { grid-template-columns: 220px minmax(0, 1fr) 288px; }
+  .hub-rail { grid-column: 3; grid-row: 1; }
+  .hub-rail-inner {
+    grid-template-columns: 1fr;
+    position: sticky; top: 14px;
+    max-height: calc(100dvh - 28px); overflow-y: auto;
+  }
+}
+
+/* Móvil: los filtros se vuelven una tira horizontal. */
 @media (max-width: 720px) {
-  .hub-layout { grid-template-columns: 1fr; gap: 16px; }
-  .hub-sidebar { position: static; }
+  .hub-shell { padding: 0 14px; }
+  /* Con una herramienta abierta, las categorías solo estorban arriba del
+     contenido: el salto entre herramientas se hace con la tira de abajo. */
+  .hub-tool-open .hub-nav-cats { display: none; }
   .hub-cats { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
   .hub-cats button { white-space: nowrap; min-height: 40px; }
+  .hub-nav-tools { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
+  .hub-nav-tools a { min-height: 40px; }
+}
+
+/* Banco de trabajo de Fórmulas: entradas | resultado.
+   Se define SOLO aquí (nunca inline) porque un estilo inline le gana a la
+   media query. El corte va a 1100px de viewport y no a los 720px del resto:
+   dentro del hub la columna útil es viewport − 40 − 220 − 24 (y aún menos
+   cuando aparece el riel derecho), así que por debajo de 1100 la columna de
+   resultado ya no cabe al lado. */
+.fl-work { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; }
+.fl-work > * { min-width: 0; }
+@media (min-width: 1100px) {
+  .fl-work { grid-template-columns: minmax(0, 1fr) 290px; }
+  .fl-sticky { position: sticky; top: 12px; }
 }
 
 /* ── Móvil ──────────────────────────────────────────────────────────
@@ -54,9 +120,16 @@ select { min-width: 0; max-width: 100%; }
   /* Sin teclado físico no hay Ctrl/⌘+K: el botón solo roba ancho. */
   .hub-kbd { display: none !important; }
 
+  /* «Te da: …» se parte en tres renglones y empuja el formulario abajo. */
+  .tf-entrega { display: none !important; }
+
   /* Filas de la paleta: la descripción aplasta el nombre en pantalla angosta. */
   .cmdk-desc { display: none !important; }
 
   /* Conversor: 4 columnas (valor · de · ⇄ · a) no caben; se apilan. */
   .uc-grid { grid-template-columns: 1fr !important; }
+
+  /* Inercia: al apilarse, el borde de la vista previa va arriba, no a la
+     izquierda (si no, queda una línea suelta en medio de la tarjeta). */
+  .inertia-preview { border-left: none !important; border-top: 2px solid #161616 !important; }
 }

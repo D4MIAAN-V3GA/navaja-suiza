@@ -90,7 +90,9 @@ export default function LinearInterpolator({ onAccentChange }) {
     const nx1 = parseFloat(x1), ny1 = parseFloat(y1);
     const nx2 = parseFloat(x2), nx3 = parseFloat(x3), ny3 = parseFloat(y3);
     const y2 = result;
-    const W = 260, H = 120, pad = 24;
+    // La gráfica es la que hace entendible el resultado: se dibuja grande y
+    // se escala sola con la columna (viewBox + width 100%).
+    const W = 620, H = 260, pad = 40;
 
     const xs = [nx1, nx3, !isNaN(nx2) ? nx2 : null].filter((v) => v !== null);
     const ys = [ny1, ny3, y2 !== null ? y2 : null].filter((v) => v !== null);
@@ -105,24 +107,28 @@ export default function LinearInterpolator({ onAccentChange }) {
     const p3x = px(nx3), p3y = py(ny3);
 
     return (
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible", border: BORDER_THIN, background: PANEL }}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="xMidYMid meet"
+        style={{ width: "100%", display: "block", border: BORDER_THIN, background: PANEL }}
+      >
         {[0.25, 0.5, 0.75].map((t) => (
           <line key={t} x1={pad} y1={pad + t * (H - pad * 2)} x2={W - pad} y2={pad + t * (H - pad * 2)} stroke={FAINT} strokeWidth="1" strokeDasharray="2,3" />
         ))}
-        <line x1={p1x} y1={p1y} x2={p3x} y2={p3y} stroke={INK} strokeWidth="2" />
+        <line x1={p1x} y1={p1y} x2={p3x} y2={p3y} stroke={INK} strokeWidth="2.5" />
         {y2 !== null && !isNaN(nx2) && (
           <>
-            <line x1={px(nx2)} y1={py(y2)} x2={px(nx2)} y2={H - pad} stroke={accent} strokeWidth="1" strokeDasharray="3,2" />
-            <line x1={pad} y1={py(y2)} x2={px(nx2)} y2={py(y2)} stroke={accent} strokeWidth="1" strokeDasharray="3,2" />
-            <rect x={px(nx2) - 5} y={py(y2) - 5} width="10" height="10" fill={accent} stroke={INK} strokeWidth="1.5" />
+            <line x1={px(nx2)} y1={py(y2)} x2={px(nx2)} y2={H - pad} stroke={accent} strokeWidth="1.5" strokeDasharray="4,3" />
+            <line x1={pad} y1={py(y2)} x2={px(nx2)} y2={py(y2)} stroke={accent} strokeWidth="1.5" strokeDasharray="4,3" />
+            <rect x={px(nx2) - 7} y={py(y2) - 7} width="14" height="14" fill={accent} stroke={INK} strokeWidth="2" />
           </>
         )}
-        <rect x={p1x - 5} y={p1y - 5} width="10" height="10" fill={cGreen} stroke={INK} strokeWidth="1.5" />
-        <rect x={p3x - 5} y={p3y - 5} width="10" height="10" fill={cBlue} stroke={INK} strokeWidth="1.5" />
-        <text x={p1x} y={p1y - 9} textAnchor="middle" fill={INK} fontSize="9" fontFamily="monospace">(x1,y1)</text>
-        <text x={p3x} y={p3y - 9} textAnchor="middle" fill={INK} fontSize="9" fontFamily="monospace">(x3,y3)</text>
+        <rect x={p1x - 7} y={p1y - 7} width="14" height="14" fill={cGreen} stroke={INK} strokeWidth="2" />
+        <rect x={p3x - 7} y={p3y - 7} width="14" height="14" fill={cBlue} stroke={INK} strokeWidth="2" />
+        <text x={p1x} y={p1y - 13} textAnchor="middle" fill={INK} fontSize="13" fontFamily="monospace">(x1,y1)</text>
+        <text x={p3x} y={p3y - 13} textAnchor="middle" fill={INK} fontSize="13" fontFamily="monospace">(x3,y3)</text>
         {y2 !== null && !isNaN(nx2) && (
-          <text x={px(nx2) + 9} y={py(y2) - 6} fill={INK} fontSize="9" fontFamily="monospace">y2</text>
+          <text x={px(nx2) + 12} y={py(y2) - 9} fill={INK} fontSize="13" fontWeight="700" fontFamily="monospace">y2</text>
         )}
       </svg>
     );
@@ -146,19 +152,7 @@ export default function LinearInterpolator({ onAccentChange }) {
   })() : [];
 
   return (
-    <section style={{ maxWidth: 560, margin: "0 auto", padding: "32px 0 16px" }}>
-      <div style={{ marginBottom: 24 }}>
-        <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 12 }}>
-          04 / 05 — INTERPOLACIÓN
-        </span>
-        <h2 style={{ fontFamily: SANS, fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, color: INK, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
-          Interpolador lineal
-        </h2>
-        <p style={{ fontFamily: MONO, fontSize: 12, color: MUTE, margin: 0 }}>
-          y2 = y1 + [(x2 − x1) / (x3 − x1)] · (y3 − y1)
-        </p>
-      </div>
-
+    <div>
       <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW }}>
         <div style={{ padding: "24px 24px 0" }}>
           <KnownRow rowLabel="Punto conocido 1" xLabel="x" xSub="1" yLabel="y" ySub="1" xVal={x1} yVal={y1} onX={setX1} onY={setY1} accent={cGreen} />
@@ -228,26 +222,26 @@ export default function LinearInterpolator({ onAccentChange }) {
 
         {/* Graph */}
         {hasEnoughForLine && (
-          <div style={{ borderTop: BORDER, padding: "16px 24px 20px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+          <div style={{ borderTop: BORDER, padding: "18px 24px 22px", display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ fontFamily: MONO, fontSize: 10, color: MUTE, letterSpacing: 2, textTransform: "uppercase" }}>
               Representación gráfica
             </div>
             <MiniGraph />
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+            <div style={{ display: "flex", gap: 18, flexWrap: "wrap", justifyContent: "center" }}>
               {[
                 { color: cGreen, label: "(x1, y1)" },
                 { color: cBlue, label: "(x3, y3)" },
                 { color: accent, label: "(x2, y2) interpolado" },
               ].map(({ color, label }) => (
-                <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                  <div style={{ width: 10, height: 10, background: color, border: BORDER_THIN }} />
-                  <span style={{ fontFamily: MONO, fontSize: 10, color: MUTE }}>{label}</span>
+                <div key={label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: 11, height: 11, background: color, border: BORDER_THIN }} />
+                  <span style={{ fontFamily: MONO, fontSize: 11.5, color: MUTE }}>{label}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 }

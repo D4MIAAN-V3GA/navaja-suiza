@@ -54,17 +54,17 @@ function buildVecSteps(r) {
 function VecInput({ label, color, vec, onChange }) {
   const fields = ["i", "j", "k"];
   return (
-    <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW_SM, padding: "18px 20px", flex: 1, minWidth: 200 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-        <span style={{ display: "inline-block", width: 12, height: 12, background: color, border: BORDER_THIN }} />
-        <span style={{ fontFamily: SANS, color: INK, fontSize: 14, letterSpacing: 1, textTransform: "uppercase", fontWeight: 800 }}>
+    <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW_SM, padding: "20px 22px", flex: 1, minWidth: 220 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
+        <span style={{ display: "inline-block", width: 14, height: 14, background: color, border: BORDER_THIN }} />
+        <span style={{ fontFamily: SANS, color: INK, fontSize: 15, letterSpacing: 1, textTransform: "uppercase", fontWeight: 800 }}>
           {label}
         </span>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
         {fields.map((axis) => (
-          <label key={axis} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontFamily: MONO, color: MUTE, fontSize: 13, fontWeight: 700, width: 14, textAlign: "center" }}>
+          <label key={axis} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontFamily: MONO, color: MUTE, fontSize: 15, fontWeight: 700, width: 16, textAlign: "center" }}>
               {axis}
             </span>
             <input
@@ -74,7 +74,7 @@ function VecInput({ label, color, vec, onChange }) {
               placeholder="0"
               style={{
                 flex: 1, background: PAPER, border: BORDER, borderRadius: 0,
-                padding: "8px 12px", color: INK, fontFamily: MONO, fontSize: 14,
+                padding: "12px 14px", color: INK, fontFamily: MONO, fontSize: 17,
                 outline: "none", width: "100%", boxSizing: "border-box",
               }}
               onFocus={(e) => (e.target.style.boxShadow = `3px 3px 0 ${color}`)}
@@ -87,16 +87,77 @@ function VecInput({ label, color, vec, onChange }) {
   );
 }
 
+// Escena isométrica: ver los dos vectores (y su producto cruz) evita el error
+// clásico de teclear un signo al revés y no darse cuenta.
+//   pantalla_x = (i − j)·cos30      pantalla_y = (i + j)·sen30 − k
+const SCENE = { W: 300, H: 230 };
+const SCENE_CX = SCENE.W / 2;
+const SCENE_CY = SCENE.H / 2 + 14;
+
+// Proyección isométrica de (i, j, k) a coordenadas de pantalla.
+const project = (v, s) => [
+  SCENE_CX + s * (v.i - v.j) * 0.866,
+  SCENE_CY + s * ((v.i + v.j) * 0.5 - v.k),
+];
+
+function SceneArrow({ v, s, color, label, dash }) {
+  const [x, y] = project(v, s);
+  if (Math.hypot(x - SCENE_CX, y - SCENE_CY) < 2) return null;
+  const ang = Math.atan2(y - SCENE_CY, x - SCENE_CX);
+  const h = 9;
+  const p1 = [x - h * Math.cos(ang - 0.4), y - h * Math.sin(ang - 0.4)];
+  const p2 = [x - h * Math.cos(ang + 0.4), y - h * Math.sin(ang + 0.4)];
+  return (
+    <g>
+      <line x1={SCENE_CX} y1={SCENE_CY} x2={x} y2={y} stroke={color} strokeWidth="3" strokeDasharray={dash ? "5 4" : undefined} />
+      <polygon points={`${x},${y} ${p1[0]},${p1[1]} ${p2[0]},${p2[1]}`} fill={color} />
+      <text x={x + (x >= SCENE_CX ? 7 : -7)} y={y + (y >= SCENE_CY ? 13 : -6)} fill={color} fontFamily="Courier New, monospace" fontSize="13" fontWeight="700" textAnchor={x >= SCENE_CX ? "start" : "end"}>
+        {label}
+      </text>
+    </g>
+  );
+}
+
+function SceneAxis({ v, label }) {
+  const [x, y] = project(v, 92);
+  return (
+    <g>
+      <line x1={SCENE_CX} y1={SCENE_CY} x2={x} y2={y} stroke={FAINT} strokeWidth="1.5" />
+      <text x={x} y={y} dx={4} dy={4} fill={FAINT} fontFamily="Courier New, monospace" fontSize="11">{label}</text>
+    </g>
+  );
+}
+
+// Escena isométrica: ver los dos vectores (y su producto cruz) evita el error
+// clásico de teclear un signo al revés y no darse cuenta.
+function VectorScene({ a, b, cross, colorA, colorB, colorC }) {
+  const comps = [a, b, cross || { i: 0, j: 0, k: 0 }].flatMap((v) => [Math.abs(v.i), Math.abs(v.j), Math.abs(v.k)]);
+  const max = Math.max(1, ...comps);
+  const s = 78 / max; // el vector más largo mide ~78 px
+
+  return (
+    <svg viewBox={`0 0 ${SCENE.W} ${SCENE.H}`} width="100%" style={{ maxWidth: SCENE.W, display: "block" }} role="img" aria-label="Representación isométrica de los vectores">
+      <SceneAxis v={{ i: 1, j: 0, k: 0 }} label="i" />
+      <SceneAxis v={{ i: 0, j: 1, k: 0 }} label="j" />
+      <SceneAxis v={{ i: 0, j: 0, k: 1 }} label="k" />
+      <circle cx={SCENE_CX} cy={SCENE_CY} r="3" fill={INK} />
+      {cross && <SceneArrow v={cross} s={s} color={colorC} label="A×B" dash />}
+      <SceneArrow v={a} s={s} color={colorA} label="A" />
+      <SceneArrow v={b} s={s} color={colorB} label="B" />
+    </svg>
+  );
+}
+
 function ResultCard({ title, value, sub, accent }) {
   return (
-    <div style={{ background: accent, border: BORDER, boxShadow: SHADOW_SM, padding: "16px 18px", flex: 1, minWidth: 160 }}>
-      <div style={{ fontFamily: MONO, fontSize: 10, color: "rgba(255,255,255,0.85)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 8 }}>
+    <div style={{ background: accent, border: BORDER, boxShadow: SHADOW_SM, padding: "18px 20px" }}>
+      <div style={{ fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.85)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 10 }}>
         {title}
       </div>
-      <div style={{ fontFamily: MONO, fontSize: typeof value === "string" && value.length > 16 ? 14 : value.length > 8 ? 17 : 22, color: "#fff", fontWeight: 700, wordBreak: "break-all", lineHeight: 1.3 }}>
+      <div style={{ fontFamily: MONO, fontSize: typeof value === "string" && value.length > 16 ? 17 : value.length > 8 ? 21 : 28, color: "#fff", fontWeight: 700, wordBreak: "break-all", lineHeight: 1.25 }}>
         {value}
       </div>
-      {sub && <div style={{ marginTop: 6, fontFamily: MONO, fontSize: 11, color: "rgba(255,255,255,0.85)" }}>{sub}</div>}
+      {sub && <div style={{ marginTop: 7, fontFamily: MONO, fontSize: 12, color: "rgba(255,255,255,0.85)" }}>{sub}</div>}
     </div>
   );
 }
@@ -134,29 +195,37 @@ export default function VectorCalculator({ onAccentChange }) {
     ? `(${fmt(results.cross.i)}, ${fmt(results.cross.j)}, ${fmt(results.cross.k)})`
     : null;
 
-  return (
-    <section style={{ maxWidth: 720, margin: "0 auto", padding: "32px 0 16px" }}>
-      <div style={{ marginBottom: 24 }}>
-        <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 12 }}>
-          02 / 05 — VECTORES
-        </span>
-        <h2 style={{ fontFamily: SANS, fontSize: "clamp(24px, 4vw, 34px)", fontWeight: 800, color: INK, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
-          Calculadora de vectores 3D
-        </h2>
-        <p style={{ fontFamily: MONO, fontSize: 13, color: MUTE, margin: 0 }}>
-          Magnitud · producto punto · producto cruz
-        </p>
-      </div>
+  // La escena se dibuja con lo que hay escrito, sin esperar al botón.
+  const liveA = parseVec(vecA);
+  const liveB = parseVec(vecB);
 
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}>
-        <VecInput label="Vector A" color={A} vec={vecA} onChange={handleChange(setVecA)} />
-        <VecInput label="Vector B" color={B} vec={vecB} onChange={handleChange(setVecB)} />
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16, alignItems: "stretch" }}>
+        <div style={{ flex: "1 1 340px", display: "flex", gap: 16, flexWrap: "wrap" }}>
+          <VecInput label="Vector A" color={A} vec={vecA} onChange={handleChange(setVecA)} />
+          <VecInput label="Vector B" color={B} vec={vecB} onChange={handleChange(setVecB)} />
+        </div>
+
+        <div style={{ flex: "1 1 280px", background: PANEL, border: BORDER, boxShadow: SHADOW_SM, padding: "14px 16px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+          <div style={{ alignSelf: "flex-start", fontFamily: MONO, fontSize: 10, color: MUTE, letterSpacing: 1.6, textTransform: "uppercase" }}>
+            Vista isométrica
+          </div>
+          <VectorScene
+            a={liveA}
+            b={liveB}
+            cross={results ? results.cross : null}
+            colorA={A}
+            colorB={B}
+            colorC={ACCENTS.pink}
+          />
+        </div>
       </div>
 
       <button
         onClick={calculate}
         style={{
-          width: "100%", padding: "14px 0", background: A, border: BORDER, boxShadow: SHADOW,
+          width: "100%", padding: "17px 0", background: A, border: BORDER, boxShadow: SHADOW,
           borderRadius: 0, color: "#fff", fontFamily: SANS, fontWeight: 800, fontSize: 15,
           letterSpacing: 2, cursor: "pointer", marginBottom: 24, transition: "transform 0.05s, box-shadow 0.05s",
         }}
@@ -169,19 +238,18 @@ export default function VectorCalculator({ onAccentChange }) {
 
       {results && (
         <div key={animKey}>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <div style={{ flex: 1, minWidth: 140 }}>
-              <ResultCard title="|A| Magnitud" value={fmt(results.magA)} sub="unidades" accent={A} />
-            </div>
-            <div style={{ flex: 1, minWidth: 140 }}>
-              <ResultCard title="|B| Magnitud" value={fmt(results.magB)} sub="unidades" accent={B} />
-            </div>
-            <div style={{ flex: 1, minWidth: 140 }}>
-              <ResultCard title="A · B  Punto" value={fmt(results.dot)} sub={Math.abs(results.dot) < 1e-9 ? "perpendiculares" : ""} accent={ACCENTS.yellow} />
-            </div>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <ResultCard title="A × B  Cruz" value={crossStr} sub={`|AxB| = ${fmt(magnitude(results.cross))}`} accent={ACCENTS.pink} />
-            </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1.4, color: INK, textTransform: "uppercase" }}>
+              Resultados
+            </span>
+            <div style={{ flex: 1, height: 2, background: INK }} />
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 190px), 1fr))", gap: 14 }}>
+            <ResultCard title="|A| Magnitud" value={fmt(results.magA)} sub="unidades" accent={A} />
+            <ResultCard title="|B| Magnitud" value={fmt(results.magB)} sub="unidades" accent={B} />
+            <ResultCard title="A · B  Punto" value={fmt(results.dot)} sub={Math.abs(results.dot) < 1e-9 ? "perpendiculares" : ""} accent={ACCENTS.yellow} />
+            <ResultCard title="A × B  Cruz" value={crossStr} sub={`|AxB| = ${fmt(magnitude(results.cross))}`} accent={ACCENTS.pink} />
           </div>
 
           <ProcedurePanel accent={A} steps={buildVecSteps(results)} />
@@ -189,10 +257,10 @@ export default function VectorCalculator({ onAccentChange }) {
       )}
 
       {!results && (
-        <div style={{ textAlign: "center", padding: "24px 0", border: `2px dashed ${FAINT}`, color: MUTE, fontFamily: MONO, fontSize: 12, letterSpacing: 0.5 }}>
+        <div style={{ textAlign: "center", padding: "34px 0", border: `2px dashed ${FAINT}`, color: MUTE, fontFamily: MONO, fontSize: 13, letterSpacing: 0.5 }}>
           ingresa coordenadas y presiona calcular
         </div>
       )}
-    </section>
+    </div>
   );
 }

@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import Footer from "./Footer";
 import { ProcedurePanel } from "./ProcedurePanel";
 import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS } from "./theme";
 
@@ -380,21 +378,13 @@ export default function UncertaintyBudget() {
   ] : [];
 
   return (
-    <div style={{ minHeight: "100dvh", background: PAPER, color: INK, fontFamily: SANS }}>
-      <div style={{ maxWidth: 760, margin: "0 auto", padding: "0 16px" }}>
-
-        {/* Navegación de regreso */}
-        <div style={{ padding: "28px 0 0", display: "flex", gap: 18, flexWrap: "wrap" }}>
-          <Link to="/" style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", color: INK, textDecoration: "none", textTransform: "uppercase" }}>
-            ← Inicio
-          </Link>
-          <Link to="/herramientas" style={{ fontFamily: MONO, fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", color: MUTE, textDecoration: "none", textTransform: "uppercase" }}>
-            Todas las herramientas →
-          </Link>
-        </div>
+    <div>
+      {/* El shell de /herramientas ya pone fondo, navegación y pie: aquí solo
+          va el artículo, con ancho de lectura cómodo. */}
+      <div style={{ maxWidth: 820 }}>
 
         {/* ── Sección 1: contenido SEO / educativo ── */}
-        <article style={{ padding: "36px 0 8px" }}>
+        <article style={{ padding: "4px 0 8px" }}>
           <header>
             <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 14, textTransform: "uppercase" }}>
               Metrología · Guía GUM
@@ -581,7 +571,9 @@ export default function UncertaintyBudget() {
         {/* ── Sección 2: motor de cálculo GUM ── */}
         <section id="calculadora" style={{ padding: "48px 0 16px", scrollMarginTop: 16 }}>
           {/* Banda de quiebre: aquí termina el artículo y empieza la herramienta */}
-          <div style={{ borderTop: `2px solid ${INK}`, margin: "0 -16px 0" }} />
+          {/* Sin margen negativo: el relleno lateral lo pone el shell, así que
+              sangrar 16px solo desbordaba la página a lo ancho en móvil. */}
+          <div style={{ borderTop: `2px solid ${INK}` }} />
           <div style={{ background: INK, border: BORDER, boxShadow: SHADOW, padding: "22px 24px", margin: "28px 0" }}>
             <span style={{ display: "inline-block", background: ACCENT, color: "#fff", fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 12, textTransform: "uppercase" }}>
               Herramienta interactiva
@@ -991,8 +983,6 @@ export default function UncertaintyBudget() {
           </div>
         </div>
       )}
-
-      <Footer />
     </div>
   );
 }

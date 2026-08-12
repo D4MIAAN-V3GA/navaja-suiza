@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PAPER, PANEL, INK, MUTE, MONO, BORDER, BORDER_THIN, SHADOW_SM } from "./theme";
+import { PAPER, PANEL, INK, MUTE, MONO, BORDER, BORDER_THIN, BORDER_SOFT, SHADOW_SM } from "./theme";
 
 // Panel desplegable "Ver procedimiento" — mismo look brutalista en todas las herramientas.
 // steps: [{ title: string, lines: string[] }]
@@ -9,13 +9,15 @@ export function ProcedurePanel({ accent, steps }) {
 
   return (
     <div style={{ marginTop: 16 }}>
+      {/* Acción secundaria: el resultado ya se dio, esto es para quien quiere
+          el desarrollo. Borde fino y sin sombra para que no compita. */}
       <button
         onClick={() => setOpen((o) => !o)}
         style={{
           width: "100%",
-          background: open ? INK : PANEL,
-          color: open ? PAPER : INK,
-          border: BORDER,
+          background: open ? INK : "transparent",
+          color: open ? PAPER : MUTE,
+          border: open ? BORDER_THIN : BORDER_SOFT,
           borderRadius: 0,
           padding: "10px",
           fontFamily: MONO,

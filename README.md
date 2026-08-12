@@ -1,18 +1,25 @@
 # 🛠️ La Navaja Suiza del Ingeniero
 
-Conjunto de **5 herramientas de cálculo** para ingenieros y estudiantes — gratis, anti-filtros. El arma secreta de Industrias Muñeco (`@damianvlab`).
+Conjunto de **herramientas de cálculo** para ingenieros y estudiantes — gratis, anti-filtros. Ninguna es material de consulta: todas resuelven y muestran el procedimiento. El arma secreta de Industrias Muñeco (`@damianvlab`).
 
-🔗 https://navaja-suiza.vercel.app
+🔗 https://industriasmuneco.com
 
 ## Herramientas
 
-| # | Herramienta | Qué hace |
-|---|---|---|
-| 01 | **Ecuaciones** | Sistemas lineales 2×2 y 3×3 por regla de Cramer |
-| 02 | **Vectores** | Magnitud, producto punto y producto cruz (3D) |
-| 03 | **Inercia** | Centroides y momentos de inercia de secciones (rectángulo, círculo, triángulo, tubo) |
-| 04 | **Interpolación** | Interpolación lineal entre dos puntos |
-| 05 | **Unidades** | Conversión de presión, torque y fuerza (nivel ingeniería) |
+El catálogo vive en **`src/tools.js`** (fuente única de verdad): agregar una entrada ahí la publica
+en la ruta, el grid, la Landing y la paleta de comandos.
+
+| Herramienta | Qué hace |
+|---|---|
+| **Ecuaciones** | Sistemas lineales 2×2 y 3×3 por regla de Cramer |
+| **Matrices** | Reducción por Gauss paso a paso |
+| **Vectores** | Magnitud, producto punto y producto cruz (3D) |
+| **Inercia** | Centroides y momentos de inercia de secciones (rectángulo, círculo, triángulo, tubo) |
+| **Interpolación** | Interpolación lineal entre dos puntos |
+| **Unidades** | Conversión de presión, torque y fuerza (nivel ingeniería) |
+| **Fórmulas** | **Las resuelve**: eliges qué variable despejar, metes los datos y sale el número con unidades. 37 de 43 ya calculan; el resto quedan como tarjeta |
+| **Incertidumbre** | Presupuesto de incertidumbre GUM con reporte descargable |
+| **TUR / TAR** | Veredicto de la relación de incertidumbre contra la tolerancia |
 
 Cada herramienta incluye un panel desplegable **"Ver procedimiento"** que muestra el desarrollo paso a paso con los números sustituidos — gratis, porque enseñar el método es parte de la marca.
 
@@ -34,6 +41,11 @@ ni glows ni morado. La paleta y los tokens viven en un único archivo: **`src/th
 ```
 src/
   theme.js            ← tokens de diseño (colores, bordes, sombras, fuentes)
+  tools.js            ← catálogo de herramientas (rutas, grid, Landing, paleta)
+  fuzzy.js            ← búsqueda difusa de la biblioteca de fórmulas
+  data/
+    formulas.json     ← contenido de la biblioteca (nombre, fórmula, tags, ref)
+    formulaCalcs.js   ← los despejes que hacen calculable cada fórmula
   App.jsx             ← shell + nav de pestañas (una herramienta activa a la vez)
   EngineerHeader.jsx  ← cabecera
   Footer.jsx          ← redes + CTA Discord
@@ -43,6 +55,70 @@ src/
 ```
 
 Cada herramienta recibe `onAccentChange` y reporta su color de acento, que tiñe la pestaña activa del nav.
+
+## Cómo hacer calculable una fórmula
+
+Una fórmula vive en **`src/data/formulas.json`** (nombre, expresión que se muestra, tags, norma).
+Eso sola la publica como **tarjeta de referencia**. Para que además **se resuelva**, hay que
+agregarle una entrada en **`src/data/formulaCalcs.js`**, con la misma clave numérica que su `id`.
+Las fórmulas sin entrada ahí siguen funcionando como antes — se puede ir de una en una.
+
+**Por qué es un `.js` y no un `.json`:** el CSP de producción (`vercel.json`) no permite
+`'unsafe-eval'`, así que no se puede guardar el despeje como texto y evaluarlo. Cada despeje es
+una función real: sin parser, sin `eval`, y sin poder romperse en producción.
+
+```js
+2: {                                        // ← el id de la fórmula en formulas.json
+  vars: [
+    { key: "Re",  sym: "Re", name: "Número de Reynolds", unit: "—" },
+    { key: "rho", sym: "ρ",  name: "Densidad",           unit: "kg/m³" },
+    { key: "g",   sym: "g",  name: "Gravedad",           unit: "m/s²", def: 9.81 },
+  ],
+  solve: {
+    Re:  ({ rho, v, D, mu }) => (rho * v * D) / mu,
+    rho: ({ Re, v, D, mu }) => (Re * mu) / (v * D),
+  },
+  nota: "Aclaración opcional que sale bajo el resultado.",
+}
+```
+
+**Campos.**
+
+- `key` — el nombre ASCII que usan las funciones. `sym` es lo que ve el usuario (`ρ`, `ΔT`, `σadm`).
+- `unit` — se muestra junto al campo y junto al resultado. Usa `"—"` si es adimensional.
+- `def` — opcional: prellena el campo. Es para constantes (`g`, `R`, `k = 2`), que quedan
+  editables por si el usuario trabaja en otras unidades.
+- `solve` — **un despeje por variable que se pueda aislar**, no hace falta cubrirlas todas. La
+  clave es el `key` de la incógnita y la función recibe un objeto con las demás. **El primer
+  despeje es el que aparece seleccionado al abrir la calculadora**, así que pon el más común.
+- `nota` — obligatoria en la práctica cuando la calculadora usa una forma distinta a la que
+  muestra la tarjeta (p. ej. Fourier, que en la tarjeta va con `dT/dx` y aquí con `ΔT/L`).
+
+**Las sumatorias van a dos términos.** `uc = √(Σuᵢ²)`, resistencias en paralelo y centroide se
+resuelven para el caso de dos, con una `nota` que dice cómo encadenar más. Un campo de lista
+dinámico rompería el patrón de `vars` fijas.
+
+**Una sola relación por fórmula.** El verificador arma el juego de datos calculando el primer
+despeje y exige que los demás lo reproduzcan, así que una fórmula con dos relaciones acopladas
+no puede cerrar. Si un despeje es ambiguo (p. ej. el tamaño real en MMC, cuyo signo depende de
+si es eje o agujero), déjalo fuera de `solve` y explícalo en `nota`.
+
+**De GD&T se calcula la verificación, no la anotación.** El símbolo no tiene despeje, pero sí la
+cuenta de atrás: posición `⌀ = 2√(Δx²+Δy²)`, planitud `Lmax − Lmin`, circularidad y cilindricidad
+`(Dmax − Dmin)/2`, y la bonificación de MMC.
+
+**Qué no lleva calculadora (6).** Las cinco de **Cálculo** (cadena, producto, partes, Laplace y
+Taylor son reglas simbólicas: harían falta un parser con derivación o un selector de función) y
+**equilibrio estático**, que no tiene un juego fijo de variables. El CSP no lo impide — un parser
+escrito a mano no usa `eval`; lo que frena es el alcance.
+
+**Antes de subir**, corre la verificación de ida y vuelta: arma un juego de datos consistente
+por fórmula y comprueba que despejar cada variable devuelva su valor original. Cualquier
+despeje mal escrito se cae ahí.
+
+```bash
+node scripts/verify-calcs.mjs
+```
 
 ## Desarrollo
 

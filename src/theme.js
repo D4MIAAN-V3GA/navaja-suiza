@@ -14,6 +14,29 @@ export const BORDER_THIN = `1px solid ${INK}`;
 export const SHADOW = `5px 5px 0 ${INK}`;
 export const SHADOW_SM = `3px 3px 0 ${INK}`;
 
+// Línea suave para lo SECUNDARIO. Si todo lleva borde de 2px y sombra dura,
+// nada resalta y la pantalla se vuelve ruido: el peso visual deja de indicar
+// qué hay que hacer. Regla de la casa:
+//
+//   2px + sombra → lo interactivo y lo principal (botón de calcular, tarjeta
+//                  de datos, resultado, navegación, tarjetas del catálogo)
+//   BORDER_SOFT  → lo que solo acompaña (fichas de referencia, guías del riel,
+//                  chips, notas, separadores)
+export const LINE = "#ded8c6";
+export const BORDER_SOFT = `1px solid ${LINE}`;
+
+// Escala tipográfica — un salto claro entre niveles, no cinco tamaños casi
+// iguales. Se usa con los tokens de fuente de arriba.
+//   T1 título de herramienta   SANS 800  clamp(19, 2.1vw, 26)
+//   T2 título de bloque        SANS 800  15
+//   T3 etiqueta                MONO 700  10 · uppercase · letterSpacing 1.5
+//   DATO resultado             MONO 700  clamp(26, 5vw, 40)
+//   CUERPO                     SANS      13 / 1.55
+export const T3 = (extra = {}) => ({
+  fontFamily: MONO, fontSize: 10, fontWeight: 700, letterSpacing: 1.5,
+  textTransform: "uppercase", color: MUTE, ...extra,
+});
+
 // Sans para títulos/cuerpo, mono SOLO para números/fórmulas/inputs.
 export const SANS = `Helvetica, Arial, "Helvetica Neue", system-ui, sans-serif`;
 export const MONO = `"Courier New", "Courier", ui-monospace, Menlo, monospace`;

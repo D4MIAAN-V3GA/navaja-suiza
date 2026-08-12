@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS } from "./theme";
+import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, BORDER_SOFT, SHADOW, SHADOW_SM, ACCENTS } from "./theme";
 import { ProcedurePanel } from "./ProcedurePanel";
 
 const SHAPES = [
-  { value: "rectangle", label: "Rectángulo" },
-  { value: "circle", label: "Círculo" },
-  { value: "triangle", label: "Triángulo (base/altura)" },
-  { value: "hollow_circle", label: "Círculo Hueco (tubo)" },
+  { value: "rectangle",     label: "Rectángulo",              short: "Rectángulo" },
+  { value: "circle",        label: "Círculo",                 short: "Círculo" },
+  { value: "triangle",      label: "Triángulo (base/altura)", short: "Triángulo" },
+  { value: "hollow_circle", label: "Círculo Hueco (tubo)",    short: "Tubo" },
 ];
 
 function fmt(n, dec = 4) {
@@ -111,16 +111,18 @@ function buildInertiaSteps(shape, vals, r) {
 }
 
 // SVG: relleno plano con el accent, trazo de tinta. Sin glow ni filtros.
-function ShapePreview({ shape, vals, accent }) {
-  const size = 140;
-  const pad = 18;
+function ShapePreview({ shape, vals, accent, size = 200 }) {
+  const pad = size * 0.13;
   const inner = size - pad * 2;
   const stroke = INK;
 
   if (shape === "rectangle") {
-    const b = parseFloat(vals.b) || 0;
-    const h = parseFloat(vals.h) || 0;
-    const max = Math.max(b, h, 1);
+    // Sin datos se dibuja una proporción de muestra: un rectángulo de 0×0
+    // no se vería, y esta figura también hace de icono en el selector.
+    const hasVals = parseFloat(vals.b) > 0 && parseFloat(vals.h) > 0;
+    const b = hasVals ? parseFloat(vals.b) : 1.5;
+    const h = hasVals ? parseFloat(vals.h) : 1;
+    const max = Math.max(b, h, 1e-9);
     const rw = (b / max) * inner;
     const rh = (h / max) * inner;
     const x = pad + (inner - rw) / 2;
@@ -147,9 +149,10 @@ function ShapePreview({ shape, vals, accent }) {
     );
   }
   if (shape === "triangle") {
-    const b = parseFloat(vals.b) || 0;
-    const h = parseFloat(vals.h) || 0;
-    const max = Math.max(b, h, 1);
+    const hasVals = parseFloat(vals.b) > 0 && parseFloat(vals.h) > 0;
+    const b = hasVals ? parseFloat(vals.b) : 1.4;
+    const h = hasVals ? parseFloat(vals.h) : 1;
+    const max = Math.max(b, h, 1e-9);
     const tw = (b / max) * inner;
     const th = (h / max) * inner;
     const ox = pad + (inner - tw) / 2;
@@ -195,8 +198,8 @@ function InputField({ label, value, onChange, placeholder = "0", accent }) {
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         style={{
-          background: PAPER, border: BORDER, borderRadius: 0, padding: "10px 14px",
-          color: INK, fontFamily: MONO, fontSize: 15, outline: "none", width: "100%", boxSizing: "border-box",
+          background: PAPER, border: BORDER, borderRadius: 0, padding: "13px 15px",
+          color: INK, fontFamily: MONO, fontSize: 17, outline: "none", width: "100%", boxSizing: "border-box",
         }}
         onFocus={(e) => (e.target.style.boxShadow = `3px 3px 0 ${accent}`)}
         onBlur={(e) => (e.target.style.boxShadow = "none")}
@@ -207,11 +210,11 @@ function InputField({ label, value, onChange, placeholder = "0", accent }) {
 
 function ResultRow({ label, value, unit, accent }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 0", borderBottom: `1px solid ${FAINT}` }}>
-      <span style={{ fontFamily: MONO, fontSize: 12, color: MUTE }}>{label}</span>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: `1px solid ${FAINT}` }}>
+      <span style={{ fontFamily: MONO, fontSize: 13, color: MUTE }}>{label}</span>
       <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-        <span style={{ fontFamily: MONO, fontSize: 15, color: accent, fontWeight: 700 }}>{value}</span>
-        {unit && <span style={{ fontFamily: MONO, fontSize: 10, color: FAINT }}>{unit}</span>}
+        <span style={{ fontFamily: MONO, fontSize: 19, color: accent, fontWeight: 700 }}>{value}</span>
+        {unit && <span style={{ fontFamily: MONO, fontSize: 11, color: FAINT }}>{unit}</span>}
       </div>
     </div>
   );
@@ -262,45 +265,44 @@ export default function InertiaCalculator({ onAccentChange }) {
   useEffect(() => { onAccentChange?.(accent); }, [accent]);
 
   return (
-    <section style={{ maxWidth: 680, margin: "0 auto", padding: "32px 0 16px" }}>
-      <div style={{ marginBottom: 24 }}>
-        <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 12 }}>
-          03 / 05 — INERCIA
-        </span>
-        <h2 style={{ fontFamily: SANS, fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, color: INK, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
-          Centroides & momentos de inercia
-        </h2>
-        <p style={{ fontFamily: MONO, fontSize: 13, color: MUTE, margin: 0 }}>
-          Propiedades geométricas de sección transversal
-        </p>
-      </div>
-
+    <div>
       <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW }}>
-        {/* Shape selector */}
-        <div style={{ padding: "20px 24px", borderBottom: BORDER }}>
-          <label style={{ display: "block", fontFamily: MONO, fontSize: 11, color: MUTE, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 8 }}>
+        {/* Selector de perfil: fichas con la figura dibujada, no una lista
+            desplegable — se elige con la vista, que es como se piensa un perfil. */}
+        <div style={{ padding: "18px 22px", borderBottom: BORDER }}>
+          <div style={{ fontFamily: MONO, fontSize: 11, color: MUTE, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 10 }}>
             Tipo de perfil
-          </label>
-          <select
-            value={shape}
-            onChange={(e) => { setShape(e.target.value); setVals({ b: "", h: "", r: "", R: "", r2: "" }); }}
-            style={{
-              width: "100%", background: PAPER, border: BORDER, borderRadius: 0,
-              padding: "11px 14px", color: INK, fontFamily: MONO, fontSize: 14,
-              outline: "none", cursor: "pointer", appearance: "none",
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23161616' d='M6 8L0 0h12z'/%3E%3C/svg%3E")`,
-              backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center", paddingRight: 38,
-            }}
-          >
-            {SHAPES.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
-            ))}
-          </select>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 120px), 1fr))", gap: 10 }}>
+            {SHAPES.map((s) => {
+              const active = shape === s.value;
+              const sAccent = accentMap[s.value];
+              return (
+                <button
+                  key={s.value}
+                  onClick={() => { setShape(s.value); setVals({ b: "", h: "", r: "", R: "", r2: "" }); }}
+                  aria-pressed={active}
+                  style={{
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+                    padding: "12px 8px", cursor: "pointer", borderRadius: 0,
+                    border: BORDER, background: active ? sAccent : PAPER,
+                    boxShadow: active ? SHADOW_SM : "none",
+                    color: active ? "#fff" : INK,
+                  }}
+                >
+                  <ShapePreview shape={s.value} vals={{}} accent={active ? "#ffffff" : sAccent} size={52} />
+                  <span style={{ fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textAlign: "center", lineHeight: 1.3 }}>
+                    {s.short}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Inputs + preview */}
         <div style={{ display: "flex", flexWrap: "wrap", borderBottom: BORDER }}>
-          <div style={{ flex: "1 1 220px", padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ flex: "1 1 240px", padding: "22px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
             {(shape === "rectangle" || shape === "triangle") && (
               <>
                 <InputField label="Base (b)" value={vals.b} onChange={set("b")} placeholder="ej. 100" accent={accent} />
@@ -326,10 +328,13 @@ export default function InertiaCalculator({ onAccentChange }) {
             </p>
           </div>
 
-          <div style={{ flex: "0 0 140px", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", borderLeft: BORDER }}>
-            <div style={{ opacity: results ? 1 : 0.35 }}>
+          <div className="inertia-preview" style={{ flex: "1 1 240px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "20px", borderLeft: BORDER }}>
+            <div style={{ opacity: results ? 1 : 0.4 }}>
               <ShapePreview shape={shape} vals={vals} accent={accent} />
             </div>
+            <span style={{ fontFamily: MONO, fontSize: 10.5, color: FAINT, letterSpacing: 1, textTransform: "uppercase" }}>
+              ● centroide · - - ejes
+            </span>
           </div>
         </div>
 
@@ -356,7 +361,7 @@ export default function InertiaCalculator({ onAccentChange }) {
               </div>
             </>
           ) : (
-            <div style={{ textAlign: "center", padding: "24px 0", fontFamily: MONO, fontSize: 12, color: MUTE }}>
+            <div style={{ textAlign: "center", padding: "30px 0", fontFamily: MONO, fontSize: 13, color: MUTE }}>
               ingresa las dimensiones para ver los resultados en tiempo real
             </div>
           )}
@@ -365,8 +370,8 @@ export default function InertiaCalculator({ onAccentChange }) {
 
       {results && <ProcedurePanel accent={accent} steps={buildInertiaSteps(shape, vals, results)} />}
 
-      {/* Formula reference */}
-      <div style={{ marginTop: 16, background: PANEL, border: BORDER, boxShadow: SHADOW_SM, padding: "14px 20px", display: "flex", flexWrap: "wrap", gap: "6px 24px" }}>
+      {/* Referencia: acompaña, no compite — línea suave y sin sombra. */}
+      <div style={{ marginTop: 16, border: BORDER_SOFT, padding: "10px 16px", display: "flex", flexWrap: "wrap", gap: "6px 24px" }}>
         {shape === "rectangle" && ["I_x = bh³/12", "I_y = hb³/12", "ȳ = h/2"].map(f => (
           <span key={f} style={{ fontFamily: MONO, fontSize: 11, color: MUTE }}>{f}</span>
         ))}
@@ -380,6 +385,6 @@ export default function InertiaCalculator({ onAccentChange }) {
           <span key={f} style={{ fontFamily: MONO, fontSize: 11, color: MUTE }}>{f}</span>
         ))}
       </div>
-    </section>
+    </div>
   );
 }

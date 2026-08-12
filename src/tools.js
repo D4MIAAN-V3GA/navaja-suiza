@@ -18,7 +18,9 @@ export const CATEGORIES = [
   { id: "numerico", label: "Numérico" },
   { id: "unidades", label: "Unidades" },
   { id: "metrologia", label: "Metrología" },
-  { id: "referencia", label: "Referencia" },
+  // Antes era "Referencia". Se renombró al volverse calculable la biblioteca:
+  // ninguna herramienta del catálogo es material de consulta, todas ejecutan.
+  { id: "fisica", label: "Física aplicada" },
 ];
 
 export const TOOLS = [
@@ -28,7 +30,7 @@ export const TOOLS = [
   { id: "inercia",       label: "Inercia",       desc: "Centroide e inercia de tu perfil, listos para copiar",        category: "secciones",  accent: ACCENTS.orange, component: InertiaCalculator },
   { id: "interpolacion", label: "Interpolación", desc: "El valor entre dos puntos de tu tabla, en segundos",          category: "numerico",   accent: ACCENTS.pink,   component: LinearInterpolator },
   { id: "unidades",      label: "Unidades",      desc: "Convierte y te avisa si tu número no tiene sentido",          category: "unidades",   accent: ACCENTS.cyan,   component: UnitConverter },
-  { id: "formulas",      label: "Fórmulas",      desc: "Busca la fórmula que se te olvidó, sin abrir el libro",       category: "referencia", accent: ACCENTS.yellow, component: FormulaLibrary },
+  { id: "formulas",      label: "Fórmulas",      desc: "Eliges qué despejar, metes los datos y te da el número",      category: "fisica",     accent: ACCENTS.yellow, component: FormulaLibrary },
   { id: "incertidumbre", label: "Incertidumbre", desc: "Presupuesto GUM completo con reporte descargable",            category: "metrologia", accent: ACCENTS.red,    component: UncertaintyBudget },
   { id: "tur",           label: "TUR / TAR",     desc: "¿Tu patrón pasa la regla 4:1? Te doy el veredicto",           category: "metrologia", accent: ACCENTS.brown,  component: TurTar },
 ];

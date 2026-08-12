@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS } from "./theme";
+import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, BORDER_SOFT, SHADOW, SHADOW_SM, ACCENTS } from "./theme";
 import { ProcedurePanel } from "./ProcedurePanel";
 
 // ── Conversion data ────────────────────────────────────────────────
@@ -334,7 +334,7 @@ export default function UnitConverter({ onAccentChange }) {
 
   const SelectStyle = {
     background: PAPER, border: BORDER, borderRadius: 0,
-    padding: "11px 36px 11px 14px", color: INK, fontFamily: MONO, fontSize: 13,
+    padding: "14px 36px 14px 14px", color: INK, fontFamily: MONO, fontSize: 14.5,
     outline: "none", cursor: "pointer", appearance: "none", WebkitAppearance: "none",
     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23161616' d='M5 6L0 0h10z'/%3E%3C/svg%3E")`,
     backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center",
@@ -342,19 +342,7 @@ export default function UnitConverter({ onAccentChange }) {
   };
 
   return (
-    <section style={{ maxWidth: 600, margin: "0 auto", padding: "32px 0 16px" }}>
-      <div style={{ marginBottom: 24 }}>
-        <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", marginBottom: 12 }}>
-          05 / 05 — UNIDADES
-        </span>
-        <h2 style={{ fontFamily: SANS, fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 800, color: INK, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
-          ¿Tiene sentido tu número?
-        </h2>
-        <p style={{ fontFamily: MONO, fontSize: 13, color: MUTE, margin: 0 }}>
-          Convierte y compara contra un contexto real — presión · torque · fuerza · longitud · masa · temperatura
-        </p>
-      </div>
-
+    <div>
       {/* Category tabs */}
       <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
         {Object.entries(CATEGORIES).map(([key, c]) => {
@@ -395,8 +383,9 @@ export default function UnitConverter({ onAccentChange }) {
                     setFromUnit(c.unit);
                   }}
                   style={{
-                    padding: "8px 14px", background: active ? accent : PANEL, border: BORDER, borderRadius: 0,
-                    color: active ? "#fff" : INK, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 0.5,
+                    padding: "8px 14px", background: active ? accent : "transparent",
+                    border: active ? BORDER : BORDER_SOFT, borderRadius: 0,
+                    color: active ? "#fff" : MUTE, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 0.5,
                     cursor: "pointer",
                   }}>
                   {c.label}
@@ -418,7 +407,7 @@ export default function UnitConverter({ onAccentChange }) {
                 value={inputVal}
                 onChange={e => setInputVal(e.target.value)}
                 placeholder="0"
-                style={{ background: PAPER, border: BORDER, borderRadius: 0, padding: "11px 14px", color: INK, fontFamily: MONO, fontSize: 18, fontWeight: 700, outline: "none", width: "100%", boxSizing: "border-box" }}
+                style={{ background: PAPER, border: BORDER, borderRadius: 0, padding: "14px 15px", color: INK, fontFamily: MONO, fontSize: 20, fontWeight: 700, outline: "none", width: "100%", boxSizing: "border-box" }}
               />
             </Cell>
 
@@ -430,8 +419,8 @@ export default function UnitConverter({ onAccentChange }) {
 
             <Cell label="">
               <button onClick={swap} aria-label="Intercambiar unidades" style={{
-                background: INK, border: BORDER, borderRadius: 0, color: PAPER, fontSize: 16,
-                cursor: "pointer", height: 44, width: "100%", display: "flex", alignItems: "center", justifyContent: "center",
+                background: INK, border: BORDER, borderRadius: 0, color: PAPER, fontSize: 18,
+                cursor: "pointer", height: 50, width: "100%", display: "flex", alignItems: "center", justifyContent: "center",
               }}>⇄</button>
             </Cell>
 
@@ -517,14 +506,14 @@ export default function UnitConverter({ onAccentChange }) {
 
       {result !== null && inputVal !== "" && <ProcedurePanel accent={accent} steps={procSteps} />}
 
-      {/* Unit reference chips */}
+      {/* Referencia de unidades: peso mínimo, es material de consulta. */}
       <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: 8 }}>
         {Object.entries(units).map(([key, u]) => (
-          <div key={key} style={{ background: PANEL, border: BORDER_THIN, borderRadius: 0, padding: "5px 12px", fontFamily: MONO, fontSize: 10, color: MUTE }}>
+          <div key={key} style={{ border: BORDER_SOFT, borderRadius: 0, padding: "5px 11px", fontFamily: MONO, fontSize: 11, color: MUTE }}>
             <span style={{ color: accent, fontWeight: 700 }}>{u.label}</span> {u.name}
           </div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
