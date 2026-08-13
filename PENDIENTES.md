@@ -3,6 +3,26 @@
 > Esto es un **lanzamiento de ACTUALIZACIÓN** (no relanzamiento). El dominio ya está
 > vivo y ya se anunció en Discord. Lo nuevo a lanzar: **landing/link-in-bio** + **herramienta 06**.
 
+## 🔥 Oferta «De Atorado a Aprobado» (2026-08-13)
+
+El sitio ya la vende: la tarjeta está en la Landing justo debajo del hero (`RescueCard`), el
+riel de cada herramienta manda a `/#rescate`, y la Zona Premium de Ko-fi se desmontó. Falta
+lo que no vive en el código:
+
+- [ ] **Formulario de intake** (Google Forms/Tally): nombre, materia/tema, descripción del
+      problema, preferencia video o llamada. Pegar la URL en `INTAKE_URL` (`src/offer.js`).
+- [ ] **Link de cobro de Mercado Pago** → `MERCADO_PAGO_URL`.
+- [ ] **Número de WhatsApp** (`wa.me/52…`) → `WHATSAPP_URL`.
+      ⚠️ Mientras los tres estén vacíos, el botón «Manda tu problema» abre correo a
+      `contacto@industriasmuneco.com`. Funciona, pero es más fricción de la que aguanta la oferta.
+- [ ] **Video/post de lanzamiento con CTA explícito** al flujo nuevo. La historia que ya se
+      subió no traía CTA — sin eso, la oferta existe pero nadie la ve.
+- [ ] **Los 2 testimonios**: pedir (1) cómo describían su bloqueo con sus propias palabras y
+      (2) 2-3 líneas de resultado, idealmente screenshot del mensaje real, con nombre o
+      iniciales según prefieran. Van a `TESTIMONIOS` en `src/offer.js` — el bloque no se
+      pinta hasta que haya algo real que poner.
+- [ ] **Revisar la Landing a 375px**: el rediseño de jerarquía se verificó a 1568px en Chrome.
+
 ## 🔴 A cargo de Damián
 - [x] **Correo profesional — decisión**: se eligió `contacto@industriasmuneco.com` (ya está en `src/Landing.jsx`, `CONTACT_EMAIL`).
 - [x] **Correo profesional — crear buzón**: `contacto@industriasmuneco.com` creado y confirmado (recibe y envía).

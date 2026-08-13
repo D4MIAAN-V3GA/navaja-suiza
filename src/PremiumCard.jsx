@@ -1,5 +1,12 @@
 import { PANEL, INK, MUTE, MONO, SANS, BORDER, BORDER_THIN, SHADOW, ACCENTS } from "./theme";
 
+// ⚠️ DESMONTADO (2026-08-13). Ya no se renderiza en ninguna parte: la Landing y
+// el hub ahora venden el rescate 1 a 1 de `src/offer.js` (pago único, Mercado
+// Pago, WhatsApp). Dos ofertas de pago en la misma pantalla se anulaban, y la
+// suscripción de $5/mes nunca llenó los 30 lugares. Se conserva el archivo por
+// si el premium vuelve como escalón posterior al rescate — si vuelve, revisar
+// que no compita con la oferta principal.
+//
 // ── Oferta premium: fuente ÚNICA de verdad ───────────────────────────
 // El mismo precio y la misma escasez que se dicen en los videos y en la bio
 // tienen que aparecer aquí idénticos. Si cambia el precio, se cambia AQUÍ

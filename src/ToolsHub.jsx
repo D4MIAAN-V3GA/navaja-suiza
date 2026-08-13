@@ -3,7 +3,6 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import EngineerHeader from "./EngineerHeader";
 import Footer from "./Footer";
 import CommandPalette from "./CommandPalette";
-import PremiumCard from "./PremiumCard";
 import ToolRail from "./ToolRail";
 import { CATEGORIES, TOOLS, getTool } from "./tools";
 import { useFavorites } from "./useFavorites";
@@ -230,8 +229,6 @@ export default function ToolsHub() {
             </div>
           </aside>
         </div>
-
-        <PremiumCard style={{ margin: "36px 0 8px" }} />
       </div>
 
       <CommandPalette />

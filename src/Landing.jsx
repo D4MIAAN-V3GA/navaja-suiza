@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Footer from './Footer';
-import PremiumCard from './PremiumCard';
+import RescueCard from './RescueCard';
 import { TOOLS } from './tools';
-import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, SHADOW, SHADOW_SM, ACCENTS, textOn } from './theme';
+import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, BORDER_SOFT, ACCENTS, T3, textOn } from './theme';
 
 // Catálogo para la portada: todo menos las herramientas B2B, que tienen su propia sección aparte.
 const GRID_TOOLS = TOOLS.filter((t) => t.id !== 'incertidumbre' && t.id !== 'tur');
@@ -64,45 +65,80 @@ const LINKS = [
   { key: 'email',     label: 'Contacto',  sub: 'Marcas y colabs', href: `mailto:${CONTACT_EMAIL}`, external: false, color: ACCENTS.green },
 ];
 
-// Botón de enlace: bloque de icono con color por red (brutalista, diferenciado).
+// Herramientas B2B. Se enlazan desde aquí, nunca desde el catálogo de
+// estudiantes: son otro público y otra conversación.
+const INDUSTRIA = [
+  {
+    to: '/herramientas/incertidumbre',
+    color: ACCENTS.red,
+    titulo: 'Presupuesto de incertidumbre (GUM)',
+    texto: 'Calculadora y guía para laboratorios y áreas de calidad: evaluación Tipo A y Tipo B, suma en cuadratura e incertidumbre expandida U (k=2), con el procedimiento paso a paso.',
+  },
+  {
+    to: '/herramientas/tur',
+    color: ACCENTS.brown,
+    titulo: 'TUR / TAR: ¿tu patrón es apto para calibrar?',
+    texto: 'No hagas la cuenta a mano — dame los datos de tu instrumento y tu patrón, y te digo si pasa la regla 4:1, con veredicto y procedimiento incluido.',
+  },
+];
+
+// Botón de enlace: bloque de icono con color por red.
+// Peso bajo a propósito (línea suave, sin sombra): las redes son el pie de la
+// página, no la acción que se está pidiendo.
 function LinkButton({ icon, label, sub, href, external, color }) {
   return (
     <a
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       style={{
-        display: 'flex', alignItems: 'center', gap: 14,
-        padding: '12px 16px',
-        border: BORDER, background: PANEL, boxShadow: SHADOW_SM,
+        display: 'flex', alignItems: 'center', gap: 12,
+        padding: '10px 14px',
+        border: BORDER_SOFT, background: PANEL,
         color: INK, textDecoration: 'none',
-        transition: 'transform 0.05s, box-shadow 0.05s',
       }}
-      onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(3px,3px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
-      onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
-      onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
     >
       <span style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        width: 40, height: 40, flexShrink: 0,
-        background: color, border: BORDER_THIN,
+        width: 34, height: 34, flexShrink: 0,
+        background: color,
       }}>
         {icon(textOn(color))}
       </span>
       <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25 }}>
-        <span style={{ fontFamily: SANS, fontSize: 15, fontWeight: 800 }}>{label}</span>
+        <span style={{ fontFamily: SANS, fontSize: 14, fontWeight: 800 }}>{label}</span>
         <span style={{ fontFamily: MONO, fontSize: 11, color: MUTE, letterSpacing: '0.04em' }}>{sub}</span>
       </span>
     </a>
   );
 }
 
+// Sección de la Landing. La etiqueta ya no es un rectángulo negro: cinco cajas
+// negras en una página gritan todas al mismo volumen. Queda una sola voz alta
+// —la de la oferta— y las secciones se separan con una línea y una etiqueta T3.
+function Section({ label, children, id, first }) {
+  return (
+    <section id={id} style={{ borderTop: BORDER_SOFT, marginTop: first ? 34 : 44, paddingTop: 22 }}>
+      <h2 style={T3({ color: MUTE, margin: '0 0 16px' })}>{label}</h2>
+      {children}
+    </section>
+  );
+}
+
 export default function Landing() {
+  // El riel de las herramientas manda aquí con /#rescate. React Router no hace
+  // el salto por su cuenta, así que lo hacemos nosotros.
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash !== '#rescate') return;
+    document.getElementById('rescate')?.scrollIntoView({ block: 'start' });
+  }, [hash]);
+
   return (
     <div style={{ minHeight: '100dvh', background: PAPER, color: INK, fontFamily: SANS }}>
       <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 16px' }}>
 
         {/* ── Hero de marca: corto, invita a acercarse ── */}
-        <header style={{ padding: '52px 0 32px' }}>
+        <header className="landing-hero" style={{ padding: '52px 0 32px' }}>
           <div style={{
             display: 'inline-block', background: INK, color: PAPER,
             fontFamily: MONO, fontSize: 12, letterSpacing: 2,
@@ -120,9 +156,10 @@ export default function Landing() {
             La navaja suiza del ingeniero
           </h1>
 
-          <p style={{ fontFamily: MONO, fontSize: 14, color: MUTE, margin: '16px 0 0', lineHeight: 1.6, maxWidth: 560 }}>
+          <p style={{ fontFamily: SANS, fontSize: 16, color: MUTE, margin: '16px 0 0', lineHeight: 1.6, maxWidth: 580 }}>
             Calculadoras que resuelven tu problema de ingeniería en segundos — y te enseñan
             el procedimiento, para que lo puedas defender en el examen. Gratis y sin registro.
+            Y si el problema es más grande que una calculadora, <strong style={{ color: INK }}>te lo resuelvo yo</strong>.
           </p>
 
           {/* Prueba social: la escasez del premium solo es creíble si antes hay demanda */}
@@ -130,28 +167,27 @@ export default function Landing() {
             +300 ingenieros en el Discord · {TOOLS.length} herramientas · 0 registros
           </p>
 
-          {/* Un solo CTA primario; "Colaboremos" baja a enlace de texto (las marcas lo
-              buscan en SOBRE MÍ, donde sigue teniendo su botón completo). */}
-          <div style={{ marginTop: 28, display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'center' }}>
+          {/* CTA secundario en peso: el botón que cuesta dinero es el de la
+              oferta, aquí abajo, y es el único con sombra en toda la página. */}
+          <div style={{ marginTop: 26, display: 'flex', flexWrap: 'wrap', gap: 18, alignItems: 'center' }}>
             <Link
               to="/herramientas"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 10,
-                padding: '15px 26px', border: BORDER, background: INK, boxShadow: SHADOW, color: PAPER,
-                fontFamily: MONO, fontSize: 14, fontWeight: 700, letterSpacing: '0.06em',
+                padding: '13px 24px', border: BORDER, background: INK, color: PAPER,
+                fontFamily: MONO, fontSize: 13.5, fontWeight: 700, letterSpacing: '0.06em',
                 textDecoration: 'none', textTransform: 'uppercase',
-                transition: 'transform 0.05s, box-shadow 0.05s',
               }}
-              onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(5px,5px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
-              onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW; }}
             >
               Abrir herramientas →
             </Link>
+            {/* En móvil se oculta (index.css): el mismo enlace está en SOBRE MÍ
+                y aquí solo mete un renglón entre el teléfono y la oferta. */}
             <a
+              className="landing-brandlink"
               href={`mailto:${CONTACT_EMAIL}?subject=Colaboración con Industrias Muñeco`}
               style={{
-                fontFamily: MONO, fontSize: 13, color: MUTE,
+                fontFamily: SANS, fontSize: 13.5, color: MUTE,
                 textDecoration: 'underline', textUnderlineOffset: 3,
               }}
             >
@@ -160,153 +196,99 @@ export default function Landing() {
           </div>
         </header>
 
-        {/* ── Zona Premium: segunda sección, arriba del catálogo gratis ── */}
-        <section style={{ padding: '4px 0 12px' }}>
-          <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
-            ZONA PREMIUM
-          </span>
-          <PremiumCard />
+        {/* ── La oferta: primera sección después del hero, sin nada que la tape ── */}
+        <section id="rescate" style={{ padding: '4px 0 12px', scrollMarginTop: 16 }}>
+          <RescueCard />
         </section>
 
-        {/* ── Herramientas ── */}
-        <section style={{ paddingBottom: 12 }}>
-          <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
-            {GRID_TOOLS.length} HERRAMIENTAS · GRATIS
-          </span>
+        {/* ── Herramientas: el regalo que trae a la gente, en peso de navegación ── */}
+        <Section first label={`${GRID_TOOLS.length} herramientas · gratis`}>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 230px), 1fr))',
-            gap: 14,
+            gap: 12,
           }}>
             {GRID_TOOLS.map((t, i) => (
               <Link key={t.id} to={`/herramientas/${t.id}`} style={{ textDecoration: 'none' }}>
                 <div style={{
-                  background: PANEL, border: BORDER, boxShadow: SHADOW_SM,
-                  padding: '14px 16px', height: '100%', boxSizing: 'border-box',
+                  background: PANEL, border: BORDER_THIN,
+                  padding: '13px 15px', height: '100%', boxSizing: 'border-box',
                   display: 'flex', flexDirection: 'column', gap: 5,
                 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                    <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: t.accent }}>{String(i + 1).padStart(2, '0')}</span>
-                    <span style={{ fontFamily: SANS, fontSize: 16, fontWeight: 800, color: INK }}>{t.label}</span>
+                    <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: t.accent }}>{String(i + 1).padStart(2, '0')}</span>
+                    <span style={{ fontFamily: SANS, fontSize: 15.5, fontWeight: 800, color: INK }}>{t.label}</span>
                   </div>
-                  <span style={{ fontFamily: MONO, fontSize: 12, color: MUTE, lineHeight: 1.5 }}>{t.desc}</span>
+                  <span style={{ fontFamily: SANS, fontSize: 12.5, color: MUTE, lineHeight: 1.5 }}>{t.desc}</span>
                 </div>
               </Link>
             ))}
           </div>
-        </section>
+        </Section>
 
-        {/* ── Sobre mí: gancho personal para seguidores y marcas ── */}
-        <section style={{ padding: '40px 0 0' }}>
-          <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
-            SOBRE MÍ
-          </span>
-          <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, padding: '20px 22px' }}>
-            <h2 style={{ fontFamily: SANS, fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
-              Ingeniero en metrología + creador de contenido
-            </h2>
-            <p style={{ fontFamily: MONO, fontSize: 13.5, color: MUTE, lineHeight: 1.65, margin: 0 }}>
-              Hago ingeniería con humor. En mi Discord y mis historias le regalo valor real a mi comunidad —
-              sin filtros, sin paywalls, sin humo. <strong style={{ color: INK }}>Industrias Muñeco</strong> es mi marca:
-              herramientas, contenido y una comunidad de ingenieros y estudiantes que de verdad usa lo que comparto.
-            </p>
-            <p style={{ fontFamily: MONO, fontSize: 13.5, color: INK, lineHeight: 1.6, margin: '14px 0 16px', fontWeight: 700 }}>
-              ¿Eres una marca? Trabajo patrocinios y colaboraciones.
-            </p>
+        {/* ── Sobre mí: es quien responde el rescate, no una tarjeta más ── */}
+        <Section label="Sobre mí">
+          <h3 style={{ fontFamily: SANS, fontSize: 'clamp(18px, 3.4vw, 22px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
+            Ingeniero en metrología + creador de contenido
+          </h3>
+          <p style={{ fontFamily: SANS, fontSize: 14, color: MUTE, lineHeight: 1.65, margin: 0, maxWidth: 620 }}>
+            Hago ingeniería con humor. En mi Discord y mis historias le regalo valor real a mi comunidad —
+            sin filtros, sin paywalls, sin humo. <strong style={{ color: INK }}>Industrias Muñeco</strong> es mi marca:
+            herramientas, contenido y una comunidad de ingenieros y estudiantes que de verdad usa lo que comparto.
+            Cuando pides un rescate, del otro lado estoy yo — no un becario ni un bot.
+          </p>
+          <p style={{ fontFamily: SANS, fontSize: 14, color: MUTE, lineHeight: 1.65, margin: '12px 0 0' }}>
+            ¿Eres una marca? Trabajo patrocinios y colaboraciones:{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}?subject=Colaboración con Industrias Muñeco`}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 10,
-                padding: '12px 22px', border: BORDER, background: PAPER, boxShadow: SHADOW_SM, color: INK,
-                fontFamily: MONO, fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
-                textDecoration: 'none', textTransform: 'uppercase',
-                transition: 'transform 0.05s, box-shadow 0.05s',
-              }}
-              onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(3px,3px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
-              onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
+              style={{ color: INK, fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: 3 }}
             >
-              Colaboremos →
+              {CONTACT_EMAIL}
             </a>
-          </div>
-        </section>
+          </p>
+        </Section>
 
         {/* ── Para industria: herramientas B2B, aparte del catálogo de estudiantes ── */}
-        <section style={{ padding: '40px 0 0' }}>
-          <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
-            PARA INDUSTRIA
-          </span>
+        <Section label="Para industria">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 14 }}>
-            <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, padding: '20px 22px' }}>
-              <h2 style={{ fontFamily: SANS, fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
-                Presupuesto de incertidumbre (GUM)
-              </h2>
-              <p style={{ fontFamily: MONO, fontSize: 13.5, color: MUTE, lineHeight: 1.65, margin: '0 0 16px' }}>
-                Calculadora y guía para laboratorios y áreas de calidad: evaluación Tipo A y Tipo B,
-                suma en cuadratura e incertidumbre expandida U (k=2), con el procedimiento paso a paso.
-              </p>
-              <Link
-                to="/herramientas/incertidumbre"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10,
-                  padding: '12px 22px', border: BORDER, background: ACCENTS.red, boxShadow: SHADOW_SM, color: '#fff',
-                  fontFamily: MONO, fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
-                  textDecoration: 'none', textTransform: 'uppercase',
-                  transition: 'transform 0.05s, box-shadow 0.05s',
-                }}
-                onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(3px,3px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
-                onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
-              >
-                Abrir calculadora →
-              </Link>
-            </div>
-
-            <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, padding: '20px 22px' }}>
-              <h2 style={{ fontFamily: SANS, fontSize: 'clamp(20px, 4vw, 26px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
-                TUR / TAR: ¿tu patrón es apto para calibrar?
-              </h2>
-              <p style={{ fontFamily: MONO, fontSize: 13.5, color: MUTE, lineHeight: 1.65, margin: '0 0 16px' }}>
-                No hagas la cuenta a mano — dame los datos de tu instrumento y tu patrón, y te digo si pasa
-                la regla 4:1, con veredicto y procedimiento incluido.
-              </p>
-              <Link
-                to="/herramientas/tur"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10,
-                  padding: '12px 22px', border: BORDER, background: ACCENTS.brown, boxShadow: SHADOW_SM, color: '#fff',
-                  fontFamily: MONO, fontSize: 13, fontWeight: 700, letterSpacing: '0.06em',
-                  textDecoration: 'none', textTransform: 'uppercase',
-                  transition: 'transform 0.05s, box-shadow 0.05s',
-                }}
-                onMouseDown={(e) => { e.currentTarget.style.transform = 'translate(3px,3px)'; e.currentTarget.style.boxShadow = `0 0 0 ${INK}`; }}
-                onMouseUp={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = SHADOW_SM; }}
-              >
-                Abrir calculadora →
-              </Link>
-            </div>
+            {INDUSTRIA.map((b) => (
+              <div key={b.to} style={{ background: PANEL, border: BORDER_SOFT, padding: '16px 18px' }}>
+                <h3 style={{ fontFamily: SANS, fontSize: 17, fontWeight: 800, margin: '0 0 8px', color: INK, letterSpacing: '-0.01em' }}>
+                  {b.titulo}
+                </h3>
+                <p style={{ fontFamily: SANS, fontSize: 13, color: MUTE, lineHeight: 1.6, margin: '0 0 12px' }}>
+                  {b.texto}
+                </p>
+                <Link
+                  to={b.to}
+                  style={{
+                    fontFamily: MONO, fontSize: 12, fontWeight: 700, letterSpacing: '0.06em',
+                    textTransform: 'uppercase', color: b.color, textDecoration: 'none',
+                    borderBottom: `2px solid ${b.color}`, paddingBottom: 2,
+                  }}
+                >
+                  Abrir calculadora →
+                </Link>
+              </div>
+            ))}
           </div>
-        </section>
+        </Section>
 
         {/* ── Enlaces (linktree): ordenados, mismo nivel, no invasivos ── */}
-        <section style={{ padding: '36px 0 52px' }}>
-          <span style={{ display: 'inline-block', background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: '4px 10px', marginBottom: 16 }}>
-            CONECTA
-          </span>
+        <Section label="Conecta">
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 1fr))',
-            gap: 12,
+            gap: 10,
           }}>
             {LINKS.map((l) => (
               <LinkButton key={l.key} icon={ICONS[l.key]} label={l.label} sub={l.sub} href={l.href} external={l.external} color={l.color} />
             ))}
           </div>
-          <p style={{ fontFamily: MONO, fontSize: 11, color: FAINT, marginTop: 22, letterSpacing: '0.06em' }}>
+          <p style={{ fontFamily: MONO, fontSize: 11, color: FAINT, margin: '22px 0 52px', letterSpacing: '0.06em' }}>
             INDUSTRIAS MUÑECO · QUERÉTARO, MX · industriasmuneco.com
           </p>
-        </section>
+        </Section>
       </div>
 
       <Footer />

@@ -132,4 +132,15 @@ details[open] > summary > span:first-child { transform: rotate(90deg); display: 
   /* Inercia: al apilarse, el borde de la vista previa va arriba, no a la
      izquierda (si no, queda una línea suelta en medio de la tarjeta). */
   .inertia-preview { border-left: none !important; border-top: 2px solid #161616 !important; }
+
+  /* Oferta: en el teléfono cada pixel de alto retrasa el botón, y la mayoría
+     del tráfico llega de TikTok/IG. Menos padding y CTA de ancho completo —
+     un botón centrado de 100% se toca con el pulgar sin apuntar. */
+  /* El hero es lo único entre el teléfono y la oferta: se aprieta para que la
+     tarjeta empiece dentro de la primera pantalla. */
+  .landing-hero { padding: 28px 0 22px !important; }
+  .landing-brandlink { display: none !important; }
+
+  .rescue-card { padding: 16px 15px !important; }
+  .rescue-cta  { display: flex !important; width: 100% !important; box-sizing: border-box; padding: 15px 18px !important; }
 }

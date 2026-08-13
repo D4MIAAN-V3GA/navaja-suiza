@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER_SOFT, T3 } from "./theme";
 import { TOOLS } from "./tools";
 import { getGuide } from "./data/toolGuides";
+import { OFFER } from "./offer";
 import formulas from "./data/formulas.json";
 import { CALCS } from "./data/formulaCalcs";
 
@@ -59,6 +60,32 @@ function Steps({ items, accent }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+// La única mención de la oferta dentro de las herramientas, y va al final del
+// riel: es el punto donde el usuario ya admitió que está trabado. Peso de
+// marginalia a propósito — sin borde, sin sombra, sin color. Las calculadoras
+// siguen siendo el regalo; esto es una salida, no un anuncio.
+function StuckNote() {
+  return (
+    <div style={{ borderTop: BORDER_SOFT, paddingTop: 12, marginTop: 14 }}>
+      <h2 style={T3({ margin: "0 0 6px", color: MUTE })}>¿Sigues atorado?</h2>
+      <p style={{ fontFamily: SANS, fontSize: 12, lineHeight: 1.45, color: MUTE, margin: "0 0 8px" }}>
+        Si el problema es más grande que una calculadora, te lo resuelvo paso a paso
+        en {OFFER.plazo}.
+      </p>
+      <Link
+        to="/#rescate"
+        style={{
+          fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1,
+          textTransform: "uppercase", color: INK,
+          textDecoration: "underline", textUnderlineOffset: 3,
+        }}
+      >
+        Cómo funciona →
+      </Link>
+    </div>
   );
 }
 
@@ -120,6 +147,8 @@ function IndexRail() {
           <div><b style={{ color: INK }}>☆</b> — fijar favoritas hasta arriba</div>
         </div>
       </RailBlock>
+
+      <StuckNote />
     </>
   );
 }
@@ -177,6 +206,8 @@ export default function ToolRail({ tool, accent: liveAccent }) {
           <ToolLinks ids={guide.ver} />
         </div>
       )}
+
+      <StuckNote />
     </>
   );
 }
