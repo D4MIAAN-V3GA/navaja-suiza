@@ -27,14 +27,20 @@ export default function ToolFrame({ tool, guide, accent: liveAccent, isFav, togg
 
   return (
     <section style={{ padding: "2px 0 24px" }}>
-      {/* Migaja: la sidebar puede estar colapsada en móvil, así que la ruta
-          de regreso vive también aquí. */}
+      {/* Migaja: en móvil las categorías del lateral se ocultan con una
+          herramienta abierta, así que ESTE es el único camino de vuelta al
+          catálogo. Iba en gris claro de 10px y sin flecha — no se leía como
+          salida. Tinta plena, flecha y alto de dedo. */}
       <nav style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 10, flexWrap: "wrap" }}>
         <Link
           to="/herramientas"
-          style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "#5c5c54", textDecoration: "none", textTransform: "uppercase" }}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 5, minHeight: 34, padding: "4px 0",
+            fontFamily: MONO, fontSize: 10.5, fontWeight: 700, letterSpacing: "0.1em",
+            color: INK, textDecoration: "none", textTransform: "uppercase",
+          }}
         >
-          Herramientas
+          ← Herramientas
         </Link>
         <span style={{ fontFamily: MONO, fontSize: 10, color: "#9a9a8c" }}>/</span>
         <span style={{ fontFamily: MONO, fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: INK, textTransform: "uppercase" }}>

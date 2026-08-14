@@ -245,7 +245,10 @@ export default function InertiaCalculator({ onAccentChange }) {
       } else if (shape === "hollow_circle") {
         const R = parseFloat(vals.R), r = parseFloat(vals.r2);
         if (R > 0 && r >= 0) {
-          if (r >= R) { setError("El radio interior debe ser menor al exterior."); return; }
+          // Sin limpiar, el resultado del último perfil válido se quedaba en
+          // pantalla junto al error: el usuario ve un número que ya no
+          // corresponde a lo que tiene escrito.
+          if (r >= R) { setError("El radio interior debe ser menor al exterior."); setResults(null); return; }
           res = computeHollowCircle(R, r);
         }
       }

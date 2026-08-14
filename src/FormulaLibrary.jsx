@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useMemo, useRef, useCallback } from "react";
 import { PAPER, PANEL, INK, MUTE, FAINT, LINE, MONO, SANS, BORDER, BORDER_THIN, BORDER_SOFT, SHADOW, SHADOW_SM, ACCENTS, textOn } from "./theme";
 import { fuzzyScore } from "./fuzzy";
 import formulas from "./data/formulas.json";
@@ -89,10 +89,14 @@ function Workbench({ item, calc, color, onClose }) {
   };
 
   // Escape sale del banco; el foco arranca en «volver» para que el teclado
-  // no tenga que recorrer toda la página anterior.
+  // no tenga que recorrer toda la página anterior. Si hay una capa encima
+  // (la paleta de comandos) Escape es suyo: si no, un Escape cerraba las dos
+  // cosas y se perdía el formulario ya lleno.
   useEffect(() => {
-    volverRef.current?.focus();
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    volverRef.current?.focus({ preventScroll: true });
+    const onKey = (e) => {
+      if (e.key === "Escape" && !document.body.dataset.overlay) onClose();
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
@@ -454,10 +458,28 @@ export default function FormulaLibrary({ onAccentChange }) {
 
   const abierta = openId === null ? null : formulas.find((f) => f.id === openId);
 
+  // Volver del banco de trabajo tiraba al usuario al inicio de una rejilla de 43
+  // tarjetas: si había abierto una de las últimas, tenía que volver a buscarla.
+  // El estado (búsqueda y filtros) ya sobrevivía; la posición, no.
+  const scrollCatalogo = useRef(0);
+  const restaurar = useRef(false);
+
   const abrir = (item) => {
+    scrollCatalogo.current = window.scrollY;
     setOpenId(item.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  // useCallback: el efecto de Escape del banco depende de onClose.
+  const cerrar = useCallback(() => {
+    restaurar.current = true;
+    setOpenId(null);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (openId !== null || !restaurar.current) return;
+    restaurar.current = false;
+    window.scrollTo(0, scrollCatalogo.current);
+  }, [openId]);
 
   if (abierta) {
     return (
@@ -467,7 +489,7 @@ export default function FormulaLibrary({ onAccentChange }) {
         item={abierta}
         calc={CALCS[abierta.id]}
         color={catColor(abierta.category)}
-        onClose={() => setOpenId(null)}
+        onClose={cerrar}
       />
     );
   }
@@ -566,6 +588,18 @@ export default function FormulaLibrary({ onAccentChange }) {
               ? "Esta categoría todavía no tiene fórmulas con calculadora. Quita el filtro para verlas como referencia."
               : "Prueba con otro término o cambia la categoría."}
           </div>
+          {/* Salida del callejón: tres filtros combinados pueden dejar la
+              rejilla en cero, y ninguno de los tres está a la vista aquí abajo. */}
+          <button
+            onClick={() => { setQuery(""); setActiveCategory("Todos"); setSoloCalc(false); }}
+            style={{
+              marginTop: 18, background: PANEL, border: BORDER, borderRadius: 0,
+              boxShadow: SHADOW_SM, color: INK, cursor: "pointer",
+              fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1,
+              textTransform: "uppercase", padding: "11px 16px", minHeight: 42,
+            }}>
+            Quitar filtros
+          </button>
         </div>
       ) : (
         <>

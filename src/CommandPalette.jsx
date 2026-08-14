@@ -26,6 +26,16 @@ export default function CommandPalette() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Aviso al resto de la app de que hay una capa encima. Sin esto, Escape con la
+  // paleta abierta cerraba la paleta Y lo que hubiera debajo (el banco de
+  // trabajo de Fórmulas, con el formulario ya lleno): los dos escuchan en
+  // window y el de abajo se registra primero.
+  useEffect(() => {
+    if (!open) return;
+    document.body.dataset.overlay = "cmdk";
+    return () => { delete document.body.dataset.overlay; };
+  }, [open]);
+
   if (!open) return null;
 
   const q = query.trim().toLowerCase();

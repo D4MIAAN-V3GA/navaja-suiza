@@ -85,6 +85,10 @@ export default function EquationSolver() {
       next[row][col] = val;
       return next;
     });
+    // Tocar un coeficiente invalida la solución: si se quedara en pantalla, el
+    // usuario copiaría a su tarea unas x, y, z que ya no son de estos datos.
+    setResult(null);
+    setError(null);
   };
 
   const solve = () => {

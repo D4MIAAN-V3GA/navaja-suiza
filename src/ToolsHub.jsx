@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import EngineerHeader from "./EngineerHeader";
 import Footer from "./Footer";
@@ -68,15 +68,35 @@ export default function ToolsHub() {
     ? reported.accent
     : activeTool?.accent;
 
-  // Filtrar desde una herramienta abierta vuelve al grid.
+  // Filtrar es una acción del CATÁLOGO. Si se toca con una herramienta abierta,
+  // el filtro no tiene nada que filtrar en pantalla: hay que volver al grid o el
+  // botón se siente muerto.
+  const backToIndex = useCallback(() => {
+    if (!onIndex) navigate("/herramientas");
+  }, [onIndex, navigate]);
+
   const pickCategory = (id) => {
     setCategory((c) => (c === id ? null : id));
-    if (!onIndex) navigate("/herramientas");
+    backToIndex();
+  };
+  // «TODAS» es el botón de reinicio del catálogo: quita categoría Y búsqueda.
+  // Antes solo hacía setCategory(null) — sin navegar — así que desde una
+  // herramienta abierta se pintaba activo y no pasaba absolutamente nada.
+  const showAll = () => {
+    setCategory(null);
+    setQuery("");
+    backToIndex();
   };
   const onSearch = (v) => {
     setQuery(v);
-    if (!onIndex && v.trim()) navigate("/herramientas");
+    if (v.trim()) backToIndex();
   };
+
+  // Cambiar de herramienta sin volver arriba deja al usuario a media página de
+  // la nueva (Fórmulas son 43 tarjetas de alto): parece que no pasó nada.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   // Filtrar es secundario: la caja fuerte se la queda la herramienta activa.
   const catBtn = (active) => ({
@@ -94,16 +114,27 @@ export default function ToolsHub() {
   });
 
   // Lista de navegación: saltar de una calculadora a otra sin volver al grid.
-  const q = query.trim().toLowerCase();
-  const navTools = TOOLS.filter((t) => {
-    const okCat = !category || t.category === category;
-    const okQ = !q || (t.label + " " + t.desc).toLowerCase().includes(q);
-    return okCat && okQ;
-  });
+  // NO se filtra. Los filtros son del catálogo; aplicarlos aquí dejaba callejones
+  // sin salida — con «Metrología» puesto la lista se quedaba en dos herramientas,
+  // y en móvil (donde las categorías se ocultan con una herramienta abierta) no
+  // había manera de quitar el filtro. Son nueve: caben todas.
   const ordered = [
-    ...navTools.filter((t) => favorites.includes(t.id)),
-    ...navTools.filter((t) => !favorites.includes(t.id)),
+    ...TOOLS.filter((t) => favorites.includes(t.id)),
+    ...TOOLS.filter((t) => !favorites.includes(t.id)),
   ];
+
+  // En móvil la lista es una tira horizontal. Si la herramienta abierta es de
+  // las últimas, arranca fuera de vista y parece que no está seleccionada.
+  const navToolsRef = useRef(null);
+  const activeRowRef = useRef(null);
+  useEffect(() => {
+    const cont = navToolsRef.current;
+    const el = activeRowRef.current;
+    if (!cont || !el || cont.scrollWidth <= cont.clientWidth) return;
+    const cr = cont.getBoundingClientRect();
+    const er = el.getBoundingClientRect();
+    cont.scrollLeft += er.left - cr.left - (cr.width - er.width) / 2;
+  }, [activeTool?.id]);
 
   const railLabel = onIndex ? "Sobre estas herramientas" : `Guía · ${activeTool.label}`;
 
@@ -135,12 +166,30 @@ export default function ToolsHub() {
           <aside className="hub-nav">
             <div className="hub-nav-inner">
               <div style={{ display: "flex", gap: 8 }}>
-                <input
-                  value={query}
-                  onChange={(e) => onSearch(e.target.value)}
-                  placeholder="Buscar…"
-                  style={field({ flex: 1, fontSize: 13, padding: "9px 11px" })}
-                />
+                <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
+                  <input
+                    value={query}
+                    onChange={(e) => onSearch(e.target.value)}
+                    placeholder="Buscar…"
+                    style={field({ width: "100%", boxSizing: "border-box", fontSize: 13, padding: "9px 11px", paddingRight: query ? 32 : 11 })}
+                  />
+                  {/* Sin esto la única forma de vaciar la búsqueda era borrar a
+                      mano, y una búsqueda olvidada filtra el catálogo entero. */}
+                  {query && (
+                    <button
+                      onClick={showAll}
+                      aria-label="Limpiar búsqueda"
+                      title="Limpiar búsqueda"
+                      style={{
+                        position: "absolute", top: 0, right: 0, bottom: 0, width: 30,
+                        background: "transparent", border: "none", borderRadius: 0,
+                        color: MUTE, fontFamily: MONO, fontSize: 13, fontWeight: 700, cursor: "pointer",
+                      }}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
                 <button
                   className="hub-kbd"
                   onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true }))}
@@ -157,7 +206,7 @@ export default function ToolsHub() {
               <div className="hub-nav-cats">
                 <div className="hub-nav-title">Categorías</div>
                 <div className="hub-cats">
-                  <button onClick={() => setCategory(null)} style={catBtn(!category)}>
+                  <button onClick={showAll} style={catBtn(!category && !query.trim())}>
                     TODAS
                   </button>
                   {CATEGORIES.map((c) => (
@@ -173,7 +222,7 @@ export default function ToolsHub() {
                   que es cuando sirve para saltar a otra. */}
               <div className="hub-nav-tools-wrap" style={{ display: onIndex ? "none" : undefined }}>
                 <div className="hub-nav-title">Herramientas</div>
-                <nav className="hub-nav-tools">
+                <nav className="hub-nav-tools" ref={navToolsRef}>
                   {ordered.map((t) => {
                     const active = activeTool?.id === t.id;
                     // La fila activa usa el color vivo para no contradecir a la
@@ -183,6 +232,8 @@ export default function ToolsHub() {
                       <Link
                         key={t.id}
                         to={`/herramientas/${t.id}`}
+                        ref={active ? activeRowRef : undefined}
+                        aria-current={active ? "page" : undefined}
                         style={{
                           display: "flex", alignItems: "center", gap: 8, textDecoration: "none",
                           padding: "8px 10px",
@@ -207,11 +258,6 @@ export default function ToolsHub() {
                       </Link>
                     );
                   })}
-                  {ordered.length === 0 && (
-                    <div style={{ fontFamily: MONO, fontSize: 11.5, color: MUTE, padding: "6px 2px" }}>
-                      Nada con «{query}».
-                    </div>
-                  )}
                 </nav>
               </div>
             </div>

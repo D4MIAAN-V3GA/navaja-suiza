@@ -174,8 +174,13 @@ export default function VectorCalculator({ onAccentChange }) {
   const A = ACCENTS.green;
   const B = ACCENTS.blue;
 
-  const handleChange = (setter) => (axis, val) =>
+  // Editar una componente invalida los números de abajo. La escena sí es viva,
+  // así que sin esto la vista y las cifras se contradecían: el dibujo ya era del
+  // vector nuevo y el producto punto seguía siendo del anterior.
+  const handleChange = (setter) => (axis, val) => {
     setter((prev) => ({ ...prev, [axis]: val }));
+    setResults(null);
+  };
 
   const calculate = () => {
     const a = parseVec(vecA);

@@ -48,6 +48,10 @@ export default function MatrixSolver({ onAccentChange }) {
       next[r][c] = val;
       return next;
     });
+    // Editar una celda invalida la reducción: los pasos mostrados dejarían de
+    // corresponder a la matriz que se ve arriba.
+    setResult(null);
+    setError(null);
   };
 
   const solve = () => {

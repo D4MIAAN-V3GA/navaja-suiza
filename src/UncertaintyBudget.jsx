@@ -143,6 +143,25 @@ export default function UncertaintyBudget() {
     };
   }, []);
 
+  // Salidas del Lead Wall. Sin esto la única forma de cerrarlo era atinarle a
+  // una ✕ de 26 px: el usuario que no quiere registrarse queda atrapado, y es
+  // la página de la que dependen los leads B2B. Escape se cede a la paleta de
+  // comandos si está encima (marca `data-overlay` en el body).
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const onKey = (e) => {
+      if (e.key === "Escape" && document.body.dataset.overlay !== "cmdk") setIsModalOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    // El fondo seguía haciendo scroll detrás del modal en móvil.
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isModalOpen]);
+
   const updateSource = (id, patch) => {
     setSources((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
     setResults(null);
@@ -919,6 +938,7 @@ export default function UncertaintyBudget() {
           role="dialog"
           aria-modal="true"
           aria-label="Registro para ver el resultado"
+          onClick={() => setIsModalOpen(false)}
           style={{
             position: "fixed", inset: 0, zIndex: 100,
             background: "rgba(22,22,22,0.65)",
@@ -926,15 +946,21 @@ export default function UncertaintyBudget() {
             padding: 16,
           }}
         >
-          <div style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, width: "100%", maxWidth: 460, maxHeight: "90vh", overflowY: "auto", padding: "22px 24px", boxSizing: "border-box" }}>
+          {/* Clic en el fondo cierra; dentro de la tarjeta no, o escribir en un
+              campo cerraría el modal. */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, width: "100%", maxWidth: 460, maxHeight: "90vh", overflowY: "auto", padding: "22px 24px", boxSizing: "border-box" }}
+          >
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 14 }}>
               <span style={{ display: "inline-block", background: INK, color: PAPER, fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1, padding: "4px 10px", textTransform: "uppercase" }}>
                 Descarga tu reporte
               </span>
-              <button onClick={() => setIsModalOpen(false)} aria-label="Cerrar" style={{
+              {/* 26 px es imposible de tocar con el pulgar y es LA salida del modal. */}
+              <button onClick={() => setIsModalOpen(false)} aria-label="Cerrar" title="Cerrar (Esc)" style={{
                 background: PAPER, border: BORDER_THIN, borderRadius: 0, color: INK,
-                fontFamily: MONO, fontSize: 12, fontWeight: 700, cursor: "pointer",
-                width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                fontFamily: MONO, fontSize: 13, fontWeight: 700, cursor: "pointer",
+                width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
               }}>
                 ✕
               </button>
