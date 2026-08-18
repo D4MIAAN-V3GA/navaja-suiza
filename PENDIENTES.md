@@ -9,24 +9,35 @@ El sitio ya la vende: la tarjeta está en la Landing justo debajo del hero (`Res
 riel de cada herramienta manda a `/#rescate`, y la Zona Premium de Ko-fi se desmontó. Falta
 lo que no vive en el código:
 
-- [ ] **Formulario de intake** (Google Forms/Tally): nombre, materia/tema, descripción del
-      problema, preferencia video o llamada. Pegar la URL en `INTAKE_URL` (`src/offer.js`).
-- [ ] **Link de cobro de Mercado Pago** → `MERCADO_PAGO_URL`.
-- [ ] **Número de WhatsApp** (`wa.me/52…`) → `WHATSAPP_URL`.
-      ⚠️ Mientras los tres estén vacíos, el botón «Manda tu problema» abre correo a
-      `contacto@industriasmuneco.com`. Funciona, pero es más fricción de la que aguanta la oferta.
+- [x] **Formulario de intake** (Google Forms) → `INTAKE_URL` en `src/offer.js`. El botón
+      «Manda tu problema» ya manda al formulario, no al correo.
+- [x] **Link de cobro de Mercado Pago** → `MERCADO_PAGO_URL`.
+- [x] **Número de WhatsApp** → `WHATSAPP_URL`.
+      ℹ️ WhatsApp sí se muestra en /rescate, en peso de nota. Mercado Pago NO: el precio es
+      un rango y el cobro va después de leer el problema.
+- [ ] **Pegar el link de Mercado Pago en el mensaje de confirmación del Google Form**
+      (Configuración → Presentación → Mensaje de confirmación). Ahí quien acaba de llenarlo
+      lo ve al instante en vez de esperar a que Damián conteste — es donde de verdad quita
+      fricción. Link: `https://link.mercadopago.com.mx/damianvlab`
+- [ ] **Probar el formulario de punta a punta**: llenarlo una vez desde el móvil y confirmar
+      que la respuesta llega. Un formulario mal compartido (sin «cualquiera puede responder»)
+      falla en silencio.
 - [ ] **Video/post de lanzamiento con CTA explícito** al flujo nuevo. La historia que ya se
       subió no traía CTA — sin eso, la oferta existe pero nadie la ve.
-- [ ] **Los 2 testimonios**: pedir (1) cómo describían su bloqueo con sus propias palabras y
-      (2) 2-3 líneas de resultado, idealmente screenshot del mensaje real, con nombre o
-      iniciales según prefieran. Van a `TESTIMONIOS` en `src/offer.js` — el bloque no se
-      pinta hasta que haya algo real que poner.
-- [ ] **Revisar la Landing a 375px**: el rediseño de jerarquía se verificó a 1568px en Chrome.
+- [x] **Los 2 testimonios**: puestos en `TESTIMONIOS` (`src/offer.js`), transcritos de los
+      WhatsApp reales. Cada uno lleva el *bloqueo* en sus palabras + el resultado.
+- [x] **Permiso de los nombres**: Cristian Velázquez y José Bautista autorizaron nombre
+      completo (2026-08-18). Van con captura del WhatsApp original, plegada tras «Ver captura».
+      La foto de la libreta resuelta va con los papeles del fondo tapados a mano (ahí se
+      leía el nombre de un tercero). Regla para la próxima: revisar SIEMPRE el fondo.
+- [ ] **Revisar la Landing y /rescate a 375px**: nunca se ha verificado en móvil real.
+      Cambios del 2026-08-18 sin comprobar: foto en Sobre mí, CTA naranja de herramientas,
+      rejilla antes que la oferta, teaser + página /rescate, «Cómo funciona» plegado.
+      No había navegador en la sesión.
 
 ## 🔴 A cargo de Damián
 - [x] **Correo profesional — decisión**: se eligió `contacto@industriasmuneco.com` (ya está en `src/Landing.jsx`, `CONTACT_EMAIL`).
 - [x] **Correo profesional — crear buzón**: `contacto@industriasmuneco.com` creado y confirmado (recibe y envía).
-- [ ] **Historias de Instagram del dominio**: nunca se hicieron (en Discord sí). La nueva landing es el pretexto para mostrarlo por fin.
 
 ## 🟡 Técnico antes del lanzamiento
 - [ ] **Push pendiente** (2026-07-21): `b9beafe` está commiteado en local pero NO subido.
@@ -47,7 +58,7 @@ lo que no vive en el código:
 2. Confirmar las 3 historias y el resto de cambios sin commitear.
 3. Cuando Damián dé luz verde: **commit + push** (rama `main`) y **deploy** en Vercel. ✅ Hecho (`70f091f`).
 4. Configurar el dominio `industriasmuneco.com` en Vercel (ver 🟡) y verificar el sitio en `industriasmuneco.com` (`/` y `/herramientas`).
-5. Publicar las historias en IG con los links UTM (`?utm_source=instagram&utm_campaign=update_formulas`).
+5. Publicar las historias en IG con los links UTM (`?utm_source=instagram&utm_campaign=update_formulas`). ✅ Hecho.
 
 ## 🟡 Fórmulas calculables — lo que falta
 

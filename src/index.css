@@ -109,6 +109,9 @@ details[open] > summary > span:first-child { transform: rotate(90deg); display: 
   .fl-sticky { position: sticky; top: 12px; }
 }
 
+/* Sobre mí con foto: foto al lado del texto. En el teléfono se apila (abajo). */
+.landing-bio { display: flex; gap: 18px; align-items: flex-start; }
+
 /* ── Móvil ──────────────────────────────────────────────────────────
    Todo el diseño va en estilos inline (theme.js), así que estas reglas
    necesitan !important para ganarles. */
@@ -143,4 +146,20 @@ details[open] > summary > span:first-child { transform: rotate(90deg); display: 
 
   .rescue-card { padding: 16px 15px !important; }
   .rescue-cta  { display: flex !important; width: 100% !important; box-sizing: border-box; padding: 15px 18px !important; }
+
+  /* Botones de ancho completo: en el pulgar se tocan sin apuntar. */
+  .landing-cta,
+  .rescue-teaser-cta,
+  .rescue-teaser-alt { display: flex !important; width: 100% !important; box-sizing: border-box; padding: 14px 20px !important; }
+
+  /* Los dos botones de la oferta se apilan: en 375px lado a lado quedan a
+     ~160px cada uno y el texto se parte. */
+  .rescue-teaser-acciones { flex-direction: column; align-items: stretch !important; gap: 10px !important; }
+
+  .rescue-teaser { padding: 14px 15px !important; }
+
+  /* Bio: la foto arriba del texto, no una columna de 168px que deja el párrafo
+     en renglones de tres palabras. */
+  .landing-bio { flex-direction: column; gap: 14px; }
+  .landing-bio img { width: 132px !important; height: 165px !important; }
 }

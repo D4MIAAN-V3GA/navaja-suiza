@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Footer from './Footer';
-import RescueCard from './RescueCard';
+import { RescueTeaser } from './RescueCard';
 import { TOOLS } from './tools';
 import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, BORDER_SOFT, ACCENTS, T3, textOn } from './theme';
 
@@ -167,19 +167,21 @@ export default function Landing() {
             +300 ingenieros en el Discord · {TOOLS.length} herramientas · 0 registros
           </p>
 
-          {/* CTA secundario en peso: el botón que cuesta dinero es el de la
-              oferta, aquí abajo, y es el único con sombra en toda la página. */}
+          {/* CTA de las herramientas: negro y sin sombra dura. La voz alta de la
+              página es la oferta, aquí abajo — este botón solo tiene que ser lo
+              primero que se toca, no lo que más grita. */}
           <div style={{ marginTop: 26, display: 'flex', flexWrap: 'wrap', gap: 18, alignItems: 'center' }}>
             <Link
+              className="landing-cta"
               to="/herramientas"
               style={{
-                display: 'inline-flex', alignItems: 'center', gap: 10,
-                padding: '13px 24px', border: BORDER, background: INK, color: PAPER,
-                fontFamily: MONO, fontSize: 13.5, fontWeight: 700, letterSpacing: '0.06em',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                padding: '15px 28px', border: BORDER, background: INK, color: PAPER,
+                fontFamily: MONO, fontSize: 14.5, fontWeight: 700, letterSpacing: '0.06em',
                 textDecoration: 'none', textTransform: 'uppercase',
               }}
             >
-              Abrir herramientas →
+              Abrir las {TOOLS.length} herramientas →
             </Link>
             {/* En móvil se oculta (index.css): el mismo enlace está en SOBRE MÍ
                 y aquí solo mete un renglón entre el teléfono y la oferta. */}
@@ -196,9 +198,12 @@ export default function Landing() {
           </div>
         </header>
 
-        {/* ── La oferta: primera sección después del hero, sin nada que la tape ── */}
+        {/* ── La oferta: primera sección después del hero, sin nada que la tape.
+            Va en teaser, no completa: la tarjeta entera medía ~1020px de alto en
+            un teléfono y no se veía ni un tercio. El argumento completo vive en
+            /rescate — aquí solo lo que decide si sigues leyendo. ── */}
         <section id="rescate" style={{ padding: '4px 0 12px', scrollMarginTop: 16 }}>
-          <RescueCard />
+          <RescueTeaser />
         </section>
 
         {/* ── Herramientas: el regalo que trae a la gente, en peso de navegación ── */}
@@ -226,26 +231,40 @@ export default function Landing() {
           </div>
         </Section>
 
-        {/* ── Sobre mí: es quien responde el rescate, no una tarjeta más ── */}
+        {/* ── Sobre mí: es quien responde el rescate, no una tarjeta más ──
+            La foto vive AQUÍ y no en el hero: arriba solo compite con el CTA, y
+            "del otro lado estoy yo" solo se prueba si se te ve la cara. */}
         <Section label="Sobre mí">
-          <h3 style={{ fontFamily: SANS, fontSize: 'clamp(18px, 3.4vw, 22px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
-            Ingeniero en metrología + creador de contenido
-          </h3>
-          <p style={{ fontFamily: SANS, fontSize: 14, color: MUTE, lineHeight: 1.65, margin: 0, maxWidth: 620 }}>
-            Hago ingeniería con humor. En mi Discord y mis historias le regalo valor real a mi comunidad —
-            sin filtros, sin paywalls, sin humo. <strong style={{ color: INK }}>Industrias Muñeco</strong> es mi marca:
-            herramientas, contenido y una comunidad de ingenieros y estudiantes que de verdad usa lo que comparto.
-            Cuando pides un rescate, del otro lado estoy yo — no un becario ni un bot.
-          </p>
-          <p style={{ fontFamily: SANS, fontSize: 14, color: MUTE, lineHeight: 1.65, margin: '12px 0 0' }}>
-            ¿Eres una marca? Trabajo patrocinios y colaboraciones:{' '}
-            <a
-              href={`mailto:${CONTACT_EMAIL}?subject=Colaboración con Industrias Muñeco`}
-              style={{ color: INK, fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: 3 }}
-            >
-              {CONTACT_EMAIL}
-            </a>
-          </p>
+          <div className="landing-bio">
+            <img
+              src="/damian.webp"
+              alt="Damián, ingeniero en metrología, en el laboratorio junto a una máquina de medición por coordenadas"
+              width="640"
+              height="800"
+              loading="lazy"
+              style={{ width: 168, height: 210, objectFit: 'cover', border: BORDER, display: 'block', flexShrink: 0 }}
+            />
+            <div style={{ minWidth: 0 }}>
+              <h3 style={{ fontFamily: SANS, fontSize: 'clamp(18px, 3.4vw, 22px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
+                Ingeniero en metrología + creador de contenido
+              </h3>
+              <p style={{ fontFamily: SANS, fontSize: 14, color: MUTE, lineHeight: 1.65, margin: 0, maxWidth: 620 }}>
+                Hago ingeniería con humor. En mi Discord y mis historias le regalo valor real a mi comunidad —
+                sin filtros, sin paywalls, sin humo. <strong style={{ color: INK }}>Industrias Muñeco</strong> es mi marca:
+                herramientas, contenido y una comunidad de ingenieros y estudiantes que de verdad usa lo que comparto.
+                Cuando pides un rescate, del otro lado estoy yo — no un becario ni un bot.
+              </p>
+              <p style={{ fontFamily: SANS, fontSize: 14, color: MUTE, lineHeight: 1.65, margin: '12px 0 0' }}>
+                ¿Eres una marca? Trabajo patrocinios y colaboraciones:{' '}
+                <a
+                  href={`mailto:${CONTACT_EMAIL}?subject=Colaboración con Industrias Muñeco`}
+                  style={{ color: INK, fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: 3 }}
+                >
+                  {CONTACT_EMAIL}
+                </a>
+              </p>
+            </div>
+          </div>
         </Section>
 
         {/* ── Para industria: herramientas B2B, aparte del catálogo de estudiantes ── */}

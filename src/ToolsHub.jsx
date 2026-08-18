@@ -92,12 +92,6 @@ export default function ToolsHub() {
     if (v.trim()) backToIndex();
   };
 
-  // Cambiar de herramienta sin volver arriba deja al usuario a media página de
-  // la nueva (Fórmulas son 43 tarjetas de alto): parece que no pasó nada.
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-
   // Filtrar es secundario: la caja fuerte se la queda la herramienta activa.
   const catBtn = (active) => ({
     textAlign: "left",

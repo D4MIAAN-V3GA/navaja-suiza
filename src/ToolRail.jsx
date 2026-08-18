@@ -76,7 +76,7 @@ function StuckNote() {
         en {OFFER.plazo}.
       </p>
       <Link
-        to="/#rescate"
+        to="/rescate"
         style={{
           fontFamily: MONO, fontSize: 11, fontWeight: 700, letterSpacing: 1,
           textTransform: "uppercase", color: INK,

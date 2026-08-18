@@ -131,7 +131,6 @@ export default function UncertaintyBudget() {
 
   // SEO: título y descripción propios de esta ruta; se restauran al salir.
   useEffect(() => {
-    window.scrollTo(0, 0);
     const prevTitle = document.title;
     const meta = document.querySelector('meta[name="description"]');
     const prevDesc = meta?.getAttribute("content");
