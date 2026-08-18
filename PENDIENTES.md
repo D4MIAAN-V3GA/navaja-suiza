@@ -15,10 +15,8 @@ lo que no vive en el código:
 - [x] **Número de WhatsApp** → `WHATSAPP_URL`.
       ℹ️ WhatsApp sí se muestra en /rescate, en peso de nota. Mercado Pago NO: el precio es
       un rango y el cobro va después de leer el problema.
-- [ ] **Pegar el link de Mercado Pago en el mensaje de confirmación del Google Form**
-      (Configuración → Presentación → Mensaje de confirmación). Ahí quien acaba de llenarlo
-      lo ve al instante en vez de esperar a que Damián conteste — es donde de verdad quita
-      fricción. Link: `https://link.mercadopago.com.mx/damianvlab`
+- [x] **Link de Mercado Pago en el mensaje de confirmación del Google Form** (2026-08-18):
+      quien termina de llenarlo ve el cobro al instante, sin esperar respuesta.
 - [ ] **Probar el formulario de punta a punta**: llenarlo una vez desde el móvil y confirmar
       que la respuesta llega. Un formulario mal compartido (sin «cualquiera puede responder»)
       falla en silencio.
@@ -26,14 +24,12 @@ lo que no vive en el código:
       subió no traía CTA — sin eso, la oferta existe pero nadie la ve.
 - [x] **Los 2 testimonios**: puestos en `TESTIMONIOS` (`src/offer.js`), transcritos de los
       WhatsApp reales. Cada uno lleva el *bloqueo* en sus palabras + el resultado.
-- [x] **Permiso de los nombres**: Cristian Velázquez y José Bautista autorizaron nombre
+- [x] **Permiso de los nombres**: Cristian Velázquez y Josué Bautista autorizaron nombre
       completo (2026-08-18). Van con captura del WhatsApp original, plegada tras «Ver captura».
       La foto de la libreta resuelta va con los papeles del fondo tapados a mano (ahí se
       leía el nombre de un tercero). Regla para la próxima: revisar SIEMPRE el fondo.
-- [ ] **Revisar la Landing y /rescate a 375px**: nunca se ha verificado en móvil real.
-      Cambios del 2026-08-18 sin comprobar: foto en Sobre mí, CTA naranja de herramientas,
-      rejilla antes que la oferta, teaser + página /rescate, «Cómo funciona» plegado.
-      No había navegador en la sesión.
+- [x] **Revisar la Landing y /rescate en móvil** (2026-08-18): confirmado en el teléfono
+      tras el deploy de `59f2102`.
 
 ## 🔴 A cargo de Damián
 - [x] **Correo profesional — decisión**: se eligió `contacto@industriasmuneco.com` (ya está en `src/Landing.jsx`, `CONTACT_EMAIL`).
