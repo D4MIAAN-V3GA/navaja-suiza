@@ -31,13 +31,35 @@ lo que no vive en el código:
 - [x] **Revisar la Landing y /rescate en móvil** (2026-08-18): confirmado en el teléfono
       tras el deploy de `59f2102`.
 
+## 🔍 SEO — que el sitio salga al buscar «Industrias Muñeco» (2026-09-22)
+
+Al buscar la marca en Google no salía nada. Causa: el HTML crudo no decía «Industrias Muñeco»
+por ningún lado — sólo aparecía después de que React pintaba. Arreglado en el código:
+
+- [x] `<title>`, `<meta description>`, og y `og:site_name` abren con la marca (incluye
+      «Muneco» sin ñ, que es como se teclea).
+- [x] JSON-LD `Organization` (nombre, alternateName, Querétaro/MX, correo) + su hash sha256
+      en el CSP de `vercel.json`. ⚠️ Si editas ese JSON hay que **recalcular el hash** o el
+      CSP lo bloquea. Hay un comentario en `index.html` avisándolo.
+- [x] `<link rel="canonical">` al ápice: `www` y sin `www` responden 200 las dos y Google
+      las veía como sitios distintos.
+- [x] Texto de marca en `<noscript>` para el rastreo sin JS. **No es visible** para el
+      usuario — se probó primero dentro de `#root` y parpadeaba antes de hidratar.
+
+Falta lo que no vive en el código (sin esto el arreglo no sirve de nada):
+
+- [ ] **Verificar el dominio en Google Search Console** (registro TXT en Namecheap/Vercel).
+- [ ] **Enviar `sitemap.xml`** desde Search Console.
+- [ ] **Inspección de URL → «Solicitar indexación»** para `/`. Tarda de días a ~2 semanas.
+      Si acaba en «Rastreada, actualmente sin indexar», hay que revisarlo aparte.
+
 ## 🔴 A cargo de Damián
 - [x] **Correo profesional — decisión**: se eligió `contacto@industriasmuneco.com` (ya está en `src/Landing.jsx`, `CONTACT_EMAIL`).
 - [x] **Correo profesional — crear buzón**: `contacto@industriasmuneco.com` creado y confirmado (recibe y envía).
 
 ## 🟡 Técnico antes del lanzamiento
-- [ ] **Push pendiente** (2026-07-21): `b9beafe` está commiteado en local pero NO subido.
-      Incluye TurTar + arreglos de móvil. `git push origin main` lo pone en vivo.
+- [x] **Push pendiente** (2026-07-21): resuelto. `main` local y `origin/main` están al día
+      (verificado 2026-09-22).
 - [x] Commit + push de todo lo nuevo (landing, herramienta 06, vercel.json, assets). Hecho: `70f091f`.
 - [x] **Dominio en Vercel**: `industriasmuneco.com` apuntando a este proyecto vía Namecheap (A `@` → 216.198.79.1, CNAME `www`). Landing en `/`, navaja en `/herramientas`.
 - [x] Verificado en vivo: `/`, `/herramientas`, `www` y `navaja` responden 200; sirven la app correcta y el asset desplegado coincide con el último build (`index-snXeBkgA.js`).
