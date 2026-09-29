@@ -90,6 +90,7 @@ function LinkButton({ icon, label, sub, href, external, color }) {
     <a
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className="link-btn"
       style={{
         display: 'flex', alignItems: 'center', gap: 12,
         padding: '10px 14px',
@@ -106,7 +107,7 @@ function LinkButton({ icon, label, sub, href, external, color }) {
       </span>
       <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25 }}>
         <span style={{ fontFamily: SANS, fontSize: 14, fontWeight: 800 }}>{label}</span>
-        <span style={{ fontFamily: MONO, fontSize: 11, color: MUTE, letterSpacing: '0.04em' }}>{sub}</span>
+        <span className="link-sub" style={{ fontFamily: MONO, fontSize: 11, color: MUTE, letterSpacing: '0.04em' }}>{sub}</span>
       </span>
     </a>
   );
@@ -117,7 +118,7 @@ function LinkButton({ icon, label, sub, href, external, color }) {
 // —la de la oferta— y las secciones se separan con una línea y una etiqueta T3.
 function Section({ label, children, id, first }) {
   return (
-    <section id={id} style={{ borderTop: BORDER_SOFT, marginTop: first ? 34 : 44, paddingTop: 22, scrollMarginTop: 16 }}>
+    <section id={id} className="landing-section" style={{ borderTop: BORDER_SOFT, marginTop: first ? 34 : 44, paddingTop: 22, scrollMarginTop: 16 }}>
       <h2 style={T3({ color: MUTE, margin: '0 0 16px' })}>{label}</h2>
       {children}
     </section>
@@ -135,10 +136,10 @@ export default function Landing() {
 
   return (
     <div style={{ minHeight: '100dvh', background: PAPER, color: INK, fontFamily: SANS }}>
-      {/* Rediseño: 760 → 1120. En escritorio el contenido ocupaba ~40% de la
+      {/* Rediseño: 760 → 1320. En escritorio el contenido ocupaba ~40% de la
           pantalla; ahora el hero y la oferta van lado a lado. En móvil no cambia
           nada: todo se apila en el mismo orden que antes (index.css). */}
-      <div className="landing-wrap" style={{ maxWidth: 1120, margin: '0 auto', padding: '0 24px' }}>
+      <div className="landing-wrap" style={{ maxWidth: 1320, margin: '0 auto', padding: '0 32px' }}>
         <div className="landing-top">
 
         {/* ── Hero de marca: corto, invita a acercarse ── */}
@@ -213,14 +214,14 @@ export default function Landing() {
 
         {/* ── Herramientas: el regalo que trae a la gente, en peso de navegación ── */}
         <Section first label={`Para estudiantes · ${GRID_TOOLS.length} herramientas gratis`}>
-          <div style={{
+          <div className="tools-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 230px), 1fr))',
             gap: 12,
           }}>
             {GRID_TOOLS.map((t, i) => (
               <Link key={t.id} to={`/herramientas/${t.id}`} style={{ textDecoration: 'none' }}>
-                <div style={{
+                <div className="tool-card" style={{
                   background: PANEL, border: BORDER_THIN,
                   padding: '13px 15px', height: '100%', boxSizing: 'border-box',
                   display: 'flex', flexDirection: 'column', gap: 5,
@@ -229,7 +230,7 @@ export default function Landing() {
                     <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: t.accent }}>{String(i + 1).padStart(2, '0')}</span>
                     <span style={{ fontFamily: SANS, fontSize: 15.5, fontWeight: 800, color: INK }}>{t.label}</span>
                   </div>
-                  <span style={{ fontFamily: SANS, fontSize: 12.5, color: MUTE, lineHeight: 1.5 }}>{t.desc}</span>
+                  <span className="tool-desc" style={{ fontFamily: SANS, fontSize: 12.5, color: MUTE, lineHeight: 1.5 }}>{t.desc}</span>
                 </div>
               </Link>
             ))}
@@ -260,7 +261,7 @@ export default function Landing() {
                 herramientas, contenido y una comunidad de ingenieros y estudiantes que de verdad usa lo que comparto.
                 Cuando pides un rescate, del otro lado estoy yo — no un becario ni un bot.
               </p>
-              <p style={{ fontFamily: SANS, fontSize: 14, color: MUTE, lineHeight: 1.65, margin: '12px 0 0' }}>
+              <p className="bio-collab" style={{ fontFamily: SANS, fontSize: 14, color: MUTE, lineHeight: 1.65, margin: '12px 0 0' }}>
                 ¿Eres una marca? Trabajo patrocinios y colaboraciones:{' '}
                 <a
                   href={`mailto:${CONTACT_EMAIL}?subject=Colaboración con Industrias Muñeco`}
@@ -277,11 +278,11 @@ export default function Landing() {
         <Section id="industria" label={`Para industria · ${INDUSTRIA.length} calculadoras`}>
           <div style={{ display: 'grid', gap: 14 }}>
             {INDUSTRIA.map((b) => (
-              <div key={b.to} style={{ background: PANEL, border: BORDER_SOFT, padding: '16px 18px' }}>
+              <div key={b.to} className="industria-card" style={{ background: PANEL, border: BORDER_SOFT, padding: '16px 18px' }}>
                 <h3 style={{ fontFamily: SANS, fontSize: 17, fontWeight: 800, margin: '0 0 8px', color: INK, letterSpacing: '-0.01em' }}>
                   {b.titulo}
                 </h3>
-                <p style={{ fontFamily: SANS, fontSize: 13, color: MUTE, lineHeight: 1.6, margin: '0 0 12px' }}>
+                <p className="industria-desc" style={{ fontFamily: SANS, fontSize: 13, color: MUTE, lineHeight: 1.6, margin: '0 0 12px' }}>
                   {b.texto}
                 </p>
                 <Link
@@ -302,7 +303,7 @@ export default function Landing() {
 
         {/* ── Enlaces (linktree): ordenados, mismo nivel, no invasivos ── */}
         <Section label="Conecta">
-          <div style={{
+          <div className="links-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
             gap: 10,

@@ -3,17 +3,19 @@
 > Esto es un **lanzamiento de ACTUALIZACIÓN** (no relanzamiento). El dominio ya está
 > vivo y ya se anunció en Discord. Lo nuevo a lanzar: **landing/link-in-bio** + **herramienta 06**.
 
-## 🧱 Rediseño de la portada — rama `redesing` (2026-09-29)
+## 🧱 Rediseño de la portada — rama `redesign` (2026-09-29)
 
 Prototipo, **no está en `main`**. Vercel genera una URL de previsualización por rama.
 
 Hecho en la rama:
-- [x] Ancho 760 → 1120 en escritorio: hero y oferta lado a lado; Sobre mí y Para industria lado a lado. Móvil igual que antes.
+- [x] Ancho 760 → 1320 en escritorio: hero y oferta lado a lado; Sobre mí y Para industria lado a lado. Móvil igual que antes.
 - [x] Footer nuevo: mismo ancho que el contenido, marca correcta (antes decía «© La Navaja Suiza»), mapa del sitio y enlaces legales. Ya no repite Discord/IG/TikTok por tercera vez.
 - [x] **Aviso de privacidad** en `/privacidad` (`src/Privacy.jsx`), reescrito para lo que hoy hace `main` (Google Forms, WhatsApp, Mercado Pago, correo). El de `feat/backend-pi` decía «servidor propio, sin terceros»: en `main` eso sería falso.
 - [x] Aviso simplificado junto a los dos botones «Manda tu problema» (es el punto donde se recaban datos).
 - [x] Conteos coherentes: antes «9 herramientas» arriba y «7 herramientas» abajo. Ahora «9 gratis» = 7 para estudiantes + 2 para industria.
 - [x] «0 registros» → «sin registro» (se leía como «cero usuarios»).
+- [x] Redes solo en «Conecta» (quitadas del footer para no duplicar).
+- [x] Móvil compacto: herramientas solo con nombre en 2 columnas, industria sin descripción, bio con foto chica al lado, redes en 2 columnas sin @usuario. Portada en 375px: 3391 → 2415 px de alto (−29%).
 - [x] `/privacidad` en `sitemap.xml`.
 
 A cargo de Damián antes de mergear:
