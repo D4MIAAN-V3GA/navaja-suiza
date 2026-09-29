@@ -82,14 +82,14 @@ export default function RescueCard({ style }) {
       </p>
 
       {/* Las tres cifras que deciden la compra, con peso de dato */}
-      <div style={{
+      <div className="teaser-cifras" style={{
         display: "flex", flexWrap: "wrap", gap: "12px 24px",
         borderTop: BORDER_SOFT, borderBottom: BORDER_SOFT,
         padding: "12px 0", margin: "14px 0",
       }}>
         {CIFRAS.map((c) => (
           <div key={c.l}>
-            <div style={{ fontFamily: MONO, fontSize: "clamp(19px, 3.4vw, 24px)", fontWeight: 700, color: INK, lineHeight: 1.1 }}>
+            <div className="teaser-cifra" style={{ fontFamily: MONO, fontSize: "clamp(19px, 3.4vw, 24px)", fontWeight: 700, color: INK, lineHeight: 1.1, whiteSpace: "nowrap" }}>
               {c.n}
             </div>
             <div style={T3({ marginTop: 3 })}>{c.l}</div>
@@ -261,14 +261,14 @@ export function RescueTeaser() {
       </p>
 
       {/* Las tres cifras que deciden la compra — idénticas a la tarjeta completa */}
-      <div style={{
+      <div className="teaser-cifras" style={{
         display: "flex", flexWrap: "wrap", gap: "12px 24px",
         borderTop: BORDER_SOFT, borderBottom: BORDER_SOFT,
         padding: "12px 0", margin: "14px 0",
       }}>
         {CIFRAS_TEASER.map((c) => (
           <div key={c.l}>
-            <div style={{ fontFamily: MONO, fontSize: "clamp(19px, 3.4vw, 24px)", fontWeight: 700, color: INK, lineHeight: 1.1 }}>
+            <div className="teaser-cifra" style={{ fontFamily: MONO, fontSize: "clamp(19px, 3.4vw, 24px)", fontWeight: 700, color: INK, lineHeight: 1.1, whiteSpace: "nowrap" }}>
               {c.n}
             </div>
             <div style={T3({ marginTop: 3 })}>{c.l}</div>

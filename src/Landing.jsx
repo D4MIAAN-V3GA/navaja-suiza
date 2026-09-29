@@ -156,12 +156,12 @@ export default function Landing() {
             fontFamily: SANS, fontWeight: 800,
             fontSize: 'clamp(34px, 7vw, 60px)',
             lineHeight: 1.04, letterSpacing: '-0.02em',
-            margin: 0, color: INK,
+            margin: 0, color: INK, textWrap: 'balance',
           }}>
             La navaja suiza del ingeniero
           </h1>
 
-          <p style={{ fontFamily: SANS, fontSize: 16, color: MUTE, margin: '16px 0 0', lineHeight: 1.6, maxWidth: 580 }}>
+          <p style={{ fontFamily: SANS, fontSize: 16, color: MUTE, margin: '16px 0 0', lineHeight: 1.6, maxWidth: 580, textWrap: 'pretty' }}>
             Calculadoras que resuelven tu problema de ingeniería en segundos — y te enseñan
             el procedimiento, para que lo puedas defender en el examen. Gratis y sin registro.
             Y si el problema es más grande que una calculadora, <strong style={{ color: INK }}>te lo resuelvo yo</strong>.
