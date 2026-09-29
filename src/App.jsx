@@ -5,6 +5,7 @@ import RescuePage from './RescuePage';
 import ToolsHub from './ToolsHub';
 import ToolsGrid from './ToolsGrid';
 import ToolPage from './ToolPage';
+import Privacy from './Privacy';
 
 // Cambiar de ruta NO mueve el scroll por su cuenta: el navegador te deja a la
 // misma altura en la página nueva. Tocar «Ver la oferta» desde media portada
@@ -31,6 +32,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/rescate" element={<RescuePage />} />
+        <Route path="/privacidad" element={<Privacy />} />
         <Route path="/herramientas" element={<ToolsHub />}>
           <Route index element={<ToolsGrid />} />
           <Route path=":id" element={<ToolPage />} />

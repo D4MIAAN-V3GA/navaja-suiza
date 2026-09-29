@@ -35,6 +35,17 @@ const CIFRAS = [
 // ahí ya está explicado abajo y saldría dos veces.
 const CIFRAS_TEASER = [...CIFRAS, { n: "Garantía", l: "devuelvo tu dinero" }];
 
+
+export function PrivacyNote({ style }) {
+  return (
+    <p style={{ fontFamily: SANS, fontSize: 11.5, color: MUTE, lineHeight: 1.5, margin: "10px 0 0", ...style }}>
+      Al mandar tu problema aceptas el{" "}
+      <Link to="/privacidad" style={{ color: MUTE, textDecoration: "underline", textUnderlineOffset: 2 }}>aviso de privacidad</Link>.
+      Solo uso tus datos para resolverlo y cobrarlo.
+    </p>
+  );
+}
+
 export default function RescueCard({ style }) {
   return (
     <div className="rescue-card" style={{ background: PANEL, border: BORDER, boxShadow: SHADOW, padding: "20px 22px", ...style }}>
@@ -110,6 +121,7 @@ export default function RescueCard({ style }) {
       >
         Manda tu problema →
       </a>
+      <PrivacyNote />
 
       <p style={{ fontFamily: SANS, fontSize: 12.5, color: MUTE, margin: "12px 0 0", lineHeight: 1.5, maxWidth: 560 }}>
         {OFFER.ancla} Los primeros 5 rescates llevan 20% de descuento {OFFER.descuentoNota}.
@@ -300,6 +312,7 @@ export function RescueTeaser() {
           Ver detalles
         </Link>
       </div>
+      <PrivacyNote />
     </div>
   );
 }

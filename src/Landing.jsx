@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Footer from './Footer';
 import { RescueTeaser } from './RescueCard';
 import { TOOLS } from './tools';
-import { PAPER, PANEL, INK, MUTE, FAINT, MONO, SANS, BORDER, BORDER_THIN, BORDER_SOFT, ACCENTS, T3, textOn } from './theme';
+import { PAPER, PANEL, INK, MUTE, MONO, SANS, BORDER, BORDER_THIN, BORDER_SOFT, ACCENTS, T3, textOn } from './theme';
 
 // Catálogo para la portada: todo menos las herramientas B2B, que tienen su propia sección aparte.
 const GRID_TOOLS = TOOLS.filter((t) => t.id !== 'incertidumbre' && t.id !== 'tur');
@@ -117,7 +117,7 @@ function LinkButton({ icon, label, sub, href, external, color }) {
 // —la de la oferta— y las secciones se separan con una línea y una etiqueta T3.
 function Section({ label, children, id, first }) {
   return (
-    <section id={id} style={{ borderTop: BORDER_SOFT, marginTop: first ? 34 : 44, paddingTop: 22 }}>
+    <section id={id} style={{ borderTop: BORDER_SOFT, marginTop: first ? 34 : 44, paddingTop: 22, scrollMarginTop: 16 }}>
       <h2 style={T3({ color: MUTE, margin: '0 0 16px' })}>{label}</h2>
       {children}
     </section>
@@ -129,13 +129,17 @@ export default function Landing() {
   // el salto por su cuenta, así que lo hacemos nosotros.
   const { hash } = useLocation();
   useEffect(() => {
-    if (hash !== '#rescate') return;
-    document.getElementById('rescate')?.scrollIntoView({ block: 'start' });
+    if (!hash) return;
+    document.getElementById(hash.slice(1))?.scrollIntoView({ block: 'start' });
   }, [hash]);
 
   return (
     <div style={{ minHeight: '100dvh', background: PAPER, color: INK, fontFamily: SANS }}>
-      <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 16px' }}>
+      {/* Rediseño: 760 → 1120. En escritorio el contenido ocupaba ~40% de la
+          pantalla; ahora el hero y la oferta van lado a lado. En móvil no cambia
+          nada: todo se apila en el mismo orden que antes (index.css). */}
+      <div className="landing-wrap" style={{ maxWidth: 1120, margin: '0 auto', padding: '0 24px' }}>
+        <div className="landing-top">
 
         {/* ── Hero de marca: corto, invita a acercarse ── */}
         <header className="landing-hero" style={{ padding: '52px 0 32px' }}>
@@ -164,7 +168,7 @@ export default function Landing() {
 
           {/* Prueba social: la escasez del premium solo es creíble si antes hay demanda */}
           <p style={{ fontFamily: MONO, fontSize: 12, color: MUTE, margin: '14px 0 0', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-            +300 ingenieros en el Discord · {TOOLS.length} herramientas · 0 registros
+            +300 ingenieros en el Discord · {TOOLS.length} herramientas gratis · sin registro
           </p>
 
           {/* CTA de las herramientas: negro y sin sombra dura. La voz alta de la
@@ -202,12 +206,13 @@ export default function Landing() {
             Va en teaser, no completa: la tarjeta entera medía ~1020px de alto en
             un teléfono y no se veía ni un tercio. El argumento completo vive en
             /rescate — aquí solo lo que decide si sigues leyendo. ── */}
-        <section id="rescate" style={{ padding: '4px 0 12px', scrollMarginTop: 16 }}>
+        <section id="rescate" className="landing-offer" style={{ padding: '4px 0 12px', scrollMarginTop: 16 }}>
           <RescueTeaser />
         </section>
+        </div>
 
         {/* ── Herramientas: el regalo que trae a la gente, en peso de navegación ── */}
-        <Section first label={`${GRID_TOOLS.length} herramientas · gratis`}>
+        <Section first label={`Para estudiantes · ${GRID_TOOLS.length} herramientas gratis`}>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 230px), 1fr))',
@@ -234,6 +239,7 @@ export default function Landing() {
         {/* ── Sobre mí: es quien responde el rescate, no una tarjeta más ──
             La foto vive AQUÍ y no en el hero: arriba solo compite con el CTA, y
             "del otro lado estoy yo" solo se prueba si se te ve la cara. */}
+        <div className="landing-duo">
         <Section label="Sobre mí">
           <div className="landing-bio">
             <img
@@ -268,8 +274,8 @@ export default function Landing() {
         </Section>
 
         {/* ── Para industria: herramientas B2B, aparte del catálogo de estudiantes ── */}
-        <Section label="Para industria">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 14 }}>
+        <Section id="industria" label={`Para industria · ${INDUSTRIA.length} calculadoras`}>
+          <div style={{ display: 'grid', gap: 14 }}>
             {INDUSTRIA.map((b) => (
               <div key={b.to} style={{ background: PANEL, border: BORDER_SOFT, padding: '16px 18px' }}>
                 <h3 style={{ fontFamily: SANS, fontSize: 17, fontWeight: 800, margin: '0 0 8px', color: INK, letterSpacing: '-0.01em' }}>
@@ -292,21 +298,19 @@ export default function Landing() {
             ))}
           </div>
         </Section>
+        </div>
 
         {/* ── Enlaces (linktree): ordenados, mismo nivel, no invasivos ── */}
         <Section label="Conecta">
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 220px), 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
             gap: 10,
           }}>
             {LINKS.map((l) => (
               <LinkButton key={l.key} icon={ICONS[l.key]} label={l.label} sub={l.sub} href={l.href} external={l.external} color={l.color} />
             ))}
           </div>
-          <p style={{ fontFamily: MONO, fontSize: 11, color: FAINT, margin: '22px 0 52px', letterSpacing: '0.06em' }}>
-            INDUSTRIAS MUÑECO · QUERÉTARO, MX · industriasmuneco.com
-          </p>
         </Section>
       </div>
 
