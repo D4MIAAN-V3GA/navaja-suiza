@@ -114,25 +114,18 @@ details[open] > summary > span:first-child { transform: rotate(90deg); display: 
 
 /* ── Rediseño (rama redesign): aprovechar el ancho en escritorio ──────
    Por defecto (móvil y tablet) todo va apilado como antes. Desde 1100px:
-   hero | oferta lado a lado, y Sobre mí | Para industria lado a lado. */
+   la oferta va DEBAJO del hero a todo el ancho (decisión de Damián:
+   lado a lado no se veía natural); Sobre mí | Para industria sí van lado a lado. */
 .landing-top, .landing-duo { display: block; }
 @media (min-width: 1100px) {
-  .landing-top {
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 48px;
-    align-items: center;
-  }
-  .landing-offer { padding-top: 24px !important; }
   /* Las 4 cifras de la oferta en UNA fila: con flex-wrap «Garantía» caía sola
      a un segundo renglón y se veía como un dato suelto. */
   .teaser-cifras {
     display: grid !important;
     grid-template-columns: repeat(4, auto);
-    justify-content: space-between;
-    column-gap: 14px !important;
+    justify-content: start;
+    column-gap: 48px !important;
   }
-  .teaser-cifra { font-size: clamp(17px, 1.45vw, 22px) !important; }
   /* Filas completas: 7 herramientas en 4+3 (no 5+2) y 6 redes en 3+3 (no 4+2). */
   .tools-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
   .links-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
