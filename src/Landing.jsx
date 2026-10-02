@@ -258,7 +258,7 @@ export default function Landing() {
               style={{ width: 168, height: 210, objectFit: 'cover', border: BORDER, display: 'block', flexShrink: 0 }}
             />
             <div style={{ minWidth: 0 }}>
-              <h3 style={{ fontFamily: SANS, fontSize: 'clamp(18px, 3.4vw, 22px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
+              <h3 style={{ fontFamily: SANS, fontSize: 'clamp(16px, 3vw, 18px)', fontWeight: 800, margin: '0 0 10px', color: INK, letterSpacing: '-0.01em' }}>
                 Ingeniero en metrología + creador de contenido
               </h3>
               <p style={{ fontFamily: SANS, fontSize: 14, color: MUTE, lineHeight: 1.65, margin: 0, maxWidth: 620 }}>
