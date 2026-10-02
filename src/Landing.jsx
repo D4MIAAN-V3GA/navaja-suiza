@@ -113,13 +113,19 @@ function LinkButton({ icon, label, sub, href, external, color }) {
   );
 }
 
-// Sección de la Landing. La etiqueta ya no es un rectángulo negro: cinco cajas
-// negras en una página gritan todas al mismo volumen. Queda una sola voz alta
-// —la de la oferta— y las secciones se separan con una línea y una etiqueta T3.
-function Section({ label, children, id, first }) {
+// Sección de la Landing. Rediseño: el título pasa de etiqueta mono de 10px
+// (no se leía) a un título real de 22px. Sigue por DEBAJO del título de la
+// oferta (24–34px) para que la voz alta de la página siga siendo el rescate.
+// El conteo va aparte, chico, como dato y no como parte del título.
+function Section({ label, meta, children, id, first }) {
   return (
     <section id={id} className="landing-section" style={{ borderTop: BORDER_SOFT, marginTop: first ? 34 : 44, paddingTop: 22, scrollMarginTop: 16 }}>
-      <h2 style={T3({ color: MUTE, margin: '0 0 16px' })}>{label}</h2>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap', margin: '0 0 16px' }}>
+        <h2 className="section-title" style={{ fontFamily: SANS, fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em', color: INK, margin: 0 }}>
+          {label}
+        </h2>
+        {meta && <span style={T3({ color: MUTE })}>{meta}</span>}
+      </div>
       {children}
     </section>
   );
@@ -213,7 +219,7 @@ export default function Landing() {
         </div>
 
         {/* ── Herramientas: el regalo que trae a la gente, en peso de navegación ── */}
-        <Section first label={`Para estudiantes · ${GRID_TOOLS.length} herramientas gratis`}>
+        <Section first label="Para estudiantes" meta={`${GRID_TOOLS.length} herramientas · gratis`}>
           <div className="tools-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 230px), 1fr))',
@@ -275,7 +281,7 @@ export default function Landing() {
         </Section>
 
         {/* ── Para industria: herramientas B2B, aparte del catálogo de estudiantes ── */}
-        <Section id="industria" label={`Para industria · ${INDUSTRIA.length} calculadoras`}>
+        <Section id="industria" label="Para industria" meta={`${INDUSTRIA.length} calculadoras · gratis`}>
           <div style={{ display: 'grid', gap: 14 }}>
             {INDUSTRIA.map((b) => (
               <div key={b.to} className="industria-card" style={{ background: PANEL, border: BORDER_SOFT, padding: '16px 18px' }}>

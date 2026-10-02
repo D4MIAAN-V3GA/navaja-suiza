@@ -196,6 +196,7 @@ details[open] > summary > span:first-child { transform: rotate(90deg); display: 
      Herramientas: solo el nombre, en dos columnas. La descripción ya vive
      dentro de cada herramienta. */
   .landing-section { margin-top: 26px !important; padding-top: 16px !important; }
+  .section-title { font-size: 19px !important; }
   .tools-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
   .tool-card { padding: 10px 11px !important; }
   .tool-desc { display: none !important; }
